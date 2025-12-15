@@ -3,10 +3,13 @@ import Login from "../src/Pages/Auth/Login";
 import { AuthProvider } from "./AuthProvider/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
-import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 import StudentLayout from "./Layout/StudentLayout";
 import AdminLayout from "./Layout/AdminLayout";
+import Requests from "./Pages/Admin/Requests";
+import Bookings from "./Pages/Admin/Bookings";
+import Resources from "./Pages/Admin/Resources";
+import Venues from "./Pages/Admin/Venues";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -17,6 +20,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+            {/* Admin routes */}
             <Route
               path="/admin-dashboard"
               element={
@@ -25,7 +29,40 @@ const App = () => {
                 </AdminProtected>
               }
             />
+            <Route
+              path="/admin-requests"
+              element={
+                <AdminProtected>
+                  <Requests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-bookings"
+              element={
+                <AdminProtected>
+                  <Bookings />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-resources"
+              element={
+                <AdminProtected>
+                  <Resources />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-venues"
+              element={
+                <AdminProtected>
+                  <Venues />
+                </AdminProtected>
+              }
+            />
 
+            {/* Student routes */}
             <Route
               path="/dashboard"
               element={
