@@ -112,7 +112,7 @@ function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext
+    <AuthContext.Provider
       value={{
         user,
         token,
@@ -124,7 +124,7 @@ function AuthProvider({ children }) {
       }}
     >
       {children}
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
 

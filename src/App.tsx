@@ -35,7 +35,7 @@ const App = () => {
             />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-
+          
           <Toaster
             position="top-right"
             toastOptions={{
