@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 import StudentLayout from "./Layout/StudentLayout";
+import AdminLayout from "./Layout/AdminLayout";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -20,7 +21,7 @@ const App = () => {
               path="/admin-dashboard"
               element={
                 <AdminProtected>
-                  <AdminDashboard />
+                  <AdminLayout />
                 </AdminProtected>
               }
             />

@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar-student"
+import { AppSidebar } from "@/components/app-sidebar-admin"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-const StudentLayout = () => {
+const AdminLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -52,4 +52,4 @@ const StudentLayout = () => {
   )
 }
 
-export default StudentLayout
+export default AdminLayout
