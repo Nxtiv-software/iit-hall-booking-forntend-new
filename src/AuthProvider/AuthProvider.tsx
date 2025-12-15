@@ -73,7 +73,7 @@ function AuthProvider({ children }) {
       console.log("isAdmin: false (no user)");
       return false;
     }
-    const adminStatus = user.role?.name === "ADMIN";
+    const adminStatus = user?.role?.name === "ADMIN";
     console.log("isAdmin:", adminStatus, "role:", user.role);
     return adminStatus;
   };
