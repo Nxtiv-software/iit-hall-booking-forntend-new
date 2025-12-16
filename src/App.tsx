@@ -6,6 +6,8 @@ import { Toaster } from "react-hot-toast";
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 import StudentLayout from "./Layout/StudentLayout";
 import AdminLayout from "./Layout/AdminLayout";
+import BookingLayout from "./Layout/BookingLayout";
+
 import Requests from "./Pages/Admin/Requests";
 import Bookings from "./Pages/Admin/Bookings";
 import Resources from "./Pages/Admin/Resources";
@@ -16,6 +18,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+      
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
@@ -70,10 +73,20 @@ const App = () => {
                   <StudentLayout />
                 </UserProtected>
               }
-            />
+            >
+              <Route
+                path="booking"
+                element={
+                  <UserProtected>
+                   <BookingLayout/>
+                  </UserProtected>
+                }
+              />
+            </Route>
+
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-          
+
           <Toaster
             position="top-right"
             toastOptions={{
@@ -107,6 +120,7 @@ const App = () => {
             }}
           />
         </AuthProvider>
+       
       </BrowserRouter>
     </QueryClientProvider>
   );

@@ -20,149 +20,160 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
 
 // This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Getting Started",
-      url: "#",
-      items: [
-        {
-          title: "Installation",
-          url: "#",
-        },
-        {
-          title: "Project Structure",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Building Your Application",
-      url: "#",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "API Reference",
-      url: "#",
-      items: [
-        {
-          title: "Components",
-          url: "#",
-        },
-        {
-          title: "File Conventions",
-          url: "#",
-        },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Architecture",
-      url: "#",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-        {
-          title: "Fast Refresh",
-          url: "#",
-        },
-        {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
-          url: "#",
-        },
-      ],
-    },
-  ],
-}
+// const data = {
+//   navMain: [
+//     {
+//       title: "Getting Started",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Installation",
+//           url: "#",
+//         },
+//         {
+//           title: "Project Structure",
+//           url: "#",
+//         },
+//       ],
+//     },
+//     {
+//       title: "Building Your Application",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Routing",
+//           url: "#",
+//         },
+//         {
+//           title: "Data Fetching",
+//           url: "#",
+//           isActive: true,
+//         },
+//         {
+//           title: "Rendering",
+//           url: "#",
+//         },
+//         {
+//           title: "Caching",
+//           url: "#",
+//         },
+//         {
+//           title: "Styling",
+//           url: "#",
+//         },
+//         {
+//           title: "Optimizing",
+//           url: "#",
+//         },
+//         {
+//           title: "Configuring",
+//           url: "#",
+//         },
+//         {
+//           title: "Testing",
+//           url: "#",
+//         },
+//         {
+//           title: "Authentication",
+//           url: "#",
+//         },
+//         {
+//           title: "Deploying",
+//           url: "#",
+//         },
+//         {
+//           title: "Upgrading",
+//           url: "#",
+//         },
+//         {
+//           title: "Examples",
+//           url: "#",
+//         },
+//       ],
+//     },
+//     {
+//       title: "API Reference",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Components",
+//           url: "#",
+//         },
+//         {
+//           title: "File Conventions",
+//           url: "#",
+//         },
+//         {
+//           title: "Functions",
+//           url: "#",
+//         },
+//         {
+//           title: "next.config.js Options",
+//           url: "#",
+//         },
+//         {
+//           title: "CLI",
+//           url: "#",
+//         },
+//         {
+//           title: "Edge Runtime",
+//           url: "#",
+//         },
+//       ],
+//     },
+//     {
+//       title: "Architecture",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Accessibility",
+//           url: "#",
+//         },
+//         {
+//           title: "Fast Refresh",
+//           url: "#",
+//         },
+//         {
+//           title: "Next.js Compiler",
+//           url: "#",
+//         },
+//         {
+//           title: "Supported Browsers",
+//           url: "#",
+//         },
+//         {
+//           title: "Turbopack",
+//           url: "#",
+//         },
+//       ],
+//     },
+//     {
+//       title: "Community",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Contribution Guide",
+//           url: "#",
+//         },
+//       ],
+//     },
+//   ],
+// }
+
+const navdata = [
+  {title: "Dashboard", url:"/dashboard"},
+  {title: "Add a Booking", url: "/dashboard/booking"}
+]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate();
+
+  const handleClick = (path: string) => {
+    navigate(path)
+  }
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -174,8 +185,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <GalleryVerticalEnd className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="">v1.0.0</span>
+                  <span className="font-medium">Welcome</span>
+                  <span className="">Bojitha Nawarathna</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -186,7 +197,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item, index) => (
+            {navdata.map((item, index) => (
               <Collapsible
                 key={item.title}
                 defaultOpen={index === 1}
@@ -194,13 +205,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton onClick={() => handleClick(item.url)}>
                       {item.title}{" "}
-                      <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                      {/* <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" /> */}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  {item.items?.length ? (
+                  {/* {item.items?.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         {item.items.map((item) => (
@@ -215,7 +226,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         ))}
                       </SidebarMenuSub>
                     </CollapsibleContent>
-                  ) : null}
+                  ) : null} */}
                 </SidebarMenuItem>
               </Collapsible>
             ))}
