@@ -13,8 +13,19 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { useQuery } from "@tanstack/react-query"
+import { fetchBookings } from "@/Services/Bookings"
+import toast from "react-hot-toast"
 
 const Bookings = () => {
+  const { data: bookings, isLoading, error } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: fetchBookings,
+    onError: () => {
+      toast.error("Failed to fetch bookings. Please try again.");
+    },
+  });
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -40,7 +51,42 @@ const Bookings = () => {
           </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <div className="flex flex-1 flex-col gap-4 p-4">
+              {isLoading && <p>Loading bookings...</p>}
+
+              {error && <p className="text-red-500">Failed to load bookings</p>}
+
+              {!isLoading && bookings && bookings.length === 0 && (
+                <p>No bookings found.</p>
+              )}
+
+              {!isLoading && bookings && bookings.length > 0 && (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {bookings.map((booking: any) => (
+                    <div
+                      key={booking.id}
+                      className="bg-white p-4 rounded-xl shadow border border-gray-200"
+                    >
+                      <p>
+                        <strong>Student:</strong>{" "}
+                        {booking.request.student.user.name}
+                      </p>
+                      <p>
+                        <strong>Venue:</strong> {booking.request.venue.name}
+                      </p>
+                      <p>
+                        <strong>Status:</strong> {booking.request.status.name}
+                      </p>
+                      <p>
+                        <strong>Admin:</strong> {booking.admin.user.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

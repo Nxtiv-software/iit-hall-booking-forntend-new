@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar-admin"
+import Theme from "@/components/Theme"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +15,17 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
+
+
 const AdminLayout = () => {
+  const { data: bookings, isLoading, error } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: fetchBookings,
+    onError: () => {
+      toast.error("Failed to fetch bookings. Please try again.");
+    },
+  });
+  
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -38,6 +49,9 @@ const AdminLayout = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <div className="ml-auto">
+            <Theme/>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
