@@ -12,6 +12,7 @@ import Requests from "./Pages/Admin/Requests";
 import Bookings from "./Pages/Admin/Bookings";
 import Resources from "./Pages/Admin/Resources";
 import Venues from "./Pages/Admin/Venues";
+import { BookingProvider } from "./AuthProvider/BookingProvider";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
       <BrowserRouter>
       
         <AuthProvider>
+          <BookingProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
@@ -119,6 +121,7 @@ const App = () => {
               },
             }}
           />
+          </BookingProvider>
         </AuthProvider>
        
       </BrowserRouter>

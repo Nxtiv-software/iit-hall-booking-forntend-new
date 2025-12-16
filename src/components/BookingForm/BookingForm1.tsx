@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useBooking } from "@/AuthProvider/BookingProvider";
 
 interface AuthFormProps<T extends FieldValues> {
   defaultValues: T;
@@ -90,16 +91,21 @@ const BookingForm1 = <T extends FieldValues>({
     return descriptions[fieldName] || `Please enter your ${fieldName}.`;
   };
 
+  const { nextPage, prevPage, goToPage } = useBooking();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues as DefaultValues<z.infer<typeof formSchema>>,
   });
+  
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // You can access the values here
     console.log("All Values:", values);
+nextPage()
+
   }
 
   return (
@@ -140,7 +146,7 @@ const BookingForm1 = <T extends FieldValues>({
         />
         ))}
         </div>
-        <Button type="submit" className="w-full">Submit Booking</Button>
+        <Button type="submit" className="w-full">Next</Button>
 
         
       </form>

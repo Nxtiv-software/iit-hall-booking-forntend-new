@@ -1,3 +1,4 @@
+import { useBooking } from "@/AuthProvider/BookingProvider";
 import {
   Pagination,
   PaginationContent,
@@ -9,6 +10,8 @@ import {
 } from "@/components/ui/pagination";
 
 const PaginationNav = () => {
+
+  const {currentPage} = useBooking()
 
   const handleClick = () => {
 
@@ -24,23 +27,23 @@ const PaginationNav = () => {
 
 <div className="flex gap-5">
           <PaginationItem>
-            <PaginationLink isActive onClick={handleClick} href="#">1</PaginationLink>
+            <PaginationLink isActive={currentPage === 1}>1</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick} href="#">2</PaginationLink>
+            <PaginationLink isActive={currentPage === 2} >2</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick} href="#">3</PaginationLink>
+            <PaginationLink onClick={handleClick} >3</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick} href="#">4</PaginationLink>
+            <PaginationLink onClick={handleClick}>4</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick} href="#">5</PaginationLink>
+            <PaginationLink onClick={handleClick}>5</PaginationLink>
           </PaginationItem>
           </div>
 {/* 
