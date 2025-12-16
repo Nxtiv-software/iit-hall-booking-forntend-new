@@ -103,8 +103,8 @@ const BookingForm1 = <T extends FieldValues>({
   }
 
   return (
-    <Form {...form} >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 dark:border-amber-50">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.keys(defaultValues).map((fieldName) => (
         <FormField 

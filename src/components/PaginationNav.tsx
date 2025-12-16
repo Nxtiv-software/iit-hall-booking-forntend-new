@@ -18,10 +18,11 @@ const PaginationNav = () => {
       <Pagination>
         <PaginationContent>
 
-          <PaginationItem>
+          {/* <PaginationItem>
             <PaginationPrevious href="#" />
-          </PaginationItem>
+          </PaginationItem> */}
 
+<div className="flex gap-5">
           <PaginationItem>
             <PaginationLink isActive onClick={handleClick} href="#">1</PaginationLink>
           </PaginationItem>
@@ -35,12 +36,21 @@ const PaginationNav = () => {
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationEllipsis />
+            <PaginationLink onClick={handleClick} href="#">4</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationNext href="#" />
+            <PaginationLink onClick={handleClick} href="#">5</PaginationLink>
           </PaginationItem>
+          </div>
+{/* 
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem> */}
+
+          {/* <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem> */}
 
         </PaginationContent>
       </Pagination>

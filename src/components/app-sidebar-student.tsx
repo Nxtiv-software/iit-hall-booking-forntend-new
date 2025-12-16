@@ -1,12 +1,12 @@
-import * as React from "react"
-import { GalleryVerticalEnd, Minus, Plus } from "lucide-react"
+import * as React from "react";
+import { GalleryVerticalEnd, Minus, Plus } from "lucide-react";
 
-import { SearchForm } from "@/components/search-form"
+import { SearchForm } from "@/components/search-form";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -19,8 +19,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { useNavigate } from "react-router-dom"
+} from "@/components/ui/sidebar";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { useAuth } from "@/AuthProvider/AuthProvider";
 
 // This is sample data.
 // const data = {
@@ -164,54 +166,60 @@ import { useNavigate } from "react-router-dom"
 // }
 
 const navdata = [
-  {title: "Dashboard", url:"/dashboard"},
-  {title: "Add a Booking", url: "/dashboard/booking"}
-]
+  { title: "Dashboard", url: "/dashboard" },
+  { title: "Add a Booking", url: "/dashboard/booking" },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleClick = (path: string) => {
-    navigate(path)
-  }
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
   return (
-    <Sidebar {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Welcome</span>
-                  <span className="">Bojitha Nawarathna</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SearchForm />
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
+    <Sidebar {...props} className="">
+      <div>
+        <SidebarHeader>
           <SidebarMenu>
-            {navdata.map((item, index) => (
-              <Collapsible
-                key={item.title}
-                defaultOpen={index === 1}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton onClick={() => handleClick(item.url)}>
-                      {item.title}{" "}
-                      {/* <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <a href="#">
+                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                    <GalleryVerticalEnd className="size-4" />
+                  </div>
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="font-medium">Welcome</span>
+                    <span className="">Bojitha Nawarathna</span>
+                  </div>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SearchForm />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarMenu>
+              {navdata.map((item, index) => (
+                <Collapsible
+                  key={item.title}
+                  defaultOpen={index === 1}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton onClick={() => handleClick(item.url)}>
+                        {item.title}{" "}
+                        {/* <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" /> */}
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  {/* {item.items?.length ? (
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    {/* {item.items?.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         {item.items.map((item) => (
@@ -227,13 +235,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   ) : null} */}
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarRail />
+                  </SidebarMenuItem>
+                </Collapsible>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarRail />
+      </div>
+      <Button onClick={handleLogout} className="mt-auto mb-5 mx-5">
+        Log Out
+      </Button>
     </Sidebar>
-  )
+  );
 }
