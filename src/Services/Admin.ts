@@ -1,11 +1,13 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/admins";
+const BASE_URL = "http://localhost:8800/admins";
 
 // 1. Fetch admin profile
-export const fetchAdminProfile = async () => {
+export const fetchAdminProfile = async (token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/me`);
+    const response = await axios.get(`${BASE_URL}/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching admin profile:", error);
@@ -14,9 +16,11 @@ export const fetchAdminProfile = async () => {
 };
 
 // 2. Create admin profile
-export const createAdminProfile = async (data) => {
+export const createAdminProfile = async (data: any, token: string) => {
   try {
-    const response = await axios.post(`${BASE_URL}/me`, data);
+    const response = await axios.post(`${BASE_URL}/me`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error creating admin profile:", error);
@@ -25,9 +29,11 @@ export const createAdminProfile = async (data) => {
 };
 
 // 3. Update admin profile
-export const updateAdminProfile = async (data) => {
+export const updateAdminProfile = async (data: any, token: string) => {
   try {
-    const response = await axios.put(`${BASE_URL}/me`, data);
+    const response = await axios.put(`${BASE_URL}/me`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating admin profile:", error);
@@ -36,9 +42,11 @@ export const updateAdminProfile = async (data) => {
 };
 
 // 4. Delete admin profile
-export const deleteAdminProfile = async () => {
+export const deleteAdminProfile = async (token: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/me`);
+    const response = await axios.delete(`${BASE_URL}/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting admin profile:", error);
@@ -47,9 +55,11 @@ export const deleteAdminProfile = async () => {
 };
 
 // 5. Fetch all bookings for an admin
-export const fetchAdminBookings = async (adminId) => {
+export const fetchAdminBookings = async (adminId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/bookings`);
+    const response = await axios.get(`${BASE_URL}/${adminId}/bookings`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching admin bookings:", error);
@@ -58,9 +68,11 @@ export const fetchAdminBookings = async (adminId) => {
 };
 
 // 6. Fetch pending requests for admin
-export const fetchPendingRequests = async (adminId) => {
+export const fetchPendingRequests = async (adminId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/pending-requests`);
+    const response = await axios.get(`${BASE_URL}/${adminId}/pending-requests`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching pending requests:", error);
@@ -69,9 +81,11 @@ export const fetchPendingRequests = async (adminId) => {
 };
 
 // 7. Fetch rejected requests for admin
-export const fetchRejectedRequests = async (adminId) => {
+export const fetchRejectedRequests = async (adminId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/rejected-requests`);
+    const response = await axios.get(`${BASE_URL}/${adminId}/rejected-requests`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching rejected requests:", error);
@@ -80,9 +94,11 @@ export const fetchRejectedRequests = async (adminId) => {
 };
 
 // 8. Approve a request
-export const approveRequest = async (adminId, requestId, comment) => {
+export const approveRequest = async (adminId: string, requestId: string, comment: string, token: string) => {
   try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/approve`, { comment });
+    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/approve`, { comment }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error approving request:", error);
@@ -91,9 +107,11 @@ export const approveRequest = async (adminId, requestId, comment) => {
 };
 
 // 9. Reject a request
-export const rejectRequest = async (adminId, requestId, comment) => {
+export const rejectRequest = async (adminId: string, requestId: string, comment: string, token: string) => {
   try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/reject`, { comment });
+    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/reject`, { comment }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error rejecting request:", error);
@@ -102,9 +120,11 @@ export const rejectRequest = async (adminId, requestId, comment) => {
 };
 
 // 10. Update approval comment
-export const updateApprovalComment = async (adminId, requestId, adminLevel, comment) => {
+export const updateApprovalComment = async (adminId: string, requestId: string, adminLevel: string, comment: string, token: string) => {
   try {
-    const response = await axios.put(`${BASE_URL}/${adminId}/requests/${requestId}/approval`, { adminLevel, comment });
+    const response = await axios.put(`${BASE_URL}/${adminId}/requests/${requestId}/approval`, { adminLevel, comment }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating approval comment:", error);
@@ -113,9 +133,11 @@ export const updateApprovalComment = async (adminId, requestId, adminLevel, comm
 };
 
 // 11. Fetch count of pending requests for admin
-export const fetchPendingRequestCount = async (adminId) => {
+export const fetchPendingRequestCount = async (adminId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/pending-count`);
+    const response = await axios.get(`${BASE_URL}/${adminId}/pending-count`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching pending request count:", error);

@@ -14,13 +14,17 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useQuery } from "@tanstack/react-query"
-import { fetchBookings } from "@/Services/Bookings"
+import { fetchAllBookings } from "@/Services/Bookings"
 import toast from "react-hot-toast"
+import Theme from "@/components/Theme"
 
 const Bookings = () => {
+  const token = localStorage.getItem("token");
+  console.log(token)
+
   const { data: bookings, isLoading, error } = useQuery({
     queryKey: ["bookings"],
-    queryFn: fetchBookings,
+    queryFn: () => fetchAllBookings(token!),
     onError: () => {
       toast.error("Failed to fetch bookings. Please try again.");
     },
@@ -49,9 +53,12 @@ const Bookings = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <div className="ml-auto">
+            <Theme/>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">
             <div className="flex flex-1 flex-col gap-4 p-4">
               {isLoading && <p>Loading bookings...</p>}
 

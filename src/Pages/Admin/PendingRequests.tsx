@@ -15,8 +15,10 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-const Venues = () => {
+
+const PendingRequests = () => {
   return (
+    <div>
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
@@ -35,7 +37,7 @@ const Venues = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Venues</BreadcrumbPage>
+                <BreadcrumbPage>Pending Requests</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -44,11 +46,12 @@ const Venues = () => {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">Venues</div>
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">Pending Requests</div>
         </div>
       </SidebarInset>
     </SidebarProvider>
+</div>
   )
 }
 
-export default Venues
+export default PendingRequests

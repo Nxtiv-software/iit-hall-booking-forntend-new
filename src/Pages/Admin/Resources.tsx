@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar-admin"
+import Theme from "@/components/Theme"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -38,9 +39,12 @@ const Resources = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <div className="ml-auto">
+            <Theme/>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">Resources</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

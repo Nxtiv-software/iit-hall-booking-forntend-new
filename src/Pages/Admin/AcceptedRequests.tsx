@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar-admin"
+import Theme from "@/components/Theme"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +15,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-const Requests = () => {
+
+const AcceptedRequests = () => {
   return (
     <div>
     <SidebarProvider>
@@ -35,13 +37,16 @@ const Requests = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Requests</BreadcrumbPage>
+                <BreadcrumbPage>Accepted Requests</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <div className="ml-auto">
+            <Theme/>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">Accepted Requests</div>
         </div>
       </SidebarInset>
     </SidebarProvider>
@@ -49,4 +54,4 @@ const Requests = () => {
   )
 }
 
-export default Requests
+export default AcceptedRequests

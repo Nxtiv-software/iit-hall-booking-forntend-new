@@ -1,11 +1,13 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/requests"; 
+const BASE_URL = "http://localhost:8800/requests"; 
 
 // 1. Get all requests
-export const fetchAllRequests = async () => {
+export const fetchAllRequests = async (token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/`);
+    const response = await axios.get(`${BASE_URL}/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching requests:", error);
@@ -14,9 +16,11 @@ export const fetchAllRequests = async () => {
 };
 
 // 2. Get all attachments by request ID
-export const fetchAttachmentsByRequest = async (requestId) => {
+export const fetchAttachmentsByRequest = async (requestId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${requestId}/attachments`);
+    const response = await axios.get(`${BASE_URL}/${requestId}/attachments`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching attachments:", error);
@@ -25,7 +29,7 @@ export const fetchAttachmentsByRequest = async (requestId) => {
 };
 
 // 3. Upload an attachment for a request
-export const uploadAttachment = async (requestId, file) => {
+export const uploadAttachment = async (requestId: string, file: File, token: string) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -33,7 +37,12 @@ export const uploadAttachment = async (requestId, file) => {
     const response = await axios.post(
       `${BASE_URL}/${requestId}/attachments`,
       formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -43,9 +52,11 @@ export const uploadAttachment = async (requestId, file) => {
 };
 
 // 4. Get a single attachment by request ID and attachment ID
-export const fetchAttachmentById = async (requestId, attachmentId) => {
+export const fetchAttachmentById = async (requestId: string, attachmentId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${requestId}/attachments/${attachmentId}`);
+    const response = await axios.get(`${BASE_URL}/${requestId}/attachments/${attachmentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching attachment:", error);
@@ -54,9 +65,11 @@ export const fetchAttachmentById = async (requestId, attachmentId) => {
 };
 
 // 5. Delete an attachment by request ID and attachment ID
-export const deleteAttachment = async (requestId, attachmentId) => {
+export const deleteAttachment = async (requestId: string, attachmentId: string, token: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/${requestId}/attachments/${attachmentId}`);
+    const response = await axios.delete(`${BASE_URL}/${requestId}/attachments/${attachmentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting attachment:", error);
@@ -65,9 +78,11 @@ export const deleteAttachment = async (requestId, attachmentId) => {
 };
 
 // 6. Get full approval history for a request
-export const fetchApprovalsByRequest = async (requestId) => {
+export const fetchApprovalsByRequest = async (requestId: string, token: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${requestId}/approvals`);
+    const response = await axios.get(`${BASE_URL}/${requestId}/approvals`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching approvals:", error);

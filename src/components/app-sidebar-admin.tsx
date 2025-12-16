@@ -24,7 +24,13 @@ const data = {
       title: "Menu",
       items: [
         { title: "Dashboard", url: "/admin-dashboard", isActive: true},
-        { title: "Requests", url: "/admin-requests" }, 
+        { title: "Requests", 
+          url: "/admin-requests-pending",
+          items: [
+            { title: "Pending Requests", url: "/admin-requests-pending" },
+            { title: "Accepted Requests", url: "/admin-requests-accepted" },
+          ] 
+        }, 
         { title: "Bookings", url: "/admin-bookings" }, 
         { title: "Resources", url: "/admin-resources" },
         { title: "Venues", url: "/admin-venues" },
@@ -68,13 +74,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {data.navMain.map((group) => (
               <SidebarMenuItem key={group.title}>
                 <SidebarMenuButton>{group.title}</SidebarMenuButton>
-                {group.items?.length && (
+                {group.items?.length > 0 && (
                   <SidebarMenuSub>
                     {group.items.map((item) => (
                       <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
+                        <SidebarMenuSubButton asChild>
                           <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuSubButton>
+                        {item.items?.length > 0 && (
+                          <SidebarMenuSub>
+                            {item.items.map((subItem) => (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton asChild>
+                                  <Link to={subItem.url}>{subItem.title}</Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        )}
+
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

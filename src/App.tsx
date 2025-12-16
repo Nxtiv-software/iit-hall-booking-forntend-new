@@ -13,6 +13,8 @@ import Bookings from "./Pages/Admin/Bookings";
 import Resources from "./Pages/Admin/Resources";
 import Venues from "./Pages/Admin/Venues";
 import { BookingProvider } from "./AuthProvider/BookingProvider";
+import PendingRequests from "./Pages/Admin/PendingRequests";
+import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -35,10 +37,18 @@ const App = () => {
               }
             />
             <Route
-              path="/admin-requests"
+              path="/admin-requests-pending"
               element={
                 <AdminProtected>
-                  <Requests />
+                  <PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-requests-accepted"
+              element={
+                <AdminProtected>
+                  <AcceptedRequests />
                 </AdminProtected>
               }
             />
