@@ -8,13 +8,13 @@ import StudentLayout from "./Layout/StudentLayout";
 import AdminLayout from "./Layout/AdminLayout";
 import BookingLayout from "./Layout/BookingLayout";
 
-import Requests from "./Pages/Admin/Requests";
 import Bookings from "./Pages/Admin/Bookings";
 import Resources from "./Pages/Admin/Resources";
 import Venues from "./Pages/Admin/Venues";
 import { BookingProvider } from "./AuthProvider/BookingProvider";
 import PendingRequests from "./Pages/Admin/PendingRequests";
-import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
+// import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
+import RejectedRequests from "./Pages/Admin/RejectedRequests";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -44,11 +44,19 @@ const App = () => {
                 </AdminProtected>
               }
             />
-            <Route
+            {/* <Route
               path="/admin-requests-accepted"
               element={
                 <AdminProtected>
                   <AcceptedRequests />
+                </AdminProtected>
+              }
+            /> */}
+            <Route
+              path="/admin-requests-rejected"
+              element={
+                <AdminProtected>
+                  <RejectedRequests />
                 </AdminProtected>
               }
             />

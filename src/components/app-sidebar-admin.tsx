@@ -28,7 +28,8 @@ const data = {
           url: "/admin-requests-pending",
           items: [
             { title: "Pending Requests", url: "/admin-requests-pending" },
-            { title: "Accepted Requests", url: "/admin-requests-accepted" },
+            // { title: "Accepted Requests", url: "/admin-requests-accepted" },
+            { title: "Rejected Requests", url: "/admin-requests-rejected" },
           ] 
         }, 
         { title: "Bookings", url: "/admin-bookings" }, 

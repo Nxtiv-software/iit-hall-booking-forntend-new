@@ -14,9 +14,38 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { useQuery } from "@tanstack/react-query"
+import { fetchPendingRequests, fetchAdminProfile } from "@/Services/Admin"
 
 const PendingRequests = () => {
+  const token = localStorage.getItem("token");
+    console.log(token)
+
+    // Fetch the admin details
+    const { data: adminData } = useQuery({
+    queryKey: ["adminProfile"],
+    queryFn: () => fetchAdminProfile(token!), 
+    });
+    
+    const adminId = adminData?.admin?.id;
+
+    // Fetch pending requests
+    const { data: pendingRequestData = [] } = useQuery({
+        queryKey: ["pendingRequests", adminId],
+        queryFn: () => fetchPendingRequests(adminId!, token!),
+        enabled: !!adminId && !!token,
+    });
+
+
   return (
     <div>
     <SidebarProvider>
@@ -46,8 +75,31 @@ const PendingRequests = () => {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min">Pending Requests</div>
-        </div>
+          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
+              <h2 className="text-lg font-semibold mb-4">Pending Requests</h2>
+              <Table>
+                  <TableCaption>List of pending booking requests</TableCaption>
+                  <TableHeader>
+                  <TableRow>
+                      <TableHead>Student Name</TableHead>
+                      <TableHead>Venue</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Requested Date</TableHead>
+                  </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                  {pendingRequestData.map((request) => (
+                      <TableRow key={request.id}>
+                      <TableCell>{`${request.student.user.firstName ?? ""} ${request.student.user.lastName ?? ""}`}</TableCell>
+                      <TableCell>{request.venue.name}</TableCell>
+                      <TableCell>{request.status.name}</TableCell>
+                      <TableCell>{new Date(request.createdAt).toLocaleString()}</TableCell>
+                      </TableRow>
+                  ))}
+                  </TableBody>
+              </Table>
+          </div>
+      </div>
       </SidebarInset>
     </SidebarProvider>
 </div>
