@@ -11,10 +11,10 @@ import {
 
 const PaginationNav = () => {
 
-  const {currentPage} = useBooking()
+  const {state, goToPage} = useBooking()
 
-  const handleClick = () => {
-
+  const handleClick = (page) => {
+goToPage(page)
   }
   return (
   
@@ -27,23 +27,23 @@ const PaginationNav = () => {
 
 <div className="flex gap-5">
           <PaginationItem>
-            <PaginationLink isActive={currentPage === 1}>1</PaginationLink>
+            <PaginationLink onClick={() => handleClick(1)} isActive={state.currentPage === 1}>1</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink isActive={currentPage === 2} >2</PaginationLink>
+            <PaginationLink onClick={() => handleClick(2)} isActive={state.currentPage === 2} >2</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick} >3</PaginationLink>
+            <PaginationLink onClick={() => handleClick(3)} isActive={state.currentPage === 3} >3</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick}>4</PaginationLink>
+            <PaginationLink onClick={() => handleClick(4)} isActive={state.currentPage === 4}>4</PaginationLink>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationLink onClick={handleClick}>5</PaginationLink>
+            <PaginationLink onClick={() => handleClick(5)} isActive={state.currentPage === 5}>5</PaginationLink>
           </PaginationItem>
           </div>
 {/* 

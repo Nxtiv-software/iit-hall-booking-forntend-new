@@ -73,7 +73,7 @@ const StudentLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="scroll-auto">
+      <SidebarInset className="">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 ">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -97,6 +97,7 @@ const StudentLayout = () => {
           </div>
         </header>
         <div className="flex items-center justify-center flex-1 overflow-y-auto">
+
           <Outlet />
         </div>
       </SidebarInset>
