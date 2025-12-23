@@ -8,6 +8,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -93,37 +101,94 @@ const AdminLayout = () => {
             <div>{`Hey, welcome back ${username ? username.charAt(0).toUpperCase() + username.slice(1) : "User"}`}</div>
           </div>
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl p-4">
-              Pending Requests: {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0}
+            <div className="bg-muted/50 rounded-xl">
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Pending Requests</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
+                    {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0}
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Down 20% this period 
+                  </div>
+                  <div className="text-muted-foreground">
+                    Acquisition needs attention
+                  </div>
+                </CardFooter>
+              </Card>
             </div>
-            <div className="bg-muted/50 aspect-video rounded-xl p-4">
-              Total Bookings: {bookingLoading ? "Loading..." : bookingCountData?.totalBookings ?? 0}
+            <div className="bg-muted/50 rounded-xl">
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Total Bookings</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
+                    {bookingLoading ? "Loading..." : bookingCountData?.totalBookings ?? 0}
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Down 20% this period 
+                  </div>
+                  <div className="text-muted-foreground">
+                    Acquisition needs attention
+                  </div>
+                </CardFooter>
+              </Card>
             </div>
-            <div className="bg-muted/50 aspect-video rounded-xl p-4">
-              Total Students: {studentLoading ? "Loading..." : studentCountData?.totalStudents ?? 0}
+            <div className="bg-muted/50 rounded-xl"> 
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Total Students</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
+                    {studentLoading ? "Loading..." : studentCountData?.totalStudents ?? 0}
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Down 20% this period 
+                  </div>
+                  <div className="text-muted-foreground">
+                    Acquisition needs attention
+                  </div>
+                </CardFooter>
+              </Card>
             </div>
           </div>
-          <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
-            <h2 className="text-lg font-semibold mb-2">Upcoming Events</h2>
+          <Card className="flex-1 flex flex-col">
+            <CardHeader>
+              <CardTitle className="text-xl">Upcoming Events</CardTitle>
+              <CardDescription>Events happening within the upcoming week</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
               <ul className="space-y-2">
-                {upcomingEventData.map((booking) => (
+                {upcomingEventData.map((booking, index) => (
                   <li
                     key={booking.id}
-                    className="p-2 border rounded-md bg-white/50 flex flex-col md:flex-row md:justify-between md:items-center"
+                    className="flex items-start gap-3"
                   >
-                    <div>
-                      <p><strong>Student:</strong> {booking.request.student.user.username}</p>
-                      <p><strong>Venue:</strong> {booking.request.venue.name}</p>
-                      <p><strong>Date:</strong> {new Date(booking.request.createdAt).toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p><strong>Admin:</strong> {booking.admin.user.name}</p>
-                      <p><strong>Status:</strong> {booking.request.status.name}</p>
+                    <span className="flex items-center justify-center w-8 h-8 rounded-md border-2 font-semibold translate-y-1">
+                      {index + 1}
+                    </span>
+
+                    <div className="flex-1 p-4 border rounded-md bg-muted/50 flex flex-col md:flex-row md:justify-between md:items-center">
+                      <div className="space-y-1">
+                        <p>Student: {booking.request.student.user.username}</p>
+                        <p>Venue: {booking.request.venue.name}</p>
+                        <p>Date: {new Date(booking.request.createdAt).toLocaleString()}</p>
+                      </div>
+
+                      <div className="mt-2 md:mt-0 space-y-1">
+                        <p>Admin: {booking.admin.user.name}</p>
+                        <p>Status: {booking.request.status.name}</p>
+                      </div>
                     </div>
                   </li>
                 ))}
               </ul>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </SidebarInset>
     </SidebarProvider>

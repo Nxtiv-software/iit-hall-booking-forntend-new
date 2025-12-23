@@ -17,6 +17,8 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Button } from "./ui/button";
+import { useAuth } from "@/AuthProvider/AuthProvider";
 
 const data = {
   navMain: [
@@ -42,13 +44,18 @@ const data = {
       items: [
         { title: "Settings", url: "/settings" },
         { title: "Help Desk", url: "/help-desk" },
-        { title: "Logout", url: "/logout" },
       ],
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -78,14 +85,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {group.items?.length > 0 && (
                   <SidebarMenuSub>
                     {group.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubItem key={item.title} className="mb-3">
                         <SidebarMenuSubButton asChild>
                           <Link to={item.url}>{item.title}</Link>
                         </SidebarMenuSubButton>
                         {item.items?.length > 0 && (
                           <SidebarMenuSub>
                             {item.items.map((subItem) => (
-                              <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubItem key={subItem.title} className="mb-3">
                                 <SidebarMenuSubButton asChild>
                                   <Link to={subItem.url}>{subItem.title}</Link>
                                 </SidebarMenuSubButton>
@@ -104,6 +111,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
+      <Button onClick={handleLogout} className="mt-auto mb-5 mx-5">
+        Log Out
+      </Button>
     </Sidebar>
   )
 }
