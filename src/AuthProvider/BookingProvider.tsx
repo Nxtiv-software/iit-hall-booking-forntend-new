@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, ReactNode } from "react";
+import { createContext, useContext, useReducer, useEffect } from "react";
 
 // Define types for form data
 interface Form1Data {
@@ -17,8 +17,27 @@ interface Form2Data {
 }
 
 interface Form3Data {
-  // Add Form 3 fields here
-  [key: string]: any;
+  preferredbuilding?: string;
+  preferredroom?: string;
+  alternateroom?: string;
+}
+
+interface Form4Data {
+  soundSystem?: boolean;
+  iitBranding?: boolean;
+  projector?: boolean;
+  wifiCredentials?: boolean;
+  tablesChairSetup?: boolean;
+  zoomPackage?: boolean;
+  podium?: boolean;
+  additionalNotes?: string;
+}
+
+interface Form5Data {
+  agreement1?: boolean;
+  agreement2?: boolean;
+  agreement3?: boolean;
+  eventProposal?: File | null;
 }
 
 interface BookingState {
@@ -26,6 +45,8 @@ interface BookingState {
   form1Data: Form1Data;
   form2Data: Form2Data;
   form3Data: Form3Data;
+  form4Data: Form4Data;
+  form5Data: Form5Data;
   totalPages: number;
 }
 
@@ -36,6 +57,8 @@ type BookingAction =
   | { type: "UPDATE_FORM1"; payload: Form1Data }
   | { type: "UPDATE_FORM2"; payload: Form2Data }
   | { type: "UPDATE_FORM3"; payload: Form3Data }
+  | { type: "UPDATE_FORM4"; payload: Form4Data }
+  | { type: "UPDATE_FORM5"; payload: Form5Data }
   | { type: "RESET_BOOKING" };
 
 interface BookingContextType {
@@ -46,6 +69,8 @@ interface BookingContextType {
   updateForm1: (data: Form1Data) => void;
   updateForm2: (data: Form2Data) => void;
   updateForm3: (data: Form3Data) => void;
+  updateForm4: (data: Form4Data) => void;
+  updateForm5: (data: Form5Data) => void;
   resetBooking: () => void;
 }
 
@@ -54,7 +79,31 @@ const initialState: BookingState = {
   form1Data: {},
   form2Data: {},
   form3Data: {},
-  totalPages: 3, // Adjust based on number of forms
+  form4Data: {},
+  form5Data: {},
+  totalPages: 5, // Adjust based on number of forms
+};
+
+// Helper function to load state from localStorage
+const loadStateFromLocalStorage = (): BookingState => {
+  try {
+    const savedState = localStorage.getItem("bookingState");
+    if (savedState) {
+      return JSON.parse(savedState);
+    }
+  } catch (error) {
+    console.error("Error loading state from localStorage:", error);
+  }
+  return initialState;
+};
+
+// Helper function to save state to localStorage
+const saveStateToLocalStorage = (state: BookingState) => {
+  try {
+    localStorage.setItem("bookingState", JSON.stringify(state));
+  } catch (error) {
+    console.error("Error saving state to localStorage:", error);
+  }
 };
 
 function bookingReducer(state: BookingState, action: BookingAction): BookingState {
@@ -62,7 +111,8 @@ function bookingReducer(state: BookingState, action: BookingAction): BookingStat
     case "NEXT_PAGE":
       return {
         ...state,
-        currentPage: Math.min(state.currentPage + 1, state.totalPages),
+        // currentPage: Math.min(state.currentPage + 1, state.totalPages),
+        currentPage: state.currentPage + 1
       };
     case "PREV_PAGE":
       return {
@@ -89,6 +139,16 @@ function bookingReducer(state: BookingState, action: BookingAction): BookingStat
         ...state,
         form3Data: { ...state.form3Data, ...action.payload },
       };
+    case "UPDATE_FORM4":
+      return {
+        ...state,
+        form4Data: { ...state.form4Data, ...action.payload },
+      };
+    case "UPDATE_FORM5":
+      return {
+        ...state,
+        form5Data: { ...state.form5Data, ...action.payload },
+      };
     case "RESET_BOOKING":
       return initialState;
     default:
@@ -98,8 +158,13 @@ function bookingReducer(state: BookingState, action: BookingAction): BookingStat
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
-export function BookingProvider({ children }: { children: ReactNode }) {
-  const [{currentPage}, dispatch] = useReducer(bookingReducer, initialState);
+export function BookingProvider({ children }) {
+  const [state, dispatch] = useReducer(bookingReducer, initialState, loadStateFromLocalStorage);
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    saveStateToLocalStorage(state);
+  }, [state]);
 
   const nextPage = () => {
     dispatch({ type: "NEXT_PAGE" });
@@ -125,18 +190,29 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "UPDATE_FORM3", payload: data });
   };
 
+  const updateForm4 = (data: Form4Data) => {
+    dispatch({ type: "UPDATE_FORM4", payload: data });
+  };
+
+  const updateForm5 = (data: Form5Data) => {
+    dispatch({ type: "UPDATE_FORM5", payload: data });
+  };
+
   const resetBooking = () => {
     dispatch({ type: "RESET_BOOKING" });
+    localStorage.removeItem("bookingState"); // Clear localStorage on reset
   };
 
   const value: BookingContextType = {
-    currentPage,
+    state,
     nextPage,
     prevPage,
     goToPage,
     updateForm1,
     updateForm2,
     updateForm3,
+    updateForm4,
+    updateForm5,
     resetBooking,
   };
 

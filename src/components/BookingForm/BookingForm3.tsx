@@ -20,47 +20,27 @@ interface AuthFormProps<T extends FieldValues> {
 }
 
 const formSchema = z.object({
-  societyname: z.string().min(2, {
+  preferredbuilding: z.string().min(2, {
     message: "Society name must be at least 2 characters.",
   }),
-  eventtype: z.string().min(2, {
+  preferredroom: z.string().min(2, {
     message: "Event type must be at least 2 characters.",
   }),
-  excoposition: z.string().min(2, {
+  alternateroom: z.string().min(2, {
     message: "Exco position must be at least 2 characters.",
   }),
-  eventtitle: z.string().min(2, {
-    message: "Event name/title must be at least 2 characters.",
-  }),
-  participants: z
-    .string()
-    .min(1, {
-      message: "Number of participants is required.",
-    })
-    .regex(/^[0-9]+$/, {
-      message: "Please enter a valid number.",
-    }),
-  excomembername: z.string().min(2, {
-    message: "Exco member name must be at least 2 characters.",
-  }),
-  description: z.string().min(10, {
-    message: "Purpose/Description must be at least 10 characters.",
-  }),
+  
 });
 
-const BookingForm1 = <T extends FieldValues>({
+const BookingForm3 = <T extends FieldValues>({
   defaultValues,
 }: AuthFormProps<T>) => {
   // Helper function to get field labels
   const getFieldLabel = (fieldName: string): string => {
     const labels: Record<string, string> = {
-      societyname: "Society Name",
-      eventtype: "Event Type",
-      excoposition: "Exco Position",
-      eventtitle: "Event Name/Title",
-      participants: "Number of Participants",
-      excomembername: "Exco Member Name",
-      description: "Purpose/Description",
+      preferredbuilding: "Preferred Building",
+      preferredroom: "Preferred Room",
+      alternateroom: "Alternate Room",
     };
     return (
       labels[fieldName] ||
@@ -71,13 +51,9 @@ const BookingForm1 = <T extends FieldValues>({
   // Helper function to get field placeholders
   const getFieldPlaceholder = (fieldName: string): string => {
     const placeholders: Record<string, string> = {
-      societyname: "Enter your society name",
-      eventtype: "e.g., Workshop, Seminar, Conference",
-      excoposition: "e.g., President, Secretary, Treasurer",
-      eventtitle: "Enter the event name or title",
-      participants: "Enter number of participants",
-      excomembername: "Enter exco member's full name",
-      description: "Describe the purpose and details of your event",
+      preferredbuilding: "Enter preferred building name",
+      preferredroom: "Enter preferred room number or name",
+      alternateroom: "Enter alternate room number or name",
     };
     return placeholders[fieldName] || `Enter ${fieldName}`;
   };
@@ -85,34 +61,34 @@ const BookingForm1 = <T extends FieldValues>({
   // Helper function to get field descriptions
   const getFieldDescription = (fieldName: string): string => {
     const descriptions: Record<string, string> = {
-      societyname: "Name of your society or organization.",
-      eventtype: "Type or category of the event.",
-      excoposition: "Your position in the executive committee.",
-      eventtitle: "Official name or title of the event.",
-      participants: "Expected number of participants.",
-      excomembername: "Name of the responsible exco member.",
-      description: "Provide details about the event purpose and activities.",
+      preferredbuilding: "Select or enter the building you prefer for the event.",
+      preferredroom: "Select or enter your first choice of room.",
+      alternateroom: "Select or enter an alternative room in case the preferred room is unavailable.",
     };
     return descriptions[fieldName] || `Please enter your ${fieldName}.`;
   };
 
-  const { state, nextPage,updateForm1} = useBooking();
+  const { state, nextPage, prevPage, updateForm3 } = useBooking();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...defaultValues,
-      ...state.form1Data, 
+      ...state.form3Data,
     } as DefaultValues<z.infer<typeof formSchema>>,
   });
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // You can access the values here
-    console.log("All Values:", values); 
-    updateForm1(values)
+    console.log("All Values:", values);
+    updateForm3(values);
     nextPage();
+  }
+
+  function handlePrevious() {
+    prevPage()
   }
 
   return (
@@ -150,8 +126,8 @@ const BookingForm1 = <T extends FieldValues>({
                     )}
                   </FormControl>
                   <FormDescription>
-                {getFieldDescription(fieldName)}
-              </FormDescription>
+                    {getFieldDescription(fieldName)}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -162,8 +138,10 @@ const BookingForm1 = <T extends FieldValues>({
           Next
         </Button>
       </form>
+
+      <Button onClick={handlePrevious} className="w-full mt-5">Previous</Button>
     </Form>
   );
 };
 
-export default BookingForm1;
+export default BookingForm3;
