@@ -43,7 +43,7 @@ const data = {
     {
       title: "General",
       items: [
-        { title: "Settings", url: "/settings" },
+        { title: "Settings", url: "/admin-settings" },
         // { title: "Help Desk", url: "/help-desk" },
       ],
     },

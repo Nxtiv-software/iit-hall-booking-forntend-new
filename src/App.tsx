@@ -16,6 +16,7 @@ import { BookingProvider } from "./AuthProvider/BookingProvider";
 import PendingRequests from "./Pages/Admin/PendingRequests";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
+import Settings from "./Pages/Admin/Settings";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -85,6 +86,14 @@ const App = () => {
                 </AdminProtected>
               }
             />
+            <Route
+              path="/admin-settings"
+              element={
+                <UserProtected>
+                  <Settings/>
+                </UserProtected>
+              }
+            />
 
             {/* Student routes */}
             <Route
@@ -95,14 +104,14 @@ const App = () => {
                 </UserProtected>
               }
             >
-              <Route
-                path="booking"
-                element={
-                  <UserProtected>
-                   <BookingLayout/>
-                  </UserProtected>
-                }
-              />
+            <Route
+              path="booking"
+              element={
+                <UserProtected>
+                  <BookingLayout/>
+                </UserProtected>
+              }
+            />
             </Route>
 
             <Route path="*" element={<Navigate to="/login" replace />} />
