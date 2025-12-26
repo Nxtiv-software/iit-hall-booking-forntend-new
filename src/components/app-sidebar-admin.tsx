@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom";
-import { GalleryVerticalEnd } from "lucide-react"
+import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
+// import { GalleryVerticalEnd } from "lucide-react"
 
 import { SearchForm } from "@/components/search-form"
 
@@ -43,7 +44,7 @@ const data = {
       title: "General",
       items: [
         { title: "Settings", url: "/settings" },
-        { title: "Help Desk", url: "/help-desk" },
+        // { title: "Help Desk", url: "/help-desk" },
       ],
     },
   ],
@@ -63,8 +64,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/admin-dashboard">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
+                <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-12 items-center justify-center rounded-lg">
+                  {/* <GalleryVerticalEnd className="size-4" /> */}
+                  <img src={IITLogo} alt="IIT logo" className="size-10"/>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">Welcome to</span>

@@ -69,6 +69,23 @@ const AdminLayout = () => {
     enabled: !!token,
   });
 
+  //Helper function to create the date format
+  const formatDate = (date: Date) => {
+    const day = date.getDate()
+
+    const getOrdinal = (n: number) => {
+      const s = ["th", "st", "nd", "rd"]
+      const v = n % 100
+      return s[(v - 20) % 10] || s[v] || s[0]
+    }
+
+    const weekday = date.toLocaleDateString("en-US", { weekday: "long" })
+    const month = date.toLocaleDateString("en-US", { month: "long" })
+
+    return `${weekday}, ${day}${getOrdinal(day)} of ${month}`
+  }
+
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -97,8 +114,20 @@ const AdminLayout = () => {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 rounded-xl md:min-h-[100px] p-4">
-            <div>{`Hey, welcome back ${username ? username.charAt(0).toUpperCase() + username.slice(1) : "User"}`}</div>
+          <div className="bg-muted/50 rounded-xl">
+            <div></div>
+            <Card className="@container/card">
+              <CardHeader>
+                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
+                  {`Hey, welcome back ${username ? username.charAt(0).toUpperCase() + username.slice(1) : "User"}`}
+                </CardTitle>
+              </CardHeader>
+              <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                <div className="line-clamp-1 flex gap-2 font-medium">
+                  {formatDate(new Date())}
+                </div>
+              </CardFooter>
+            </Card>
           </div>
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 rounded-xl">
