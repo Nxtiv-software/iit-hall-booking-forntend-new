@@ -43,7 +43,7 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
-import { fetchAdminProfile } from "@/Services/Admin"
+import { fetchAdminProfile, updateAdminProfile } from "@/Services/Admin"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -51,6 +51,8 @@ import adminFormSchema from "@/components/admin-profile-form"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { KeyRound, Trash2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import IITLoader from "@/components/IITLoader"
 
 
 const Settings = () => {
@@ -58,12 +60,13 @@ const Settings = () => {
   console.log(token)
 
   // Fetch admin profile
-  const { data: adminData } = useQuery({
+  const { data: adminData, isLoading } = useQuery({
       queryKey: ["adminProfile"],
       queryFn: () => fetchAdminProfile(token!),
       enabled: !!token,
   });
 
+  const [isEditing, setIsEditing] = useState(false);
   console.log(adminData);
 
   //Zod client side validation for the form
@@ -72,7 +75,6 @@ const Settings = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
-      // username: "",
       phoneNum: "",
       gender: "male",
       uniEmail: "",
@@ -81,8 +83,43 @@ const Settings = () => {
     },
   })
 
-  function onSubmit(data: z.infer<typeof adminFormSchema>) {
-    toast("Submission successfull!");
+  useEffect(() => {
+    if (adminData) {
+      adminForm.reset({
+        firstName: adminData.admin?.user?.firstName ?? "",
+        lastName: adminData.admin?.user?.lastName ?? "",
+        phoneNum: adminData.admin?.user?.phoneNum ?? "",
+        gender: adminData.admin?.user?.gender ?? "male",
+        uniEmail: adminData.admin?.user?.uniEmail ?? "",
+        buildingName: adminData.admin?.building?.buildingName ?? "",
+        departmentName: adminData.admin?.department?.departmentName ?? "",
+      });
+    }
+  }, [adminData]);
+
+  async function onSubmit(data: z.infer<typeof adminFormSchema>) {
+    console.log("Submit called", data);
+    try {
+      const token = localStorage.getItem("token")!;
+      await updateAdminProfile({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        gender: data.gender,
+        phoneNum: data.phoneNum,
+      }, token);
+
+      toast.success("Profile updated successfully!");
+      console.log("??????");
+      setIsEditing(false);
+    } catch (error) {
+      toast.error("Failed to update profile.");
+      console.error(error);
+    }
+  }
+  
+
+  if (isLoading) {
+    return <IITLoader/>
   }
 
   return (
@@ -118,11 +155,11 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="col-span-1 flex flex-col gap-4 mt-3 md:ml-4">
                     <Avatar className="w-28 h-28">
-                        <AvatarImage src={adminData.admin.user.avatarUrl} alt="User avatar image" />
+                        <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
                         <AvatarFallback>Avatar</AvatarFallback>
                     </Avatar>
                     <div className="mb-10">
-                      {adminData.admin.user.uniEmail}
+                      {adminData?.admin?.user?.uniEmail}
                     </div>
                     <div className="flex flex-col gap-3">
                       <p className="flex items-center gap-2">
@@ -162,6 +199,8 @@ const Settings = () => {
                                     aria-invalid={fieldState.invalid}
                                     placeholder="Example: John"
                                     autoComplete="firstName"
+                                    disabled={!isEditing}
+                                    className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
                                   />
                                   {fieldState.invalid && (
                                     <FieldError errors={[fieldState.error]} />
@@ -183,6 +222,8 @@ const Settings = () => {
                                     aria-invalid={fieldState.invalid}
                                     placeholder="Example: Anderson"
                                     autoComplete="lastName"
+                                    disabled={!isEditing}
+                                    className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
                                   />
                                   {fieldState.invalid && (
                                     <FieldError errors={[fieldState.error]} />
@@ -206,6 +247,8 @@ const Settings = () => {
                                     aria-invalid={fieldState.invalid}
                                     placeholder="Example: 077....."
                                     autoComplete="phoneNum"
+                                    disabled={!isEditing}
+                                    className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
                                   />
                                   {fieldState.invalid && (
                                     <FieldError errors={[fieldState.error]} />
@@ -222,8 +265,10 @@ const Settings = () => {
                                     Gender
                                   </FieldLabel>
                                   <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    value={field.value}
+                                    onValueChange={field.onChange} 
+                                    disabled={!isEditing}
+                                    className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
                                   >
                                     <SelectTrigger id="form-rhf-input-gender" aria-invalid={fieldState.invalid}>
                                       <SelectValue placeholder="Select Gender" />
@@ -255,11 +300,22 @@ const Settings = () => {
                       </form>
                     </CardContent>
                     <CardFooter>
-                      <Field orientation="horizontal">
-                        <Button type="button" variant="outline" onClick={() => adminForm.reset()}>
-                          Reset
+                      <Field orientation="horizontal" className="gap-2">
+                        <Button type="button" variant="outline" disabled={isEditing} onClick={() => setIsEditing(true)}>
+                          Edit
                         </Button>
-                        <Button type="submit" form="form-rhf-input">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={!isEditing}
+                          onClick={() => {
+                            adminForm.reset();
+                            setIsEditing(false);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={!isEditing} form="form-rhf-input">
                           Submit
                         </Button>
                       </Field>

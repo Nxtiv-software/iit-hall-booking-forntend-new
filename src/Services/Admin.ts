@@ -32,7 +32,9 @@ export const createAdminProfile = async (data: any, token: string) => {
 export const updateAdminProfile = async (data: any, token: string) => {
   try {
     const response = await axios.put(`${BASE_URL}/me`, data, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
     });
     return response.data;
   } catch (error) {

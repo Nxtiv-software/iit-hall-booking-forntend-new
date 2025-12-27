@@ -13,11 +13,6 @@ const adminFormSchema = z.object({
     .min(1, "Last name is required")
     .max(50, "Too long"),
 
-  // username: z
-  //   .string()
-  //   .min(3, "Username must be at least 3 characters")
-  //   .max(50, "Too long"),
-
   phoneNum: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
@@ -42,6 +37,10 @@ const adminFormSchema = z.object({
   departmentName: z
     .string()
     .min(1, "Department name is required"),
+
+  avatar: z
+    .any()
+    .optional(), 
 })
 
 export default adminFormSchema
