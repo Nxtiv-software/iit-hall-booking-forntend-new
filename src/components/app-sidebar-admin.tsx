@@ -64,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/admin-dashboard">
-                <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-12 items-center justify-center rounded-lg">
+                <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-11 items-center justify-center rounded-lg">
                   {/* <GalleryVerticalEnd className="size-4" /> */}
                   <img src={IITLogo} alt="IIT logo" className="size-10"/>
                 </div>
@@ -102,7 +102,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             ))}
                           </SidebarMenuSub>
                         )}
-
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

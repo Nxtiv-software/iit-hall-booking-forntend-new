@@ -19,8 +19,39 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
 import { fetchAdminProfile } from "@/Services/Admin"
+import { Controller, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import adminFormSchema from "@/components/admin-profile-form"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { KeyRound, Trash2 } from "lucide-react"
+
 
 const Settings = () => {
   const token = localStorage.getItem("token");
@@ -34,6 +65,25 @@ const Settings = () => {
   });
 
   console.log(adminData);
+
+  //Zod client side validation for the form
+  const adminForm = useForm<z.infer<typeof adminFormSchema>>({
+    resolver: zodResolver(adminFormSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      // username: "",
+      phoneNum: "",
+      gender: "male",
+      uniEmail: "",
+      buildingName: "",
+      departmentName: "",
+    },
+  })
+
+  function onSubmit(data: z.infer<typeof adminFormSchema>) {
+    toast("Submission successfull!");
+  }
 
   return (
     <SidebarProvider>
@@ -65,31 +115,200 @@ const Settings = () => {
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
               <h2 className="text-lg font-semibold mb-4">Settings</h2>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-1">
-                    <Avatar className="size-20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="col-span-1 flex flex-col gap-4 mt-3 md:ml-4">
+                    <Avatar className="w-28 h-28">
                         <AvatarImage src={adminData.admin.user.avatarUrl} alt="User avatar image" />
                         <AvatarFallback>Avatar</AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="mb-10">
                       {adminData.admin.user.uniEmail}
                     </div>
+                    <div className="flex flex-col gap-3">
+                      <p className="flex items-center gap-2">
+                        <KeyRound className="w-4 h-4" />
+                        Change Password
+                      </p>
+
+                      <p className="flex items-center gap-2 text-red-500">
+                        <Trash2 className="w-4 h-4" />
+                        Delete Account
+                      </p>
+                    </div>
                 </div>
-                <div className="col-span-2">
-                    <div>
-                        <h2>Personal Information</h2>
-                        <div>First Name</div>
-                        <div>Last Name</div>
-                        <div>Username</div>
-                        <div>Phone number</div>
-                        <div>Gender</div>
-                    </div>
-                    <div>
-                        <h2>Workplace Information</h2>
-                        <div>University Email</div>
-                        <div>Building Name</div>
-                        <div>Department Name</div>
-                    </div>
+                <div className="col-span-2 flex flex-col gap-4">
+                  <Card className="w-full ">
+                    <CardHeader>
+                      <CardTitle>Personal Information</CardTitle>
+                      <CardDescription>
+                        Update your personal details below.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <form id="form-rhf-input" onSubmit={adminForm.handleSubmit(onSubmit)}>
+                        <FieldGroup>
+                          <div className="flex flex-col md:flex-row gap-4">
+                            <Controller
+                              name="firstName"
+                              control={adminForm.control}
+                              render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                  <FieldLabel htmlFor="form-rhf-input-firstName">
+                                    First Name
+                                  </FieldLabel>
+                                  <Input
+                                    {...field}
+                                    id="form-rhf-input-firstName"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Example: John"
+                                    autoComplete="firstName"
+                                  />
+                                  {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                  )}
+                                </Field>
+                              )}
+                            />
+                            <Controller
+                              name="lastName"
+                              control={adminForm.control}
+                              render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                  <FieldLabel htmlFor="form-rhf-input-lastName">
+                                    Last Name
+                                  </FieldLabel>
+                                  <Input
+                                    {...field}
+                                    id="form-rhf-input-lastName"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Example: Anderson"
+                                    autoComplete="lastName"
+                                  />
+                                  {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                  )}
+                                </Field>
+                              )}
+                            />
+                          </div>
+                          <div className="flex flex-col md:flex-row gap-4">
+                            <Controller
+                              name="phoneNum"
+                              control={adminForm.control}
+                              render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                  <FieldLabel htmlFor="form-rhf-input-phoneNum">
+                                    Phone Number
+                                  </FieldLabel>
+                                  <Input
+                                    {...field}
+                                    id="form-rhf-input-phoneNum"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Example: 077....."
+                                    autoComplete="phoneNum"
+                                  />
+                                  {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                  )}
+                                </Field>
+                              )}
+                            />
+                            <Controller
+                              name="gender"
+                              control={adminForm.control}
+                              render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                  <FieldLabel htmlFor="form-rhf-input-gender">
+                                    Gender
+                                  </FieldLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <SelectTrigger id="form-rhf-input-gender" aria-invalid={fieldState.invalid}>
+                                      <SelectValue placeholder="Select Gender" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="male">Male</SelectItem>
+                                      <SelectItem value="female">Female</SelectItem>
+                                      <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                  )}
+                                </Field>
+                              )}
+                            />
+                          </div>
+                          <Field>
+                            <FieldLabel className="username-input">
+                              Username
+                            </FieldLabel>
+                            <Input
+                              value={adminData?.admin?.user?.username ?? ""}
+                              disabled
+                              className="opacity-70 cursor-not-allowed"
+                            />
+                          </Field>
+                        </FieldGroup>
+                      </form>
+                    </CardContent>
+                    <CardFooter>
+                      <Field orientation="horizontal">
+                        <Button type="button" variant="outline" onClick={() => adminForm.reset()}>
+                          Reset
+                        </Button>
+                        <Button type="submit" form="form-rhf-input">
+                          Submit
+                        </Button>
+                      </Field>
+                    </CardFooter>
+                  </Card>
+                  <Card className="w-full">
+                    <CardHeader>
+                      <CardTitle>Workplace Information</CardTitle>
+                      <CardDescription>
+                        View your workplace details below.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FieldGroup>
+                        <Field>
+                          <FieldLabel className="uni-email-input">
+                            University Email
+                          </FieldLabel>
+                          <Input
+                            value={adminData?.admin?.user?.uniEmail ?? ""}
+                            disabled
+                            className="opacity-70 cursor-not-allowed"
+                          />
+                        </Field>
+                        <div className="flex flex-col md:flex-row gap-4">
+                          <Field>
+                            <FieldLabel className="building-input">
+                              Building Name
+                            </FieldLabel>
+                            <Input
+                              value={adminData?.admin?.building?.buildingName ?? ""}
+                              disabled
+                              className="opacity-70 cursor-not-allowed"
+                            />
+                          </Field>
+                          <Field>
+                            <FieldLabel className="department-input">
+                              Department Name
+                            </FieldLabel>
+                            <Input
+                              value={adminData?.admin?.department?.departmentName ?? ""}
+                              disabled
+                              className="opacity-70 cursor-not-allowed"
+                            />
+                          </Field>
+                        </div>
+                      </FieldGroup>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
           </div>
