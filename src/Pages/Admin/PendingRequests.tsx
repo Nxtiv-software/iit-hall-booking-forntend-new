@@ -25,26 +25,30 @@ import {
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
 import { fetchPendingRequests, fetchAdminProfile } from "@/Services/Admin"
+import IITLoader from "@/components/IITLoader"
 
 const PendingRequests = () => {
   const token = localStorage.getItem("token");
-    console.log(token)
+  console.log(token)
 
-    // Fetch the admin details
-    const { data: adminData } = useQuery({
-    queryKey: ["adminProfile"],
-    queryFn: () => fetchAdminProfile(token!), 
-    });
-    
-    const adminId = adminData?.admin?.id;
+  // Fetch the admin details
+  const { data: adminData, isLoading: adminLoading  } = useQuery({
+  queryKey: ["adminProfile"],
+  queryFn: () => fetchAdminProfile(token!), 
+  });
+  
+  const adminId = adminData?.admin?.id;
 
-    // Fetch pending requests
-    const { data: pendingRequestData = [] } = useQuery({
-        queryKey: ["pendingRequests", adminId],
-        queryFn: () => fetchPendingRequests(adminId!, token!),
-        enabled: !!adminId && !!token,
-    });
+  // Fetch pending requests
+  const { data: pendingRequestData = [], isLoading: requestLoading } = useQuery({
+      queryKey: ["pendingRequests", adminId],
+      queryFn: () => fetchPendingRequests(adminId!, token!),
+      enabled: !!adminId && !!token,
+  });
 
+  if (requestLoading || adminLoading) {
+    return <IITLoader/>
+  }
 
   return (
     <div>

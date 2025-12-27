@@ -25,18 +25,22 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { fetchAllBookings } from "@/Services/Bookings"
 import Theme from "@/components/Theme"
+import IITLoader from "@/components/IITLoader"
 
 const Bookings = () => {
   const token = localStorage.getItem("token");
-    console.log(token)
+  console.log(token)
+
+  // Fetch all bookings
+  const { data: bookingsData = [], isLoading } = useQuery({
+      queryKey: ["bookings"],
+      queryFn: () => fetchAllBookings(token!),
+      enabled: !!token,
+  });
   
-    // Fetch all bookings
-    const { data: bookingsData = [] } = useQuery({
-        queryKey: ["bookings"],
-        queryFn: () => fetchAllBookings(token!),
-        enabled: !!token,
-    });
-  
+  if (isLoading) {
+    return <IITLoader/>
+  }
 
   return (
     <SidebarProvider>

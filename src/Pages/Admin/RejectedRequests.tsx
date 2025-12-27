@@ -25,14 +25,14 @@ import {
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
 import { fetchAdminProfile, fetchRejectedRequests } from "@/Services/Admin"
-
+import IITLoader from "@/components/IITLoader"
 
 const RejectedRequests = () => {
     const token = localStorage.getItem("token");
     console.log(token)
 
     // Fetch the admin details
-    const { data: adminData } = useQuery({
+    const { data: adminData, isLoading: adminLoading } = useQuery({
     queryKey: ["adminProfile"],
     queryFn: () => fetchAdminProfile(token!), 
     });
@@ -40,11 +40,15 @@ const RejectedRequests = () => {
     const adminId = adminData?.admin?.id;
 
     // Fetch rejected requests
-    const { data: rejectedRequestData = [] } = useQuery({
+    const { data: rejectedRequestData = [], isLoading: requestLoading } = useQuery({
         queryKey: ["rejectedRequests", adminId],
         queryFn: () => fetchRejectedRequests(adminId!, token!),
         enabled: !!adminId && !!token,
     });
+
+    if (requestLoading || adminLoading) {
+        return <IITLoader/>
+    }
 
     return (
         <div>

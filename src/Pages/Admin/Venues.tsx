@@ -25,17 +25,22 @@ import {
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
 import { fetchAllVenues } from "@/Services/Venues"
+import IITLoader from "@/components/IITLoader"
 
 const Venues = () => {
   const token = localStorage.getItem("token");
   console.log(token)
 
   // Fetch all venues
-  const { data: venuesData = [] } = useQuery({
+  const { data: venuesData = [], isLoading } = useQuery({
       queryKey: ["venues"],
       queryFn: () => fetchAllVenues(token!),
       enabled: !!token,
   });
+
+  if (isLoading) {
+    return <IITLoader/>
+  }
 
   return (
     <SidebarProvider>

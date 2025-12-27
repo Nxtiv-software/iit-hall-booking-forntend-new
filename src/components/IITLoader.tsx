@@ -10,7 +10,7 @@ const Loader = () => {
       />
       <p className="text-lg font-semibold tracking-wide">
         Loading
-        <span className="animate-pulse">.</span>
+        <span className="animate-pulse"> .</span>
         <span className="animate-pulse delay-150">.</span>
         <span className="animate-pulse delay-300">.</span>
       </p>

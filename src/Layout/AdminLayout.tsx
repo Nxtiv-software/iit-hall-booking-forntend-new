@@ -27,13 +27,14 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchAdminProfile, fetchPendingRequestCount } from "@/Services/Admin"
 import { fetchTotalBookingCount, fetchUpcomingWeekBookings } from "@/Services/Bookings"
 import { fetchTotalStudentCount } from "@/Services/Students"
+import IITLoader from "@/components/IITLoader"
 
 const AdminLayout = () => {
   const token = localStorage.getItem("token");
   console.log(token)
 
   // Fetch the admin details
-  const { data: adminData } = useQuery({
+  const { data: adminData, isLoading: adminLoading } = useQuery({
     queryKey: ["adminProfile"],
     queryFn: () => fetchAdminProfile(token!), 
   });
@@ -63,7 +64,7 @@ const AdminLayout = () => {
   });
 
   // Fetch upcoming events
-  const { data: upcomingEventData = [] } = useQuery({
+  const { data: upcomingEventData = [], isLoading: upcomingLoading } = useQuery({
     queryKey: ["upcomingEvents"],
     queryFn: () => fetchUpcomingWeekBookings(token!),
     enabled: !!token,
@@ -85,6 +86,9 @@ const AdminLayout = () => {
     return `${weekday}, ${day}${getOrdinal(day)} of ${month}`
   }
 
+  if(adminLoading || pendingLoading || bookingLoading || studentLoading || upcomingLoading){
+    return <IITLoader/>
+  }
 
   return (
     <SidebarProvider>
