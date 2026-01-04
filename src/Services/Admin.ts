@@ -146,3 +146,42 @@ export const fetchPendingRequestCount = async (adminId: string, token: string) =
     throw error;
   }
 };
+
+// 12. Create a new resource
+export const createResource = async (adminId: string, departmentId: string, data: any, token: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/${adminId}/departments/${departmentId}/resources`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating resource:", error);
+    throw error;
+  }
+};
+
+// 13. Update a resource
+export const updateResource = async (adminId: string, departmentId: string, resourceId: string, data: any, token: string) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating resource:", error);
+    throw error;
+  }
+};
+
+// 14. Delete a resource
+export const deleteResource = async (adminId: string, departmentId: string, resourceId: string, token: string) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating resource:", error);
+    throw error;
+  }
+};

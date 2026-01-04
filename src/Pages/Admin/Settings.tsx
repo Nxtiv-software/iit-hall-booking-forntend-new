@@ -77,9 +77,9 @@ const Settings = () => {
       lastName: "",
       phoneNum: "",
       gender: "male",
-      uniEmail: "",
-      buildingName: "",
-      departmentName: "",
+      // uniEmail: "",
+      // buildingName: "",
+      // departmentName: "",
     },
   })
 
@@ -90,9 +90,9 @@ const Settings = () => {
         lastName: adminData.admin?.user?.lastName ?? "",
         phoneNum: adminData.admin?.user?.phoneNum ?? "",
         gender: adminData.admin?.user?.gender ?? "male",
-        uniEmail: adminData.admin?.user?.uniEmail ?? "",
-        buildingName: adminData.admin?.building?.buildingName ?? "",
-        departmentName: adminData.admin?.department?.departmentName ?? "",
+        // uniEmail: adminData.admin?.user?.uniEmail ?? "",
+        // buildingName: adminData.admin?.building?.name ?? "",
+        // departmentName: adminData.admin?.department?.name ?? "",
       });
     }
   }, [adminData]);
@@ -153,8 +153,8 @@ const Settings = () => {
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
               <h2 className="text-lg font-semibold mb-4">Settings</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="col-span-1 flex flex-col gap-4 mt-3 md:ml-4">
-                    <Avatar className="w-28 h-28">
+                <div className="col-span-1 flex flex-col gap-4 mt-3 md:ml-6">
+                    <Avatar className="w-35 h-35">
                         <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
                         <AvatarFallback>Avatar</AvatarFallback>
                     </Avatar>
@@ -346,7 +346,7 @@ const Settings = () => {
                               Building Name
                             </FieldLabel>
                             <Input
-                              value={adminData?.admin?.building?.buildingName ?? ""}
+                              value={adminData?.admin?.building?.name ?? ""}
                               disabled
                               className="opacity-70 cursor-not-allowed"
                             />
@@ -356,7 +356,7 @@ const Settings = () => {
                               Department Name
                             </FieldLabel>
                             <Input
-                              value={adminData?.admin?.department?.departmentName ?? ""}
+                              value={adminData?.admin?.department?.name ?? ""}
                               disabled
                               className="opacity-70 cursor-not-allowed"
                             />

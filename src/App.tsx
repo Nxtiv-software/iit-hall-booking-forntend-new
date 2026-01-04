@@ -3,6 +3,7 @@ import Login from "../src/Pages/Auth/Login";
 import { AuthProvider } from "./AuthProvider/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 import StudentLayout from "./Layout/StudentLayout";
 import AdminLayout from "./Layout/AdminLayout";
@@ -149,6 +150,7 @@ const App = () => {
               },
             }}
           />
+          <SonnerToaster richColors position="top-center"/>
           </BookingProvider>
         </AuthProvider>
        
