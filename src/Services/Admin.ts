@@ -181,7 +181,46 @@ export const deleteResource = async (adminId: string, departmentId: string, reso
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating resource:", error);
+    console.error("Error deleting resource:", error);
+    throw error;
+  }
+};
+
+// 15. Create a new venue
+export const createVenue = async (adminId: string, buildingId: string, data: any, token: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating venue:", error);
+    throw error;
+  }
+};
+
+// 16. Update a venue
+export const updateVenue = async (adminId: string, buildingId: string, venueId: string, data: any, token: string) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating venue:", error);
+    throw error;
+  }
+};
+
+// 17. Delete a venue
+export const deleteVenue = async (adminId: string, buildingId: string, venueId: string, token: string) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting venue:", error);
     throw error;
   }
 };

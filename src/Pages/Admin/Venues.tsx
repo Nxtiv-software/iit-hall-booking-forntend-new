@@ -23,22 +23,122 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useQuery } from "@tanstack/react-query"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchAllVenues } from "@/Services/Venues"
 import IITLoader from "@/components/IITLoader"
+import { createVenue, deleteVenue, fetchAdminProfile, updateVenue } from "@/Services/Admin"
+import { useState } from "react"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 
 const Venues = () => {
+  const queryClient = useQueryClient();
   const token = localStorage.getItem("token");
   console.log(token)
 
+  // Fetch admin profile
+    const { data: adminData, isLoading: adminLoading } = useQuery({
+        queryKey: ["adminProfile"],
+        queryFn: () => fetchAdminProfile(token!),
+        enabled: !!token,
+    });
+
   // Fetch all venues
-  const { data: venuesData = [], isLoading } = useQuery({
+  const { data: venuesData = [], isLoading: venueLoading } = useQuery({
       queryKey: ["venues"],
       queryFn: () => fetchAllVenues(token!),
       enabled: !!token,
   });
 
-  if (isLoading) {
+  const adminId = adminData?.admin?.id;
+  const buildingId = adminData?.admin?.building?.id;
+
+  const [ venueName, setVenueName ] = useState<string>("");
+  const [ availability, setAvailability ] = useState<boolean>(true);
+  const [ capacity, setCapacity ] = useState<string>("");
+  const [ floorNumber, setFloorNumber ] = useState<string>("");
+
+  const [ editingVenue, setEditingVenue ] = useState<any>(null)
+  const [ editName, setEditName ] = useState("")
+  const [ editAvailability, setEditAvailability ] = useState(true)
+  const [ editCapacity, setEditCapacity ] = useState("")
+  const [ editFloorNumber, setEditFloorNumber ] = useState("")
+  
+  
+  const createMutation = useMutation({
+    mutationFn: () =>
+      createVenue(
+        adminId!,
+        buildingId!,
+        {
+          name: venueName,
+          isAvailable: availability,
+          capacity: capacity,
+          floorNumber: floorNumber,
+        },
+        token!
+      ),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["venues"] });
+      setVenueName("");
+      setAvailability(true);
+      setCapacity("");
+      setFloorNumber("");
+    },
+
+    onError: (err: any) => {
+      console.log("Create Venue Failed", err.response?.data || err);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: () =>
+      updateVenue(
+        adminId!,
+        buildingId!,
+        editingVenue.id,
+        { 
+          name: editName, 
+          isAvailable: editAvailability, 
+          capacity: editCapacity,
+          floorNumber: editFloorNumber, 
+        },
+        token!
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["venues"] })
+      setEditingVenue(null)
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (venueId: string) =>
+      deleteVenue(adminId!, buildingId!, venueId, token!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["venues"] })
+    },
+  })
+
+  if ( adminLoading || venueLoading ) {
     return <IITLoader/>
   }
 
@@ -71,28 +171,157 @@ const Venues = () => {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
+            <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold mb-4">Venues</h2>
-              <Table>
-                  <TableCaption>List of venues</TableCaption>
-                  <TableHeader>
-                  <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Department Name</TableHead>
-                      <TableHead>Available</TableHead>
-                      <TableHead>Created At</TableHead>
-                  </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                  {venuesData.map((venues) => (
-                      <TableRow key={venues.id}>
-                      <TableCell>{venues.name}</TableCell>
-                      <TableCell>{venues.department.name}</TableCell>
-                      <TableCell>{venues.isAvailable}</TableCell>
-                      <TableCell>{new Date(venues.createdAt).toLocaleString()}</TableCell>
-                      </TableRow>
-                  ))}
-                  </TableBody>
-              </Table>
+              {/* Creating a venue */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="mb-4" variant="outline">
+                    <Plus className="h-4 w-4" />
+                    Add Venue
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create Venue</DialogTitle>
+                  </DialogHeader>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="mb-3">Name</Label>
+                      <Input value={venueName} onChange={(e) => setVenueName(e.target.value)} />
+                    </div>
+
+                    <div>
+                      <Label className="mb-3">Availability</Label>
+                      <Switch 
+                        checked={availability}
+                        onCheckedChange={setAvailability}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="mb-3">Capacity</Label>
+                      <Input value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                    </div>
+
+                    <div>
+                      <Label className="mb-3">Floor Number</Label>
+                      <Input value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
+                    </div>
+
+                    <Button onClick={() => createMutation.mutate()}>
+                      Create Venue
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Updating the venues */}
+              <Dialog
+                open={!!editingVenue}
+                onOpenChange={(open) => !open && setEditingVenue(null)}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Venue</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="mb-3">Name</Label>
+                      <Input value={editName} onChange={(e) => setEditName(e.target.value)}/>
+                    </div>
+                    <div>
+                      <Label className="mb-3">Availability</Label>
+                      <Switch
+                        checked={editAvailability}
+                        onCheckedChange={setEditAvailability}
+                      />
+                    </div>
+                    <div>
+                      <Label className="mb-3">Capacity</Label>
+                      <Input value={editCapacity} onChange={(e) => setEditCapacity(e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="mb-3">Floor Number</Label>
+                      <Input value={editFloorNumber} onChange={(e) => setEditFloorNumber(e.target.value)} />
+                    </div>
+                    <Button
+                      onClick={() => updateMutation.mutate()}
+                      disabled={updateMutation.isPending}
+                    >
+                      {updateMutation.isPending ? "Updating..." : "Update Venue"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Table>
+                {/* <TableCaption>List of venues</TableCaption> */}
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Building</TableHead>
+                    <TableHead>Available</TableHead>
+                    <TableHead>Floor Number</TableHead>
+                    <TableHead>Capacity</TableHead>
+                    <TableHead>Created At</TableHead>
+                </TableRow>
+                </TableHeader>
+                <TableBody>
+                {venuesData.map((venues) => (
+                    <TableRow key={venues.id}>
+                    <TableCell>{venues.name}</TableCell>
+                    <TableCell>{venues.building?.name}</TableCell>
+                    <TableCell>{venues.isAvailable ? "Available" : "Unavailable"}</TableCell>
+                    <TableCell>{venues.floorNumber}</TableCell>
+                    <TableCell>{venues.capacity}</TableCell>
+                    <TableCell>{new Date(venues.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>...</DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditingVenue(venues)
+                            setEditName(venues.name)
+                            setEditAvailability(venues.isAvailable)
+                            setEditCapacity(venues.capacity)
+                            setEditFloorNumber(venues.floorNumber)
+                          }}
+                        >
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => {
+                            toast.warning("Delete venue?", {
+                              description: "This action cannot be undone.",
+                              style: {
+                                fontSize: "14px", 
+                                padding: "16px",
+                                borderRadius: "12px",
+                              },
+                              action: {
+                                label: "Delete",
+                                onClick: () => deleteMutation.mutate(venues.id),
+                              },
+                              cancel: {
+                                label: "Cancel",
+                              },
+                            })
+                          }}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
           </div>
         </div>
       </SidebarInset>
