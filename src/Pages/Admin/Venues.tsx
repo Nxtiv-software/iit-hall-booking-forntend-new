@@ -17,7 +17,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -37,6 +36,13 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchAllVenues } from "@/Services/Venues"
 import IITLoader from "@/components/IITLoader"
@@ -48,6 +54,7 @@ import { Plus } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { fetchAllBuildings } from "@/Services/Buildings"
 
 const Venues = () => {
   const queryClient = useQueryClient();
@@ -62,24 +69,35 @@ const Venues = () => {
     });
 
   // Fetch all venues
-  const { data: venuesData = [], isLoading: venueLoading } = useQuery({
+  const { data: venueData = [], isLoading: venueLoading } = useQuery({
       queryKey: ["venues"],
       queryFn: () => fetchAllVenues(token!),
       enabled: !!token,
   });
 
+  // Fetch all buildings
+  const { data: buildingData = [], isLoading: buildingLoading } = useQuery({
+      queryKey: ["buildings"],
+      queryFn: () => fetchAllBuildings(token!),
+      enabled: !!token,
+  });
+
   const adminId = adminData?.admin?.id;
-  const buildingId = adminData?.admin?.building?.id;
+  // const buildingId = adminData?.admin?.building?.id;
 
   const [ venueName, setVenueName ] = useState<string>("");
+  const [ buildingId, setBuildingId ] = useState<string>("");
   const [ availability, setAvailability ] = useState<boolean>(true);
-  const [ capacity, setCapacity ] = useState<string>("");
+  const [ capacityAcademic, setCapacityAcademic ] = useState<string>("");
+  const [ capacityExamination, setCapacityExamination ] = useState<string>("");
   const [ floorNumber, setFloorNumber ] = useState<string>("");
 
   const [ editingVenue, setEditingVenue ] = useState<any>(null)
   const [ editName, setEditName ] = useState("")
+  const [ editBuildingId, setEditBuildingId ] = useState("")
   const [ editAvailability, setEditAvailability ] = useState(true)
-  const [ editCapacity, setEditCapacity ] = useState("")
+  const [ editCapacityAcademic, setEditCapacityAcademic ] = useState("")
+  const [ editCapacityExamination, setEditCapacityExamination ] = useState("")
   const [ editFloorNumber, setEditFloorNumber ] = useState("")
   
   
@@ -91,7 +109,8 @@ const Venues = () => {
         {
           name: venueName,
           isAvailable: availability,
-          capacity: capacity,
+          capacityAcademic: capacityAcademic,
+          capacityExamination: capacityExamination,
           floorNumber: floorNumber,
         },
         token!
@@ -101,12 +120,16 @@ const Venues = () => {
       queryClient.invalidateQueries({ queryKey: ["venues"] });
       setVenueName("");
       setAvailability(true);
-      setCapacity("");
+      setCapacityAcademic("");
+      setCapacityExamination("");
       setFloorNumber("");
+
+      toast.success("Venue created successfully");
     },
 
     onError: (err: any) => {
       console.log("Create Venue Failed", err.response?.data || err);
+      toast.error("Venue creation failed");
     },
   });
 
@@ -114,12 +137,13 @@ const Venues = () => {
     mutationFn: () =>
       updateVenue(
         adminId!,
-        buildingId!,
+        editBuildingId!,
         editingVenue.id,
         { 
           name: editName, 
           isAvailable: editAvailability, 
-          capacity: editCapacity,
+          capacityAcademic: editCapacityAcademic,
+          capacityExamination: editCapacityExamination,
           floorNumber: editFloorNumber, 
         },
         token!
@@ -127,6 +151,7 @@ const Venues = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["venues"] })
       setEditingVenue(null)
+      toast.success("Venue updated successfully");
     },
   })
 
@@ -135,10 +160,11 @@ const Venues = () => {
       deleteVenue(adminId!, buildingId!, venueId, token!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["venues"] })
+      toast.success("Venue deleted successfully");
     },
   })
 
-  if ( adminLoading || venueLoading ) {
+  if ( adminLoading || venueLoading || buildingLoading ) {
     return <IITLoader/>
   }
 
@@ -201,8 +227,29 @@ const Venues = () => {
                     </div>
 
                     <div>
-                      <Label className="mb-3">Capacity</Label>
-                      <Input value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                      <Label className="mb-3">Building</Label>
+                      <Select value={buildingId} onValueChange={setBuildingId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a building" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {buildingData.map((building) => (
+                            <SelectItem key={building.id} value={building.id}>
+                              {building.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="mb-3">Academic Capacity</Label>
+                      <Input value={capacityAcademic} onChange={(e) => setCapacityAcademic(e.target.value)} />
+                    </div>
+
+                    <div>
+                      <Label className="mb-3">Examination Capacity</Label>
+                      <Input value={capacityExamination} onChange={(e) => setCapacityExamination(e.target.value)} />
                     </div>
 
                     <div>
@@ -239,8 +286,27 @@ const Venues = () => {
                       />
                     </div>
                     <div>
-                      <Label className="mb-3">Capacity</Label>
-                      <Input value={editCapacity} onChange={(e) => setEditCapacity(e.target.value)} />
+                      <Label className="mb-3">Building</Label>
+                      <Select value={editBuildingId} onValueChange={setEditBuildingId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a building" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {buildingData.map((building) => (
+                            <SelectItem key={building.id} value={building.id}>
+                              {building.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="mb-3">Academic Capacity</Label>
+                      <Input value={editCapacityAcademic} onChange={(e) => setEditCapacityAcademic(e.target.value)} />
+                    </div>
+                    <div>
+                      <Label className="mb-3">Examination Capacity</Label>
+                      <Input value={editCapacityExamination} onChange={(e) => setEditCapacityExamination(e.target.value)} />
                     </div>
                     <div>
                       <Label className="mb-3">Floor Number</Label>
@@ -264,18 +330,20 @@ const Venues = () => {
                     <TableHead>Building</TableHead>
                     <TableHead>Available</TableHead>
                     <TableHead>Floor Number</TableHead>
-                    <TableHead>Capacity</TableHead>
+                    <TableHead>Academic Capacity</TableHead>
+                    <TableHead>Examination Capacity</TableHead>
                     <TableHead>Created At</TableHead>
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {venuesData.map((venues) => (
+                {venueData.map((venues) => (
                     <TableRow key={venues.id}>
                     <TableCell>{venues.name}</TableCell>
                     <TableCell>{venues.building?.name}</TableCell>
                     <TableCell>{venues.isAvailable ? "Available" : "Unavailable"}</TableCell>
                     <TableCell>{venues.floorNumber}</TableCell>
-                    <TableCell>{venues.capacity}</TableCell>
+                    <TableCell>{venues.capacityAcademic}</TableCell>
+                    <TableCell>{venues.capacityExamination}</TableCell>
                     <TableCell>{new Date(venues.createdAt).toLocaleString()}</TableCell>
                     <TableCell>
                     <DropdownMenu>
@@ -286,8 +354,10 @@ const Venues = () => {
                           onClick={() => {
                             setEditingVenue(venues)
                             setEditName(venues.name)
+                            setEditBuildingId(venues.building?.id)
                             setEditAvailability(venues.isAvailable)
-                            setEditCapacity(venues.capacity)
+                            setEditCapacityAcademic(venues.capacityAcademic)
+                            setEditCapacityExamination(venues.capacityExamination)
                             setEditFloorNumber(venues.floorNumber)
                           }}
                         >

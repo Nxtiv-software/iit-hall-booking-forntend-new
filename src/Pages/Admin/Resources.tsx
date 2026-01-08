@@ -41,12 +41,20 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { createResource, updateResource, deleteResource, fetchAdminProfile} from "@/Services/Admin"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
+import { fetchAllDepartments } from "@/Services/Departments"
 
 const Resources = () => {
   const queryClient = useQueryClient();
@@ -67,11 +75,21 @@ const Resources = () => {
       enabled: !!token,
   });
 
+  // Fetch all departments
+  const { data: departmentsData = [], isLoading: departmentsLoading} = useQuery({
+      queryKey: ["departments"],
+      queryFn: () => fetchAllDepartments(token!),
+      enabled: !!token,
+  });
+
   const adminId = adminData?.admin?.id;
-  const departmentId = adminData?.admin?.department?.id;
+  // const departmentId = adminData?.admin?.department?.id;
 
   const [ resourceName, setResourceName ] = useState<string>("");
+  const [ departmentId, setDepartmentId ] = useState<string>("");
   const [ availability, setAvailability ] = useState<boolean>(true);
+
+  const [ editDepartmentId, setEditDepartmentId ] = useState("")
   const [ editingResource, setEditingResource ] = useState<any>(null)
   const [ editName, setEditName ] = useState("")
   const [ editAvailability, setEditAvailability ] = useState(true)
@@ -93,10 +111,12 @@ const Resources = () => {
       queryClient.invalidateQueries({ queryKey: ["resources"] });
       setResourceName("");
       setAvailability(true);
+      toast.success("Resource created successfully");
     },
 
     onError: (err: any) => {
       console.log("Create Resource Failed", err.response?.data || err);
+      toast.error("Resource creation failed");
     },
   });
 
@@ -104,7 +124,7 @@ const Resources = () => {
     mutationFn: () =>
       updateResource(
         adminId!,
-        departmentId!,
+        editDepartmentId!,
         editingResource.id,
         { name: editName, isAvailable: editAvailability },
         token!
@@ -112,6 +132,7 @@ const Resources = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resources"] })
       setEditingResource(null)
+      toast.success("Resource updated successfully");
     },
   })
 
@@ -120,6 +141,7 @@ const Resources = () => {
       deleteResource(adminId!, departmentId!, resourceId, token!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resources"] })
+      toast.success("Resource deleted successfully");
     },
   })
 
@@ -179,6 +201,22 @@ const Resources = () => {
                     </div>
 
                     <div>
+                      <Label className="mb-3">Department</Label>
+                      <Select value={departmentId} onValueChange={setDepartmentId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departmentsData.map((department) => (
+                            <SelectItem key={department.id} value={department.id}>
+                              {department.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
                       <Label className="mb-3">Availability</Label>
                       <Switch 
                         checked={availability}
@@ -209,6 +247,22 @@ const Resources = () => {
                     </div>
 
                     <div>
+                      <Label className="mb-3">Department</Label>
+                      <Select value={editDepartmentId} onValueChange={setEditDepartmentId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departmentsData.map((department) => (
+                            <SelectItem key={department.id} value={department.id}>
+                              {department.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
                       <Label className="mb-3">Availability</Label>
                       <Switch
                         checked={editAvailability}
@@ -230,7 +284,7 @@ const Resources = () => {
                 <TableHeader>
                 <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Department Name</TableHead>
+                    <TableHead>Department</TableHead>
                     <TableHead>Availability</TableHead>
                     <TableHead>Created At</TableHead>
                     <TableHead></TableHead>
@@ -240,7 +294,7 @@ const Resources = () => {
                 {resourcesData.map((resources) => (
                     <TableRow key={resources.id}>
                     <TableCell>{resources.name}</TableCell>
-                    <TableCell>{resources.department.name}</TableCell>
+                    <TableCell>{resources.department?.name}</TableCell>
                     <TableCell>{resources.isAvailable ? "Available" : "Unavailable"}</TableCell>
                     <TableCell>{new Date(resources.createdAt).toLocaleString()}</TableCell>
                     <TableCell>
@@ -251,6 +305,7 @@ const Resources = () => {
                           <DropdownMenuItem
                             onClick={() => {
                               setEditingResource(resources)
+                              setEditDepartmentId(resources.department?.id)
                               setEditName(resources.name)
                               setEditAvailability(resources.isAvailable)
                             }}
