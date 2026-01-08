@@ -20,10 +20,10 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuth } from "@/AuthProvider/AuthProvider";
-
+import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 // This is sample data.
 // const data = {
 //   navMain: [
@@ -188,15 +188,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
-                <a href="#">
-                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    <GalleryVerticalEnd className="size-4" />
-                  </div>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-medium">Welcome</span>
-                    <span className="">Bojitha Nawarathna</span>
-                  </div>
-                </a>
+                <Link to="/dashboard">
+                <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-11 items-center justify-center rounded-lg">
+                  {/* <GalleryVerticalEnd className="size-4" /> */}
+                  <img src={IITLogo} alt="IIT logo" className="size-10"/>
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-medium">Welcome to</span>
+                  <span className="">IIT HALL BOOKING</span>
+                </div>
+              </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
