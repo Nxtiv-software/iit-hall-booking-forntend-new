@@ -50,7 +50,7 @@ import { z } from "zod"
 import adminFormSchema from "@/components/admin-profile-form"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { KeyRound, Trash2 } from "lucide-react"
+import {  KeyRound, Trash2 } from "lucide-react"
 import { useState, useEffect } from "react"
 import IITLoader from "@/components/IITLoader"
 
@@ -77,9 +77,6 @@ const Settings = () => {
       lastName: "",
       phoneNum: "",
       gender: "male",
-      // uniEmail: "",
-      // buildingName: "",
-      // departmentName: "",
     },
   })
 
@@ -90,9 +87,6 @@ const Settings = () => {
         lastName: adminData.admin?.user?.lastName ?? "",
         phoneNum: adminData.admin?.user?.phoneNum ?? "",
         gender: adminData.admin?.user?.gender ?? "male",
-        // uniEmail: adminData.admin?.user?.uniEmail ?? "",
-        // buildingName: adminData.admin?.building?.name ?? "",
-        // departmentName: adminData.admin?.department?.name ?? "",
       });
     }
   }, [adminData]);
@@ -136,7 +130,7 @@ const Settings = () => {
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="#">
-                  Menu
+                  General
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
@@ -153,28 +147,32 @@ const Settings = () => {
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
               <h2 className="text-lg font-semibold mb-4">Settings</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="col-span-1 flex flex-col gap-4 mt-3 md:ml-6">
-                    <Avatar className="w-35 h-35">
-                        <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
-                        <AvatarFallback>Avatar</AvatarFallback>
-                    </Avatar>
-                    <div className="mb-10">
-                      {adminData?.admin?.user?.uniEmail}
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <p className="flex items-center gap-2">
-                        <KeyRound className="w-4 h-4" />
-                        Change Password
-                      </p>
+                <Card className="w-full">
+                  <CardContent>
+                    <div className="col-span-1 flex flex-col gap-4 mt-3">
+                      <Avatar className="w-35 h-35">
+                          <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
+                          <AvatarFallback>Avatar</AvatarFallback>
+                      </Avatar>
+                      <div className="mb-10">
+                        {adminData?.admin?.user?.uniEmail}
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <Button className="flex items-center gap-2" variant="outline">
+                          <KeyRound className="w-4 h-4" />
+                          Change Password
+                        </Button>
 
-                      <p className="flex items-center gap-2 text-red-500">
-                        <Trash2 className="w-4 h-4" />
-                        Delete Account
-                      </p>
+                        <Button className="flex items-center gap-2" variant="destructive">
+                          <Trash2 className="w-4 h-4" />
+                          Delete Account
+                        </Button>
+                      </div>
                     </div>
-                </div>
+                  </CardContent>
+                </Card>
                 <div className="col-span-2 flex flex-col gap-4">
-                  <Card className="w-full ">
+                  <Card className="w-full">
                     <CardHeader>
                       <CardTitle>Personal Information</CardTitle>
                       <CardDescription>
