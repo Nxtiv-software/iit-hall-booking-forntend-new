@@ -3,20 +3,35 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createStudentRequest } from "@/Services/Students";
+
 
 const BookingForm5 = () => {
-  const { state, nextPage, prevPage, updateForm5 } = useBooking();
+  const { state, prevPage, updateForm5 } = useBooking();
+  const navigate = useNavigate();
   
   const [agreement1, setAgreement1] = useState(state.form5Data?.agreement1 || false);
   const [agreement2, setAgreement2] = useState(state.form5Data?.agreement2 || false);
   const [agreement3, setAgreement3] = useState(state.form5Data?.agreement3 || false);
-
+ const [isSubmitting, setIsSubmitting] = useState(false);
+ 
   useEffect(() => {
     console.log(agreement1, agreement2, agreement3)
   }, [agreement1, agreement2, agreement3])
 
   // 2. Define a submit handler.
-  function onSubmit() {
+  async function onSubmit() {
+
+    // if (!agreement1 || !agreement2 || !agreement3) {
+    //   toast({
+    //     title: "Error",
+    //     description: "Please agree to all terms and conditions",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
+
     const form5Values = {
       agreement1,
       agreement2,
@@ -25,7 +40,37 @@ const BookingForm5 = () => {
     
     console.log("Form 5 Values:", form5Values);
     updateForm5(form5Values);
-    nextPage();
+
+    const bookingData = {
+      venueId: "8da1c588-e442-43a7-ae2d-c095ee90b89e",
+      requiredDate:  "2026-01-20T10:00:00.000Z",
+      form1Data: state.form1Data,
+      form2Data: state.form2Data,
+      form3Data: state.form3Data,
+      form4Data: state.form4Data,
+      form5Data: form5Values,
+    };
+
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem("token"); // or get from your auth context
+      
+      if (!token) {
+       
+        navigate("/login");
+        return;
+      }
+
+     const response = await createStudentRequest(token, bookingData);
+     console.log("Booking created successfully:", response);
+      
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error("Error submitting booking:", error);
+      
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handlePrevious() {
