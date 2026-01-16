@@ -28,6 +28,9 @@ import { fetchAdminProfile, fetchPendingRequestCount } from "@/Services/Admin"
 import { fetchTotalBookingCount, fetchUpcomingWeekBookings } from "@/Services/Bookings"
 import { fetchTotalStudentCount } from "@/Services/Students"
 import IITLoader from "@/components/IITLoader"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { User } from "lucide-react"
 
 const AdminLayout = () => {
   const token = localStorage.getItem("token");
@@ -113,7 +116,23 @@ const AdminLayout = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            <Button variant="outline" size="icon" className="flex items-center gap-3 px-4 py-1 h-auto w-auto">
+              <div className="flex flex-col text-left leading-tight">
+                <span className="text-sm font-medium">
+                  {adminData?.admin?.user?.username ?? "Username"}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Admin
+                </span>
+              </div>
+              <div>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
+                  <AvatarFallback><User></User></AvatarFallback>
+                </Avatar>
+              </div>
+            </Button>
             <Theme/>
           </div>
         </header>
