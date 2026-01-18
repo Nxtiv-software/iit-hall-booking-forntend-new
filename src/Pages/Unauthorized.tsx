@@ -1,4 +1,4 @@
-import { useAuth } from '../AuthProvider/AuthProvider';
+import { useAuth } from '../AuthProvider/FirebaseProvider/AuthProvider';
 
 const Unauthorized = () => {
     const { user, logout } = useAuth();

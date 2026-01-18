@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { useAuth } from "@/AuthProvider/AuthProvider";
+import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
 import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 // This is sample data.
 // const data = {

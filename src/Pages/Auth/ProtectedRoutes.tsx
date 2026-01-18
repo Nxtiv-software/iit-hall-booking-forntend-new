@@ -1,5 +1,5 @@
 import { LoaderIcon } from "react-hot-toast";
-import { useAuth } from "../../AuthProvider/AuthProvider";
+import { useAuth } from "../../AuthProvider/FirebaseProvider/AuthProvider";
 import Unauthorized from "../Unauthorized";
 import { Navigate } from "react-router-dom";
 

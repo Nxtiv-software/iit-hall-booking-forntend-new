@@ -32,14 +32,20 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User } from "lucide-react"
 
-const AdminLayout = () => {
-  const token = localStorage.getItem("token");
-  console.log(token)
+import { auth } from "../Firebase/config"
+import { getIdToken } from "firebase/auth"
 
+const AdminLayout = () => {
   // Fetch the admin details
   const { data: adminData, isLoading: adminLoading } = useQuery({
     queryKey: ["adminProfile"],
-    queryFn: () => fetchAdminProfile(token!), 
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
   });
 
   const adminId = adminData?.admin?.id;

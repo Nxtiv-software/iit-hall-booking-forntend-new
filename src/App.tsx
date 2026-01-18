@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Login from "../src/Pages/Auth/Login";
-import { AuthProvider } from "./AuthProvider/AuthProvider";
+import Login from "../src/Pages/Auth/Firebase-Auth/Login";
+import { AuthProvider } from "./AuthProvider/FirebaseProvider/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
@@ -18,6 +18,7 @@ import PendingRequests from "./Pages/Admin/PendingRequests";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
+import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             {/* Admin routes */}
             <Route
               path="/admin-dashboard"
