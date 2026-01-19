@@ -10,7 +10,12 @@ export const fetchAdminProfile = async (token: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching admin profile:", error);
+    const err = error as { response?: { status?: number; data?: unknown } };
+    if (err.response?.status === 404) {
+      console.warn("Admin profile not found (404). The admin profile may need to be created.");
+    } else {
+      console.error("Error fetching admin profile:", error);
+    }
     throw error;
   }
 };

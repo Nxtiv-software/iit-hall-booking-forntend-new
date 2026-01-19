@@ -18,6 +18,7 @@ import PendingRequests from "./Pages/Admin/PendingRequests";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
+import SignIn from "./Pages/AuthPages/SignIn";
 import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 import AdminQuestions from "./Pages/Auth/Firebase-Auth/AdminQuestions";
 import StudentQuestions from "./Pages/Auth/Firebase-Auth/StudentQuestions";
@@ -32,7 +33,7 @@ const App = () => {
           <BookingProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<SignIn />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/admin-questions" element={<AdminQuestions />} />
             <Route path="/student-questions" element={<StudentQuestions />} />
@@ -111,15 +112,18 @@ const App = () => {
                 </UserProtected>
               }
             >
+            
+            </Route>
             <Route
-              path="booking"
+              path="/booking"
               element={
                 <UserProtected>
                   <BookingLayout/>
                 </UserProtected>
               }
             />
-            </Route>
+
+            <Route path="/sign-in" element={<SignIn/>}/>
 
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

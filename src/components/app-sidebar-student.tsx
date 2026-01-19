@@ -167,7 +167,7 @@ import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 
 const navdata = [
   { title: "Dashboard", url: "/dashboard" },
-  { title: "Add a Booking", url: "/dashboard/booking" },
+  { title: "Add a Booking", url: "/booking" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
