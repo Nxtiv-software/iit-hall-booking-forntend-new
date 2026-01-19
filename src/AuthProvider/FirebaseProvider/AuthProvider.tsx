@@ -1,30 +1,39 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../../Firebase/config.ts";
-import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signOut, signInWithEmailAndPassword} from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Track Firebase auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        // Get Firebase ID token
-        const idToken = await firebaseUser.getIdToken();
-
-        // Fetch user info + role from backend
-        const response = await axios.post("/auth/login", { idToken });
-        setUser(response.data.user);
-      } else {
+      if (!firebaseUser) {
+        console.log(firebaseUser);
         setUser(null);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      try {
+        const idToken = await firebaseUser.getIdToken();
+        console.log(`##########${idToken}`);
+        const response = await axios.get("http://localhost:8800/users/me", {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
+        setUser(response.data.user);
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();

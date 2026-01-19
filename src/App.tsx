@@ -19,6 +19,8 @@ import PendingRequests from "./Pages/Admin/PendingRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
 import Signup from "./Pages/Auth/Firebase-Auth/Signup";
+import AdminQuestions from "./Pages/Auth/Firebase-Auth/AdminQuestions";
+import StudentQuestions from "./Pages/Auth/Firebase-Auth/StudentQuestions";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -32,6 +34,8 @@ const App = () => {
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/admin-questions" element={<AdminQuestions />} />
+            <Route path="/student-questions" element={<StudentQuestions />} />
             {/* Admin routes */}
             <Route
               path="/admin-dashboard"

@@ -17,9 +17,18 @@ const Signup = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      await signupUser(data.email, data.password, data.roleId);
+      const user = await signupUser(data.email, data.password, data.roleId);
       toast.success("Signup successful!");
-      navigate("/login");
+
+      if(user.role.name === "ADMIN"){
+        navigate("/admin-questions", { replace: true });
+      }
+      else if (user.role.name === "STUDENT") {
+        navigate("/student-questions", { replace: true });
+      }
+      else {
+        navigate("/signup", { replace: true });
+      }
     } catch (err: any) {
       toast.error(err.response?.data?.message || err.message || "Signup failed.");
     }
