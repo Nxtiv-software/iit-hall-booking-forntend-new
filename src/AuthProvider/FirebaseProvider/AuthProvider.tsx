@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
 
       try {
         const idToken = await firebaseUser.getIdToken();
-        console.log(`##########${idToken}`);
+        console.log(idToken);
         const response = await axios.get("http://localhost:8800/users/me", {
           headers: { Authorization: `Bearer ${idToken}` },
         });
