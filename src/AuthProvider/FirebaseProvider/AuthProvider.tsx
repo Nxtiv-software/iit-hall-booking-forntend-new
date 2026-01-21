@@ -7,27 +7,33 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const [firebaseUser, setFirebaseUser] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Track Firebase auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        console.log(firebaseUser);
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseUser(fbUser);
+
+      if (!fbUser) {
+        console.log(fbUser);
         setUser(null);
         setLoading(false);
         return;
       }
 
       try {
-        const idToken = await firebaseUser.getIdToken();
+        const idToken = await fbUser.getIdToken();
         console.log(idToken);
         const response = await axios.get("http://localhost:8800/users/me", {
           headers: { Authorization: `Bearer ${idToken}` },
         });
         setUser(response.data.user);
+        console.log("################", response.data.user, "#############");
+        console.log("ffffffff", user,"ffffffffffffff")
+
       } catch (err) {
         console.error("Failed to fetch user profile", err);
         setUser(null);
@@ -38,6 +44,9 @@ export function AuthProvider({ children }) {
 
     return () => unsubscribe();
   }, []);
+
+  // Checks whether authenticated
+  const isAuthenticated = () => !!firebaseUser;
 
   // Login with Firebase
   const loginUser = async (email: string, password: string) => {
@@ -58,11 +67,13 @@ export function AuthProvider({ children }) {
   };
 
   const isAdmin = () => {
+    console.log('//////////', user?.role?.name)
+    if (!user) return false;
     return user?.role?.name === "ADMIN";
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

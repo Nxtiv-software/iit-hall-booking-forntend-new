@@ -5,9 +5,10 @@ import toast from "react-hot-toast";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Loader from "@/components/IITLoader";
 
 const Login = () => {
-  const { loginUser, isAuthenticated, isAdmin } = useAuth();
+  const { loginUser, isAuthenticated, isAdmin, loading, user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -23,7 +24,11 @@ const Login = () => {
     }
   };
 
-  if (isAuthenticated) {
+  if (loading) {
+    return <Loader />; 
+  }
+
+  if (isAuthenticated() && user) {
     return (
       <Navigate to={isAdmin() ? "/admin-dashboard" : "/dashboard"} replace />
     );
