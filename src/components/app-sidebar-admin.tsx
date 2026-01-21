@@ -19,7 +19,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button";
-import { useAuth } from "@/AuthProvider/AuthProvider";
+import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
 
 const data = {
   navMain: [

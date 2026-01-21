@@ -1,4 +1,4 @@
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../AuthProvider/FirebaseProvider/AuthProvider";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {

@@ -50,36 +50,64 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createResource, updateResource, deleteResource, fetchAdminProfile} from "@/Services/Admin"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
 import { fetchAllDepartments } from "@/Services/Departments"
+import { auth } from "@/Firebase/config"
 
 const Resources = () => {
-  const queryClient = useQueryClient();
-  const token = localStorage.getItem("token");
-  console.log(token)
+  const queryClient = useQueryClient()
+  
+  const [token, setToken] = useState<string>("")
+
+  useEffect(() => {
+    const user = auth.currentUser
+    if (!user) return
+    user.getIdToken().then(setToken)
+  }, [])
 
   // Fetch admin profile
   const { data: adminData, isLoading: adminLoading } = useQuery({
-      queryKey: ["adminProfile"],
-      queryFn: () => fetchAdminProfile(token!),
-      enabled: !!token,
+    queryKey: ["adminProfile"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   // Fetch all resources
   const { data: resourcesData = [], isLoading: resourcesLoading} = useQuery({
       queryKey: ["resources"],
-      queryFn: () => fetchAllResources(token!),
-      enabled: !!token,
+      queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAllResources(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   // Fetch all departments
   const { data: departmentsData = [], isLoading: departmentsLoading} = useQuery({
       queryKey: ["departments"],
-      queryFn: () => fetchAllDepartments(token!),
-      enabled: !!token,
+      queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAllDepartments(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   const adminId = adminData?.admin?.id;

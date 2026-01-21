@@ -26,24 +26,37 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { fetchAdminProfile, fetchRejectedRequests } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
+import { auth } from "@/Firebase/config"
 
 const RejectedRequests = () => {
-    const token = localStorage.getItem("token");
-    console.log(token)
-
-    // Fetch the admin details
+    // Fetch admin profile
     const { data: adminData, isLoading: adminLoading } = useQuery({
-    queryKey: ["adminProfile"],
-    queryFn: () => fetchAdminProfile(token!), 
+        queryKey: ["adminProfile"],
+        queryFn: async () => {
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("Not authenticated");
+
+            const idToken = await currentUser.getIdToken();
+            return fetchAdminProfile(idToken);
+        },
+        retry: false, 
+        retryOnMount: false,
     });
-    
+
     const adminId = adminData?.admin?.id;
 
     // Fetch rejected requests
     const { data: rejectedRequestData = [], isLoading: requestLoading } = useQuery({
         queryKey: ["rejectedRequests", adminId],
-        queryFn: () => fetchRejectedRequests(adminId!, token!),
-        enabled: !!adminId && !!token,
+        queryFn: async () => {
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("Not authenticated");
+
+            const idToken = await currentUser.getIdToken();
+            return fetchRejectedRequests(adminId, idToken);
+        },
+        retry: false, 
+        retryOnMount: false,
     });
 
     if (requestLoading || adminLoading) {

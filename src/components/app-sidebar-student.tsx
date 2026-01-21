@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { useAuth } from "@/AuthProvider/AuthProvider";
+import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
 import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 // This is sample data.
 // const data = {
@@ -167,7 +167,7 @@ import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 
 const navdata = [
   { title: "Dashboard", url: "/dashboard" },
-  { title: "Add a Booking", url: "/dashboard/booking" },
+  { title: "Add a Booking", url: "/booking" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

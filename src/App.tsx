@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Login from "../src/Pages/Auth/Login";
-import { AuthProvider } from "./AuthProvider/AuthProvider";
+import Login from "../src/Pages/Auth/Firebase-Auth/Login";
+import { AuthProvider } from "./AuthProvider/FirebaseProvider/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
@@ -18,6 +18,10 @@ import PendingRequests from "./Pages/Admin/PendingRequests";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
+import SignIn from "./Pages/AuthPages/SignIn";
+import Signup from "./Pages/Auth/Firebase-Auth/Signup";
+import AdminQuestions from "./Pages/Auth/Firebase-Auth/AdminQuestions";
+import StudentQuestions from "./Pages/Auth/Firebase-Auth/StudentQuestions";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -29,7 +33,10 @@ const App = () => {
           <BookingProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/admin-questions" element={<AdminQuestions />} />
+            <Route path="/student-questions" element={<StudentQuestions />} />
             {/* Admin routes */}
             <Route
               path="/admin-dashboard"
@@ -105,15 +112,18 @@ const App = () => {
                 </UserProtected>
               }
             >
+            
+            </Route>
             <Route
-              path="booking"
+              path="/booking"
               element={
                 <UserProtected>
                   <BookingLayout/>
                 </UserProtected>
               }
             />
-            </Route>
+
+            <Route path="/sign-in" element={<SignIn/>}/>
 
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

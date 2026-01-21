@@ -32,14 +32,21 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User } from "lucide-react"
 
-const AdminLayout = () => {
-  const token = localStorage.getItem("token");
-  console.log(token)
+import { auth } from "../Firebase/config"
 
+const AdminLayout = () => {
   // Fetch the admin details
-  const { data: adminData, isLoading: adminLoading } = useQuery({
+  const { data: adminData, isLoading: adminLoading, error: adminError } = useQuery({
     queryKey: ["adminProfile"],
-    queryFn: () => fetchAdminProfile(token!), 
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   const adminId = adminData?.admin?.id;
@@ -48,29 +55,46 @@ const AdminLayout = () => {
   // Fetch pending requests of the admin
   const { data: pendingCountData, isLoading: pendingLoading } = useQuery({
     queryKey: ["pendingCount", adminId],
-    queryFn: () => fetchPendingRequestCount(adminId!, token!), 
-    enabled: !!adminId && !!token, 
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchPendingRequestCount(adminId!, idToken);
+    }, 
+    enabled: !!adminId, 
   });
 
   // Fetch total booking count
   const { data: bookingCountData, isLoading: bookingLoading } = useQuery({
     queryKey: ["totalBookings"],
-    queryFn: () => fetchTotalBookingCount(token!),
-    enabled: !!token,
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchTotalBookingCount(idToken);
+    },
   });
 
   // Fetch total student count
   const { data: studentCountData, isLoading: studentLoading } = useQuery({
     queryKey: ["totalStudents"],
-    queryFn: () => fetchTotalStudentCount(token!),
-    enabled: !!token,
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchTotalStudentCount(idToken);
+    },
   });
 
   // Fetch upcoming events
   const { data: upcomingEventData = [], isLoading: upcomingLoading } = useQuery({
     queryKey: ["upcomingEvents"],
-    queryFn: () => fetchUpcomingWeekBookings(token!),
-    enabled: !!token,
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchUpcomingWeekBookings(idToken);
+    },
   });
 
   //Helper function to create the date format
@@ -91,6 +115,50 @@ const AdminLayout = () => {
 
   if(adminLoading || pendingLoading || bookingLoading || studentLoading || upcomingLoading){
     return <IITLoader/>
+  }
+
+  // Handle 404 error - Admin profile not found
+  if (adminError) {
+    const error = adminError as { response?: { status?: number } };
+    if (error?.response?.status === 404) {
+      return (
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
+              />
+              <div className="ml-auto flex items-center gap-3">
+                <Theme/>
+              </div>
+            </header>
+            <div className="flex flex-1 flex-col gap-4 p-4 items-center justify-center">
+              <Card className="w-full max-w-md">
+                <CardHeader>
+                  <CardTitle>Admin Profile Not Found</CardTitle>
+                  <CardDescription>
+                    Your admin profile hasn't been created yet. Please contact the system administrator or complete your profile setup.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Error: The endpoint <code className="bg-muted px-1 py-0.5 rounded">/admins/me</code> returned a 404 status.
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
+                    Retry
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      );
+    }
   }
 
   return (
