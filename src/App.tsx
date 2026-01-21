@@ -22,6 +22,7 @@ import SignIn from "./Pages/AuthPages/SignIn";
 import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 import AdminQuestions from "./Pages/Auth/Firebase-Auth/AdminQuestions";
 import StudentQuestions from "./Pages/Auth/Firebase-Auth/StudentQuestions";
+import PasswordReset from "./Pages/Auth/Firebase-Auth/passwordReset";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/admin-questions" element={<AdminQuestions />} />
             <Route path="/student-questions" element={<StudentQuestions />} />
+            <Route path="/reset-password" element={<PasswordReset />} />
             {/* Admin routes */}
             <Route
               path="/admin-dashboard"

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../AuthProvider/FirebaseProvider/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
@@ -83,6 +83,14 @@ const Login = () => {
             {errors.password && <span>Password is required</span>}
 
             <Button type="submit">Login</Button>
+            <div className="flex justify-between items-center mt-2">
+              <Link
+                to="/reset-password"
+                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
         </form>
       </div>
