@@ -5,10 +5,10 @@ import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStudentRequest } from "@/Services/Students";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast";import toast from "react-hot-toast";
 
 const BookingForm5 = () => {
-  const { state, prevPage, updateForm5, resetBooking } = useBooking();
+  const { state, prevPage, updateForm5, resetBooking, resetBooking } = useBooking();
   const navigate = useNavigate();
 
   const [agreement1, setAgreement1] = useState(
@@ -23,8 +23,8 @@ const BookingForm5 = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    console.log(agreement1, agreement2, agreement3);
-  }, [agreement1, agreement2, agreement3]);
+    console.log(agreement1, agreement2, agreement3);;
+  }, [agreement1, agreement2, agreement3]);;
 
   // 2. Define a submit handler.
   async function onSubmit() {
@@ -45,7 +45,7 @@ const BookingForm5 = () => {
     updateForm5(form5Values);
 
     const bookingData = {
-      venueId: "8da1c588-e442-43a7-ae2d-c095ee90b89e",
+      venueId: "009f42c5-535e-41dc-946b-04e26d0064d8",
       requiredDate: "2026-01-20T10:00:00.000Z",
       form1Data: state.form1Data,
       form2Data: state.form2Data,

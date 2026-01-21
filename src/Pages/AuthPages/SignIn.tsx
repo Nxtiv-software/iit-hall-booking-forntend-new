@@ -1,15 +1,13 @@
 
 import AuthLayout from "./AuthPageLayout";
-
-import Login from "../Auth/Firebase-Auth/Login";
+import SignInForm from "../../components/auth/SignInForm";
 
 export default function SignIn() {
   return (
     <>
       
       <AuthLayout>
-
-        <Login/>
+        <SignInForm />
       </AuthLayout>
     </>
   );

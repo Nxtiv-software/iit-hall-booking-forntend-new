@@ -22,6 +22,8 @@ import SignIn from "./Pages/AuthPages/SignIn";
 import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 import AdminQuestions from "./Pages/Auth/Firebase-Auth/AdminQuestions";
 import StudentQuestions from "./Pages/Auth/Firebase-Auth/StudentQuestions";
+import SignIn from "./Pages/AuthPages/SignIn";
+import RequestDetails from "./Pages/Admin/RequestDetails";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -51,6 +53,14 @@ const App = () => {
               element={
                 <AdminProtected>
                   <PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-requests-pending/:requestId"
+              element={
+                <AdminProtected>
+                  <RequestDetails />
                 </AdminProtected>
               }
             />
