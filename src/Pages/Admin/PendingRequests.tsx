@@ -26,24 +26,37 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { fetchPendingRequests, fetchAdminProfile } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
+import { auth } from "@/Firebase/config"
 
 const PendingRequests = () => {
-  const token = localStorage.getItem("token");
-  console.log(token)
+  // Fetch admin profile
+  const { data: adminData, isLoading: adminLoading } = useQuery({
+    queryKey: ["adminProfile"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
 
-  // Fetch the admin details
-  const { data: adminData, isLoading: adminLoading  } = useQuery({
-  queryKey: ["adminProfile"],
-  queryFn: () => fetchAdminProfile(token!), 
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
   
   const adminId = adminData?.admin?.id;
 
   // Fetch pending requests
   const { data: pendingRequestData = [], isLoading: requestLoading } = useQuery({
-      queryKey: ["pendingRequests", adminId],
-      queryFn: () => fetchPendingRequests(adminId!, token!),
-      enabled: !!adminId && !!token,
+    queryKey: ["pendingRequests", adminId],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchPendingRequests(adminId, idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   if (requestLoading || adminLoading) {

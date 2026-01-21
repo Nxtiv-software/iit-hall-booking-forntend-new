@@ -47,7 +47,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchAllVenues } from "@/Services/Venues"
 import IITLoader from "@/components/IITLoader"
 import { createVenue, deleteVenue, fetchAdminProfile, updateVenue } from "@/Services/Admin"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
@@ -55,31 +55,59 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { fetchAllBuildings } from "@/Services/Buildings"
+import { auth } from "@/Firebase/config"
 
 const Venues = () => {
-  const queryClient = useQueryClient();
-  const token = localStorage.getItem("token");
-  console.log(token)
+  const queryClient = useQueryClient()
+
+  const [token, setToken] = useState<string>("")
+
+  useEffect(() => {
+    const user = auth.currentUser
+    if (!user) return
+    user.getIdToken().then(setToken)
+  }, [])
 
   // Fetch admin profile
-    const { data: adminData, isLoading: adminLoading } = useQuery({
-        queryKey: ["adminProfile"],
-        queryFn: () => fetchAdminProfile(token!),
-        enabled: !!token,
-    });
+  const { data: adminData, isLoading: adminLoading } = useQuery({
+    queryKey: ["adminProfile"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
+  });
 
   // Fetch all venues
   const { data: venueData = [], isLoading: venueLoading } = useQuery({
-      queryKey: ["venues"],
-      queryFn: () => fetchAllVenues(token!),
-      enabled: !!token,
-  });
+    queryKey: ["venues"],
+    queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchAllVenues(idToken);
+      },
+      retry: false, 
+      retryOnMount: false,
+    });
 
   // Fetch all buildings
   const { data: buildingData = [], isLoading: buildingLoading } = useQuery({
-      queryKey: ["buildings"],
-      queryFn: () => fetchAllBuildings(token!),
-      enabled: !!token,
+    queryKey: ["buildings"],
+    queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchAllBuildings(idToken);
+      },
+      retry: false, 
+      retryOnMount: false,
   });
 
   const adminId = adminData?.admin?.id;

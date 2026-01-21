@@ -53,17 +53,22 @@ import { Button } from "@/components/ui/button"
 import {  KeyRound, Trash2 } from "lucide-react"
 import { useState, useEffect } from "react"
 import IITLoader from "@/components/IITLoader"
+import { auth } from "@/Firebase/config"
 
 
 const Settings = () => {
-  const token = localStorage.getItem("token");
-  console.log(token)
-
   // Fetch admin profile
   const { data: adminData, isLoading } = useQuery({
-      queryKey: ["adminProfile"],
-      queryFn: () => fetchAdminProfile(token!),
-      enabled: !!token,
+    queryKey: ["adminProfile"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchAdminProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -89,29 +94,35 @@ const Settings = () => {
         gender: adminData.admin?.user?.gender ?? "male",
       });
     }
-  }, [adminData]);
+  }, [adminData, adminForm]);
 
   async function onSubmit(data: z.infer<typeof adminFormSchema>) {
-    console.log("Submit called", data);
     try {
-      const token = localStorage.getItem("token")!;
-      await updateAdminProfile({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        gender: data.gender,
-        phoneNum: data.phoneNum,
-      }, token);
+      const user = auth.currentUser
+      if (!user) {
+        toast.error("You are not authenticated")
+        return
+      }
 
-      toast.success("Profile updated successfully!");
-      console.log("??????");
-      setIsEditing(false);
+      const token = await user.getIdToken();
+      await updateAdminProfile(
+        {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          gender: data.gender,
+          phoneNum: data.phoneNum,
+        },
+        token
+      )
+      toast.success("Profile updated successfully!")
+      setIsEditing(false)
     } catch (error) {
-      toast.error("Failed to update profile.");
-      console.error(error);
+      toast.error("Failed to update profile.")
+      console.error(error)
     }
   }
-  
 
+  
   if (isLoading) {
     return <IITLoader/>
   }

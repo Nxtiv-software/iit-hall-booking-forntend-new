@@ -45,7 +45,7 @@ const AdminLayout = () => {
       const idToken = await currentUser.getIdToken();
       return fetchAdminProfile(idToken);
     },
-    retry: false, // Don't retry on 404
+    retry: false, 
     retryOnMount: false,
   });
 

@@ -26,17 +26,22 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchAllBookings } from "@/Services/Bookings"
 import Theme from "@/components/Theme"
 import IITLoader from "@/components/IITLoader"
+import { auth } from "@/Firebase/config"
 
 const Bookings = () => {
-  const token = localStorage.getItem("token");
-  console.log(token)
-
   // Fetch all bookings
   const { data: bookingsData = [], isLoading } = useQuery({
       queryKey: ["bookings"],
-      queryFn: () => fetchAllBookings(token!),
-      enabled: !!token,
-  });
+      queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchAllBookings(idToken);
+      },
+      retry: false, 
+      retryOnMount: false,
+    });
   
   if (isLoading) {
     return <IITLoader/>
