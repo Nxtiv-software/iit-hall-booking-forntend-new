@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStudentRequest } from "@/Services/Students";
 import toast from "react-hot-toast";
+import { auth } from "@/Firebase/config";
 
 const BookingForm5 = () => {
   const { state, prevPage, updateForm5, resetBooking } = useBooking();
@@ -56,14 +57,19 @@ const BookingForm5 = () => {
 
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem("token"); // or get from your auth context
+      // const token = localStorage.getItem("token"); // or get from your auth context
 
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+      // if (!token) {
+      //   navigate("/login");
+      //   return;
+      // }
 
-      const response = await createStudentRequest(token, bookingData);
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+
+      const response = await createStudentRequest(idToken, bookingData);
       console.log("Booking created successfully:", response);
 
       // Clear booking data from local storage after successful submission
