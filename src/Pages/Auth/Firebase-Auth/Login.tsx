@@ -24,10 +24,6 @@ const Login = () => {
     }
   };
 
-  if (loading) {
-    return <Loader />; 
-  }
-
   if (isAuthenticated() && user) {
     return (
       <Navigate
@@ -43,12 +39,22 @@ const Login = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex flex-col flex-1 absolute left-0 top-0 right-0 bottom-0 w-full h-full bg-white/50 dark:bg-black/50 z-50">
+        <div className="flex flex-col justify-center flex-1 w-full mx-auto">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
     <div>
       <div className="mb-5 sm:mb-8">
-        <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+        <h1 className="mb-2 font-semibold text-gray-00 text-3xl dark:text-gray-900 sm:text-title-md">
           Sign In
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -59,47 +65,41 @@ const Login = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-6">
             <div>
-              <Label>
-                Email <span className="text-error-500">*</span>{" "}
+              <Label className="text-gray-900 dark:text-gray-900">
+                Email <span className="text-red-500">*</span>{" "}
               </Label>
               <Input
                 placeholder="info@gmail.com"
+                className="dark:border-gray-400 dark:text-black"
                 {...register("email", { required: "Email is required" })}
               />
+            {errors.email && <span className="dark:text-red-500 mt-1">Email is required</span>}
             </div>
-            {/* <input
-              {...register("email", { required: true })}
-              placeholder="Email"
-              type="email"
-            /> */}
-            {errors.email && <span>Email is required</span>}
+        
 
             <div>
-              <Label>
-                Password <span className="text-error-500">*</span>{" "}
+              <Label className="text-gray-900 dark:text-gray-900">
+                Password <span className="text-red-500">*</span>{" "}
               </Label>
               <Input
                 type="password"
                 placeholder="Enter your password"
+                className="dark:border-gray-400 dark:text-black"
                 {...register("password", { required: "Password is required" })}
               />
+            {errors.password && <span className="dark:text-red-500 mt-1">Password is required</span>}
             </div>
-            {/* <input
-          {...register("password", { required: true })}
-          placeholder="Password"
-          type="password"
-        /> */}
-            {errors.password && <span>Password is required</span>}
+      
 
-            <Button type="submit">Login</Button>
-            <div className="flex justify-between items-center mt-2">
+            <Button className="w-full cursor-pointer" variant="secondary" type="submit">Login</Button>
+            {/* <div className="flex justify-between items-center mt-2">
               <Link
                 to="/reset-password"
                 className="text-sm text-blue-600 hover:underline dark:text-blue-400"
               >
                 Forgot Password?
               </Link>
-            </div>
+            </div> */}
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@ import IITLogo  from "./../assets/images/general/IIT_logo_cropped.png"
 
 const Loader = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
+    <div className="flex flex-col items-center justify-center h-screen gap-4 bg-black">
       <img
         src={IITLogo}
         alt="IIT Logo"
