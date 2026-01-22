@@ -21,10 +21,13 @@ const Signup = () => {
       toast.success("Signup successful!");
 
       if(user.role.name === "ADMIN"){
-        navigate("/admin-questions", { replace: true });
+        navigate("/admin-dashboard", { replace: true });
       }
       else if (user.role.name === "STUDENT") {
-        navigate("/student-questions", { replace: true });
+        navigate("/dashboard", { replace: true });
+      }
+      else if (user.role.name === "SUPER_ADMIN") {
+        navigate("/super-admin-dashboard", { replace: true });
       }
       else {
         navigate("/signup", { replace: true });

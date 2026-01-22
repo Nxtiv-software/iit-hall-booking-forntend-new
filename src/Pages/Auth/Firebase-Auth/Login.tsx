@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/IITLoader";
 
 const Login = () => {
-  const { loginUser, isAuthenticated, isAdmin, loading, user } = useAuth();
+  const { loginUser, isAuthenticated, isAdmin, isSuperAdmin, loading, user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -30,7 +30,16 @@ const Login = () => {
 
   if (isAuthenticated() && user) {
     return (
-      <Navigate to={isAdmin() ? "/admin-dashboard" : "/dashboard"} replace />
+      <Navigate
+        to={
+          isSuperAdmin()
+            ? "/super-admin-dashboard"
+            : isAdmin()
+            ? "/admin-dashboard"
+            : "/dashboard"
+        }
+        replace
+      />
     );
   }
 
