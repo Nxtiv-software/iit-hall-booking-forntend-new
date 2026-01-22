@@ -27,6 +27,7 @@ export function AuthProvider({ children }) {
       try {
         const idToken = await fbUser.getIdToken();
         console.log(idToken);
+        console.log(idToken)
         const response = await axios.get("http://localhost:8800/users/me", {
           headers: { Authorization: `Bearer ${idToken}` },
         });
@@ -72,13 +73,8 @@ export function AuthProvider({ children }) {
     return user?.role?.name === "ADMIN";
   };
 
-  const isSuperAdmin = () => {
-    if (!user) return false;
-    return user?.role?.name === "SUPER_ADMIN";
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isSuperAdmin, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
