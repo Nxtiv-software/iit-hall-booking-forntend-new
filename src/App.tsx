@@ -14,6 +14,7 @@ import Resources from "./Pages/Admin/Resources";
 import Venues from "./Pages/Admin/Venues";
 import { BookingProvider } from "./AuthProvider/BookingProvider";
 import PendingRequests from "./Pages/Admin/PendingRequests";
+import RequestDetails from "./Pages/Admin/RequestDetails";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
 import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
@@ -48,6 +49,14 @@ const App = () => {
               element={
                 <AdminProtected>
                   <PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-request-details/:requestId"
+              element={
+                <AdminProtected>
+                  <RequestDetails />
                 </AdminProtected>
               }
             />

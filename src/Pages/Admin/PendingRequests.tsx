@@ -27,8 +27,12 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchPendingRequests, fetchAdminProfile } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 const PendingRequests = () => {
+  const navigate = useNavigate();
+  
   // Fetch admin profile
   const { data: adminData, isLoading: adminLoading } = useQuery({
     queryKey: ["adminProfile"],
@@ -102,15 +106,21 @@ const PendingRequests = () => {
                       <TableHead>Venue</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Requested Date</TableHead>
+                      <TableHead>Actions</TableHead>
                   </TableRow>
                   </TableHeader>
                   <TableBody>
-                  {pendingRequestData.map((request) => (
+                  {pendingRequestData.map((request: { id: string; student: { user: { firstName: string; lastName: string } }; venue: { name: string }; status: { name: string }; createdAt: string }) => (
                       <TableRow key={request.id}>
                       <TableCell>{`${request.student.user.firstName ?? ""} ${request.student.user.lastName ?? ""}`}</TableCell>
                       <TableCell>{request.venue.name}</TableCell>
                       <TableCell>{request.status.name}</TableCell>
                       <TableCell>{new Date(request.createdAt).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => navigate(`/admin-request-details/${request.id}`)}>
+                          See more
+                        </Button>
+                      </TableCell>
                       </TableRow>
                   ))}
                   </TableBody>
