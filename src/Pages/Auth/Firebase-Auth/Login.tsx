@@ -92,14 +92,14 @@ const Login = () => {
       
 
             <Button className="w-full cursor-pointer" variant="secondary" type="submit">Login</Button>
-            {/* <div className="flex justify-between items-center mt-2">
+            <div className="flex justify-between items-center mt-2">
               <Link
                 to="/reset-password"
                 className="text-sm text-blue-600 hover:underline dark:text-blue-400"
               >
                 Forgot Password?
               </Link>
-            </div> */}
+            </div>
           </div>
         </form>
       </div>

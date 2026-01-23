@@ -43,20 +43,30 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
-import { fetchAdminProfile, updateAdminProfile } from "@/Services/Admin"
+import { deleteAdminProfile, fetchAdminProfile, updateAdminProfile } from "@/Services/Admin"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import adminFormSchema from "@/components/admin-profile-form"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import {  KeyRound, Trash2 } from "lucide-react"
+import {  KeyRound, Trash2, TriangleAlert } from "lucide-react"
 import { useState, useEffect } from "react"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
+import { useNavigate } from "react-router-dom"
+import { signOut } from "firebase/auth"
 
 
 const Settings = () => {
+  const navigate = useNavigate()
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [token, setToken] = useState("");
+
+
   // Fetch admin profile
   const { data: adminData, isLoading } = useQuery({
     queryKey: ["adminProfile"],
@@ -65,6 +75,7 @@ const Settings = () => {
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
+      setToken(idToken);
       return fetchAdminProfile(idToken);
     },
     retry: false, 
@@ -122,6 +133,14 @@ const Settings = () => {
     }
   }
 
+  async function handleResetPassword() {
+    navigate("/reset-password");
+  }
+
+  async function handleDeleteAccount() {
+    setShowDeleteModal(true);
+  }
+
   
   if (isLoading) {
     return <IITLoader/>
@@ -169,12 +188,12 @@ const Settings = () => {
                         {adminData?.admin?.user?.uniEmail}
                       </div>
                       <div className="flex flex-col gap-3">
-                        <Button className="flex items-center gap-2" variant="outline">
+                        <Button className="flex items-center gap-2" variant="outline" onClick={() => handleResetPassword()}>
                           <KeyRound className="w-4 h-4" />
                           Change Password
                         </Button>
 
-                        <Button className="flex items-center gap-2" variant="destructive">
+                        <Button className="flex items-center gap-2" variant="destructive" onClick={() => handleDeleteAccount()}>
                           <Trash2 className="w-4 h-4" />
                           Delete Account
                         </Button>
@@ -378,6 +397,67 @@ const Settings = () => {
               </div>
           </div>
         </div>
+        {/* Popup to confirm deleting the account */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <Card className="w-full max-w-md p-6">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <TriangleAlert className="w-8 h-8 text-destructive flex-shrink-0" />
+                  <CardTitle className="m-0">Confirm Delete Account</CardTitle>
+                </div>
+                <CardDescription>
+                  Type <strong>"DELETE"</strong> to confirm account deletion.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Input
+                  placeholder="Type DELETE to confirm"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                />
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteConfirmText("");
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  disabled={deleteConfirmText !== "DELETE" || deleting}
+                  onClick={async () => {
+                    try {
+                      setDeleting(true);
+                      await deleteAdminProfile(token);
+                      await signOut(auth);
+
+                      toast.success("Account deleted successfully!");
+                      setShowDeleteModal(false);
+                      setDeleting(false);
+
+                      navigate("/login", { replace: true });
+                    } catch (error) {
+                      toast.error("Failed to delete account.");
+                      console.error(error);
+                      setDeleting(false);
+                    } finally {
+                      setDeleting(false);
+                      setShowDeleteModal(false);
+                      setDeleteConfirmText("");
+                    }
+                  }}
+                >
+                  {deleting ? "Deleting..." : "Delete Account"}
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        )}
       </SidebarInset>
     </SidebarProvider>
   )
