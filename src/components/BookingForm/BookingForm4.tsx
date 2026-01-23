@@ -1,197 +1,90 @@
-
-import { useForm, type DefaultValues, type FieldValues } from "react-hook-form";
-import { z } from "zod";
 import { useEffect, useState } from "react";
-
 import { useBooking } from "@/AuthProvider/BookingProvider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { auth } from "@/Firebase/config";
 
-interface AuthFormProps<T extends FieldValues> {
-  defaultValues: T;
+interface Resource {
+  id: string;
+  name: string;
+  description?: string;
 }
 
-const formSchema = z.object({
-  societyname: z.string().min(2, {
-    message: "Society name must be at least 2 characters.",
-  }),
-  eventtype: z.string().min(2, {
-    message: "Event type must be at least 2 characters.",
-  }),
-  excoposition: z.string().min(2, {
-    message: "Exco position must be at least 2 characters.",
-  }),
-  eventtitle: z.string().min(2, {
-    message: "Event name/title must be at least 2 characters.",
-  }),
-  participants: z
-    .string()
-    .min(1, {
-      message: "Number of participants is required.",
-    })
-    .regex(/^[0-9]+$/, {
-      message: "Please enter a valid number.",
-    }),
-  excomembername: z.string().min(2, {
-    message: "Exco member name must be at least 2 characters.",
-  }),
-  description: z.string().min(10, {
-    message: "Purpose/Description must be at least 10 characters.",
-  }),
-});
-
-const BookingForm4 = <T extends FieldValues>({
-  defaultValues,
-}: AuthFormProps<T>) => {
+const BookingForm4 = () => {
   const { state, nextPage, prevPage, updateForm4 } = useBooking();
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
 
-  // State for checkboxes - Load from localStorage
-  const [soundSystem, setSoundSystem] = useState(state.form4Data?.soundSystem || false);
-  const [iitBranding, setIitBranding] = useState(state.form4Data?.iitBranding || false);
-  const [projector, setProjector] = useState(state.form4Data?.projector || false);
-  const [wifiCredentials, setWifiCredentials] = useState(state.form4Data?.wifiCredentials || false);
-  const [tablesChairSetup, setTablesChairSetup] = useState(state.form4Data?.tablesChairSetup || false);
-  const [zoomPackage, setZoomPackage] = useState(state.form4Data?.zoomPackage || false);
-  const [podium, setPodium] = useState(state.form4Data?.podium || false);
   const [additionalNotes, setAdditionalNotes] = useState(state.form4Data?.additionalNotes || "");
 
-  
+  // Fetch resources from backend
+  useEffect(() => {
+    const fetchResources = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-  // 2. Define a submit handler.
-  function handleSubmit() {
+      const token = await user.getIdToken();
+
+      const res = await fetch("http://localhost:8800/resources", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) return console.error("Failed to fetch resources");
+      const data: Resource[] = await res.json();
+      setResources(data);
+
+      const initialSelected: Record<string, boolean> = {};
+      data.forEach((r) => {
+        initialSelected[r.id] = state.form4Data?.[r.id] || false;
+      });
+      setSelectedResources(initialSelected);
+    };
+
+    fetchResources();
+  }, []);
+
+  const handleCheckboxChange = (id: string, checked: boolean) => {
+    setSelectedResources((prev) => ({ ...prev, [id]: checked }));
+  };
+
+  const handleSubmit = () => {
     const form4Values = {
-      soundSystem,
-      iitBranding,
-      projector,
-      wifiCredentials,
-      tablesChairSetup,
-      zoomPackage,
-      podium,
+      ...selectedResources,
       additionalNotes,
     };
-    
     console.log("Form 4 Values:", form4Values);
     updateForm4(form4Values);
     nextPage();
-  }
+  };
 
-  function handlePrevious() {
-    prevPage();
-  }
+  const handlePrevious = () => prevPage();
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Required Resources</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Sound System */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="sound-system" 
-            checked={soundSystem}
-            onCheckedChange={(checked) => setSoundSystem(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="sound-system" className="cursor-pointer">Sound System</Label>
-            <p className="text-muted-foreground text-xs">
-              Audio equipment for presentations and events.
-            </p>
+        {resources.map((r) => (
+          <div key={r.id} className="flex items-start gap-3">
+            <Checkbox
+              id={r.id}
+              checked={selectedResources[r.id] || false}
+              onCheckedChange={(checked) => handleCheckboxChange(r.id, checked as boolean)}
+            />
+            <div className="grid gap-1">
+              <Label htmlFor={r.id} className="cursor-pointer">{r.name}</Label>
+              {r.description && (
+                <p className="text-muted-foreground text-xs">{r.description}</p>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* IIT Branding */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="iit-branding" 
-            checked={iitBranding}
-            onCheckedChange={(checked) => setIitBranding(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="iit-branding" className="cursor-pointer">IIT Branding</Label>
-            <p className="text-muted-foreground text-xs">
-              Official IIT branding materials and banners.
-            </p>
-          </div>
-        </div>
-
-        {/* Projector */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="projector" 
-            checked={projector}
-            onCheckedChange={(checked) => setProjector(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="projector" className="cursor-pointer">Projector</Label>
-            <p className="text-muted-foreground text-xs">
-              Display equipment for presentations.
-            </p>
-          </div>
-        </div>
-
-        {/* Wifi Credentials */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="wifi-credentials" 
-            checked={wifiCredentials}
-            onCheckedChange={(checked) => setWifiCredentials(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="wifi-credentials" className="cursor-pointer">Wifi Credentials</Label>
-            <p className="text-muted-foreground text-xs">
-              Guest WiFi access for participants.
-            </p>
-          </div>
-        </div>
-
-        {/* Tables/Chair Setup */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="tables-chair-setup" 
-            checked={tablesChairSetup}
-            onCheckedChange={(checked) => setTablesChairSetup(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="tables-chair-setup" className="cursor-pointer">Tables/Chair Setup</Label>
-            <p className="text-muted-foreground text-xs">
-              Custom seating arrangement.
-            </p>
-          </div>
-        </div>
-
-        {/* Zoom Package */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="zoom-package" 
-            checked={zoomPackage}
-            onCheckedChange={(checked) => setZoomPackage(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="zoom-package" className="cursor-pointer">Zoom Package</Label>
-            <p className="text-muted-foreground text-xs">
-              Online meeting setup and support.
-            </p>
-          </div>
-        </div>
-
-        {/* Podium */}
-        <div className="flex items-start gap-3">
-          <Checkbox 
-            id="podium" 
-            checked={podium}
-            onCheckedChange={(checked) => setPodium(checked as boolean)}
-          />
-          <div className="grid gap-1">
-            <Label htmlFor="podium" className="cursor-pointer">Podium</Label>
-            <p className="text-muted-foreground text-xs">
-              Speaker podium or lectern.
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Additional Notes Textarea */}
       <div className="space-y-2">
         <Label htmlFor="additional-notes">Additional Notes</Label>
         <textarea

@@ -1,145 +1,174 @@
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, type DefaultValues, type FieldValues } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useBooking } from "@/AuthProvider/BookingProvider";
-
-interface AuthFormProps<T extends FieldValues> {
-  defaultValues: T;
-}
+import { auth } from "@/Firebase/config";
 
 const formSchema = z.object({
-  preferredbuilding: z.string().min(2, {
-    message: "Society name must be at least 2 characters.",
-  }),
-  preferredroom: z.string().min(2, {
-    message: "Event type must be at least 2 characters.",
-  }),
-  alternateroom: z.string().min(2, {
-    message: "Exco position must be at least 2 characters.",
-  }),
-  
+  preferredbuilding: z.string().min(1, "Please select a building"),
+  preferredroom: z.string().min(1, "Please select a room"),
 });
 
-const BookingForm3 = <T extends FieldValues>({
-  defaultValues,
-}: AuthFormProps<T>) => {
-  // Helper function to get field labels
-  const getFieldLabel = (fieldName: string): string => {
-    const labels: Record<string, string> = {
-      preferredbuilding: "Preferred Building",
-      preferredroom: "Preferred Room",
-      alternateroom: "Alternate Room",
-    };
-    return (
-      labels[fieldName] ||
-      fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
-    );
-  };
-
-  // Helper function to get field placeholders
-  const getFieldPlaceholder = (fieldName: string): string => {
-    const placeholders: Record<string, string> = {
-      preferredbuilding: "Enter preferred building name",
-      preferredroom: "Enter preferred room number or name",
-      alternateroom: "Enter alternate room number or name",
-    };
-    return placeholders[fieldName] || `Enter ${fieldName}`;
-  };
-
-  // Helper function to get field descriptions
-  const getFieldDescription = (fieldName: string): string => {
-    const descriptions: Record<string, string> = {
-      preferredbuilding: "Select or enter the building you prefer for the event.",
-      preferredroom: "Select or enter your first choice of room.",
-      alternateroom: "Select or enter an alternative room in case the preferred room is unavailable.",
-    };
-    return descriptions[fieldName] || `Please enter your ${fieldName}.`;
-  };
-
+const BookingForm3 = ({ defaultValues }: { defaultValues: any }) => {
   const { state, nextPage, prevPage, updateForm3 } = useBooking();
+  const [buildings, setBuildings] = useState<{ id: string; name: string }[]>([]);
+  const [venues, setVenues] = useState<{ id: string; name: string }[]>([]);
+  const [alternateVenues, setAlternateVenues] = useState<{ id: string; name: string }[]>([]);
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...defaultValues,
       ...state.form3Data,
-    } as DefaultValues<z.infer<typeof formSchema>>,
+    },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // You can access the values here
-    console.log("All Values:", values);
+  // Fetch all buildings 
+  useEffect(() => {
+    const fetchBuildings = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken(); 
+      
+      const res = await fetch("http://localhost:8800/buildings/", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setBuildings(Array.isArray(data) ? data : []);
+    };
+
+    fetchBuildings();
+  }, []);
+
+
+  // Fetch venues when building changes
+  useEffect(() => {
+    const buildingId = form.watch("preferredbuilding");
+    if (!buildingId) {
+      setVenues([]);
+      form.setValue("preferredroom", "");
+      return;
+    }
+
+    const fetchVenues = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken(); 
+      const res = await fetch(`http://localhost:8800/buildings/${buildingId}/venues`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setVenues(Array.isArray(data) ? data : []);
+      setAlternateVenues(Array.isArray(data) ? data : []);
+    };
+
+    fetchVenues();
+  }, [form.watch("preferredbuilding")]);
+
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     updateForm3(values);
     nextPage();
-  }
-
-  function handlePrevious() {
-    prevPage()
-  }
+  };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 dark:border-amber-50"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.keys(defaultValues).map((fieldName) => (
-            <FormField
-              key={fieldName}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormItem>
+          <FormLabel>Preferred Building</FormLabel>
+          <FormControl>
+            <Controller
+              name="preferredbuilding"
               control={form.control}
-              name={fieldName as any}
               render={({ field }) => (
-                <FormItem
-                  className={`flex-col gap-3 ${
-                    fieldName === "description" ? "md:col-span-2" : ""
-                  }`}
+                <select
+                  {...field}
+                  className="w-full rounded-md border border-input px-3 py-2"
                 >
-                  <FormLabel>{getFieldLabel(fieldName)}</FormLabel>
-                  <FormControl>
-                    {fieldName === "description" ? (
-                      <textarea
-                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        placeholder={getFieldPlaceholder(fieldName)}
-                        {...field}
-                      />
-                    ) : (
-                      <Input
-                        type={fieldName === "participants" ? "number" : "text"}
-                        placeholder={getFieldPlaceholder(fieldName)}
-                        {...field}
-                      />
-                    )}
-                  </FormControl>
-                  <FormDescription>
-                    {getFieldDescription(fieldName)}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+                  <option value="">Select a building</option>
+                  {buildings.map((b) => (
+                    <option key={b.id} value={b.id} className="text-black">
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
               )}
             />
-          ))}
-        </div>
-        <Button type="submit" className="w-full">
+          </FormControl>
+          <FormMessage>{form.formState.errors.preferredbuilding?.message}</FormMessage>
+        </FormItem>
+        <FormItem>
+          <FormLabel>Preferred Room</FormLabel>
+          <FormControl>
+            <Controller
+              name="preferredroom"
+              control={form.control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="w-full rounded-md border border-input px-3 py-2"
+                  disabled={!venues.length}
+                >
+                  <option value="">Select a room</option>
+                  {venues.map((v) => (
+                    <option key={v.id} value={v.id} className="text-black">
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+          </FormControl>
+          <FormMessage>{form.formState.errors.preferredroom?.message}</FormMessage>
+        </FormItem>
+        <FormItem>
+          <FormLabel>Alternate Room</FormLabel>
+          <FormControl>
+            <Controller
+              name="alternateroom"
+              control={form.control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="w-full rounded-md border border-input px-3 py-2"
+                  disabled={!venues.length}
+                >
+                  <option value="">Select an alternate room</option>
+                  {alternateVenues.map((av) => (
+                    <option key={av.id} value={av.id} className="text-black">
+                      {av.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+          </FormControl>
+          <FormMessage>{form.formState.errors.alternateroom?.message}</FormMessage>
+        </FormItem>
+
+        <Button type="submit" className="w-full mt-4">
           Next
         </Button>
+        <Button type="button" onClick={prevPage} className="w-full mt-2">
+          Previous
+        </Button>
       </form>
-
-      <Button onClick={handlePrevious} className="w-full mt-5">Previous</Button>
     </Form>
   );
 };
