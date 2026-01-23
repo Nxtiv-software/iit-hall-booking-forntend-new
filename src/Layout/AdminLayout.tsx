@@ -33,8 +33,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User } from "lucide-react"
 
 import { auth } from "../Firebase/config"
+import { useEffect, useRef } from "react"
+import toast from "react-hot-toast"
 
 const AdminLayout = () => {
+  const welcomeShownRef = useRef(false)
+
   // Fetch the admin details
   const { data: adminData, isLoading: adminLoading, error: adminError } = useQuery({
     queryKey: ["adminProfile"],
@@ -161,6 +165,21 @@ const AdminLayout = () => {
     }
   }
 
+  useEffect(() => {
+    if (adminData && !welcomeShownRef.current) {
+      const name =
+        adminData.admin?.user?.firstName ||
+        adminData.admin?.user?.username ||
+        "Admin"
+
+      toast.success(`Welcome back, ${name}! 👋`, {
+        duration: 4000,
+      })
+
+      welcomeShownRef.current = true
+    }
+  }, [adminData])
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -188,7 +207,7 @@ const AdminLayout = () => {
             <Button variant="outline" size="icon" className="flex items-center gap-3 px-4 py-1 h-auto w-auto">
               <div className="flex flex-col text-left leading-tight">
                 <span className="text-sm font-medium">
-                  {adminData?.admin?.user?.username ?? "Username"}
+                  {adminData?.admin?.user?.firstName ?? adminData?.admin?.user?.username}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   Admin
@@ -205,7 +224,7 @@ const AdminLayout = () => {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="bg-muted/50 rounded-xl">
+          {/* <div className="bg-muted/50 rounded-xl">
             <div></div>
             <Card className="@container/card">
               <CardHeader>
@@ -219,7 +238,7 @@ const AdminLayout = () => {
                 </div>
               </CardFooter>
             </Card>
-          </div>
+          </div> */}
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
