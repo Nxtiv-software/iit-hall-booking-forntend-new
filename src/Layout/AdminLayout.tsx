@@ -33,12 +33,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User } from "lucide-react"
 
 import { auth } from "../Firebase/config"
-import { useEffect, useRef } from "react"
-import toast from "react-hot-toast"
 
 const AdminLayout = () => {
-  const welcomeShownRef = useRef(false)
-
   // Fetch the admin details
   const { data: adminData, isLoading: adminLoading, error: adminError } = useQuery({
     queryKey: ["adminProfile"],
@@ -54,7 +50,6 @@ const AdminLayout = () => {
   });
 
   const adminId = adminData?.admin?.id;
-  const username = adminData?.admin?.user?.username;
 
   // Fetch pending requests of the admin
   const { data: pendingCountData, isLoading: pendingLoading } = useQuery({
@@ -100,22 +95,6 @@ const AdminLayout = () => {
       return fetchUpcomingWeekBookings(idToken);
     },
   });
-
-  //Helper function to create the date format
-  const formatDate = (date: Date) => {
-    const day = date.getDate()
-
-    const getOrdinal = (n: number) => {
-      const s = ["th", "st", "nd", "rd"]
-      const v = n % 100
-      return s[(v - 20) % 10] || s[v] || s[0]
-    }
-
-    const weekday = date.toLocaleDateString("en-US", { weekday: "long" })
-    const month = date.toLocaleDateString("en-US", { month: "long" })
-
-    return `${weekday}, ${day}${getOrdinal(day)} of ${month}`
-  }
 
   if(adminLoading || pendingLoading || bookingLoading || studentLoading || upcomingLoading){
     return <IITLoader/>
@@ -164,21 +143,6 @@ const AdminLayout = () => {
       );
     }
   }
-
-  useEffect(() => {
-    if (adminData && !welcomeShownRef.current) {
-      const name =
-        adminData.admin?.user?.firstName ||
-        adminData.admin?.user?.username ||
-        "Admin"
-
-      toast.success(`Welcome back, ${name}! 👋`, {
-        duration: 4000,
-      })
-
-      welcomeShownRef.current = true
-    }
-  }, [adminData])
 
   return (
     <SidebarProvider>
