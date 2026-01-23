@@ -26,7 +26,7 @@ const BookingForm4 = () => {
 
       const token = await user.getIdToken();
 
-      const res = await fetch("http://localhost:8800/resources", {
+      const res = await fetch("http://localhost:8800/resources/available", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
