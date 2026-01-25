@@ -29,6 +29,7 @@ import Admin4RejectedRequests from "./Pages/Admin/Admin4/RejectedRequests";
 import Admin1RejectedRequests from "./Pages/Admin/Admin1/RejectedRequests";
 import Admin2RejectedRequests from "./Pages/Admin/Admin2/RejectedRequests";
 import Admin3RejectedRequests from "./Pages/Admin/Admin3/RejectedRequests";
+import Admin4PendingRequests from "./Pages/Admin/Admin4/PendingRequests";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -104,7 +105,7 @@ const App = () => {
               path="/admin4-requests-pending"
               element={
                 <AdminProtected>
-                  <Admin4RejectedRequests />
+                  <Admin4PendingRequests />
                 </AdminProtected>
               }
             />

@@ -57,7 +57,7 @@ const Admin4PendingRequests = () => {
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
-      return fetchAdmin4Pending(adminId, idToken);
+      return fetchAdmin4Pending(adminId!, idToken);
     },
     retry: false, 
     retryOnMount: false,
