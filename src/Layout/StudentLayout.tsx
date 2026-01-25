@@ -3,13 +3,12 @@ import Theme  from "@/components/Theme";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -17,11 +16,14 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
-  "/dashboard": { label: "Dashboard" },
-  "/dashboard/booking": { label: "Add a Booking", parent: "/dashboard" },
+  "/student-dashboard": { label: "Dashboard" },
+  "/student-dashboard/student-add-booking": { label: "Add a Booking", parent: "/student-dashboard" },
+  "/student-dashboard/student-bookings": { label: "Bookings", parent: "/student-dashboard" },
+  "/student-dashboard/student-settings": { label: "Settings", parent: "/student-dashboard" },
+  "/student-dashboard/student-venues": { label: "Venues", parent: "/student-dashboard" },
   // Add more routes as needed
 };
 
@@ -75,7 +77,7 @@ const StudentLayout = () => {
   const breadcumbs = getBreadCrumbs();
 
   function handleBookingRequest() {
-   navigate("/booking");
+   navigate("/student-add-booking");
   }
 
   return (
@@ -118,7 +120,7 @@ const StudentLayout = () => {
             <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
                 <CardHeader>
-                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Upcoming Bokkings</CardDescription>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Upcoming Bookings</CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
                     {/* {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0} */}
                   </CardTitle>

@@ -60,7 +60,7 @@ import { toast } from "sonner"
 import { fetchAllDepartments } from "@/Services/Departments"
 import { auth } from "@/Firebase/config"
 
-const Resources = () => {
+const AdminResources = () => {
   const queryClient = useQueryClient()
   
   const [token, setToken] = useState<string>("")
@@ -385,4 +385,4 @@ const Resources = () => {
   )
 }
 
-export default Resources
+export default AdminResources

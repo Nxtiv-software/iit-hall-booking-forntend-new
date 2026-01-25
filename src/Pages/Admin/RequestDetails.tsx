@@ -53,7 +53,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-const RequestDetails = () => {
+const AdminRequestDetails = () => {
   const { requestId } = useParams<{ requestId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -705,4 +705,4 @@ const RequestDetails = () => {
   );
 };
 
-export default RequestDetails;
+export default AdminRequestDetails;

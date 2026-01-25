@@ -35,7 +35,7 @@ const Login = () => {
       if (level === 3) return <Navigate to="/admin3-dashboard" replace />;
       if (level === 4) return <Navigate to="/admin4-dashboard" replace />;
     }
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/student-dashboard" replace />;
   }
 
   if (loading) {

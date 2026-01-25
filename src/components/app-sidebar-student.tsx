@@ -1,10 +1,8 @@
 import * as React from "react";
-import { GalleryVerticalEnd, Minus, Plus } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
 import {
   Collapsible,
-  CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import {
@@ -15,9 +13,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router-dom";
@@ -166,8 +161,9 @@ import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
 // }
 
 const navdata = [
-  { title: "Dashboard", url: "/dashboard" },
-  { title: "Add a Booking", url: "/booking" },
+  { title: "Dashboard", url: "/student-dashboard" },
+  { title: "Add a Booking", url: "/student-add-booking" },
+  { title: "Bookings", url: "/student-bookings" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

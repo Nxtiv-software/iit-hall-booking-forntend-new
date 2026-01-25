@@ -1,7 +1,4 @@
-import { AppSidebar1 } from "@/components/app-sidebar-admin-1"
-import { AppSidebar2 } from "@/components/app-sidebar-admin-2"
-import { AppSidebar3 } from "@/components/app-sidebar-admin-3"
-import { AppSidebar4 } from "@/components/app-sidebar-admin-4"
+import { AppSidebar } from "@/components/app-sidebar-student"
 import Theme from "@/components/Theme"
 import {
   Breadcrumb,
@@ -46,11 +43,11 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
-import { deleteAdminProfile, fetchAdminProfile, updateAdminProfile } from "@/Services/Admin"
+import { deleteStudentProfile, updateStudentProfile, fetchStudentProfile } from "@/Services/Students"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import adminFormSchema from "@/components/admin-profile-form"
+import studentFormSchema from "@/components/student-profile-form"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {  KeyRound, Trash2, TriangleAlert } from "lucide-react"
@@ -61,7 +58,7 @@ import { useNavigate } from "react-router-dom"
 import { signOut } from "firebase/auth"
 
 
-const AdminSettings = () => {
+const StudentSettings = () => {
   const navigate = useNavigate()
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -69,28 +66,26 @@ const AdminSettings = () => {
   const [deleting, setDeleting] = useState(false);
   const [token, setToken] = useState("");
 
-
-  // Fetch admin profile
-  const { data: adminData, isLoading } = useQuery({
-    queryKey: ["adminProfile"],
+  // Fetch student profile
+  const { data: studentData, isLoading } = useQuery({
+    queryKey: ["studentProfile"],
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
       setToken(idToken);
-      return fetchAdminProfile(idToken);
+      return fetchStudentProfile(idToken);
     },
     retry: false, 
     retryOnMount: false,
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  console.log(adminData);
 
   //Zod client side validation for the form
-  const adminForm = useForm<z.infer<typeof adminFormSchema>>({
-    resolver: zodResolver(adminFormSchema),
+  const studentForm = useForm<z.infer<typeof studentFormSchema>>({
+    resolver: zodResolver(studentFormSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -100,17 +95,17 @@ const AdminSettings = () => {
   })
 
   useEffect(() => {
-    if (adminData) {
-      adminForm.reset({
-        firstName: adminData.admin?.user?.firstName ?? "",
-        lastName: adminData.admin?.user?.lastName ?? "",
-        phoneNum: adminData.admin?.user?.phoneNum ?? "",
-        gender: adminData.admin?.user?.gender ?? "male",
+    if (studentData) {
+      studentForm.reset({
+        firstName: studentData.student?.user?.firstName ?? "",
+        lastName: studentData.student?.user?.lastName ?? "",
+        phoneNum: studentData.student?.user?.phoneNum ?? "",
+        gender: studentData.student?.user?.gender ?? "male",
       });
     }
-  }, [adminData, adminForm]);
+  }, [studentData, studentForm]);
 
-  async function onSubmit(data: z.infer<typeof adminFormSchema>) {
+  async function onSubmit(data: z.infer<typeof studentFormSchema>) {
     try {
       const user = auth.currentUser
       if (!user) {
@@ -119,14 +114,14 @@ const AdminSettings = () => {
       }
 
       const token = await user.getIdToken();
-      await updateAdminProfile(
+      await updateStudentProfile(
+        token,
         {
           firstName: data.firstName,
           lastName: data.lastName,
           gender: data.gender,
           phoneNum: data.phoneNum,
-        },
-        token
+        }
       )
       toast.success("Profile updated successfully!")
       setIsEditing(false)
@@ -143,13 +138,6 @@ const AdminSettings = () => {
   async function handleDeleteAccount() {
     setShowDeleteModal(true);
   }
-
-  const SidebarComponent = {
-    "1": AppSidebar1,
-    "2": AppSidebar2,
-    "3": AppSidebar3,
-    "4": AppSidebar4,
-  }[adminData?.admin?.adminLevel || "1"];
   
   if (isLoading) {
     return <IITLoader/>
@@ -157,7 +145,7 @@ const AdminSettings = () => {
 
   return (
     <SidebarProvider>
-      <SidebarComponent />
+      <AppSidebar/>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -190,11 +178,11 @@ const AdminSettings = () => {
                   <CardContent>
                     <div className="col-span-1 flex flex-col gap-4 mt-3">
                       <Avatar className="w-35 h-35">
-                          <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
+                          <AvatarImage src={studentData?.student?.user?.avatarUrl} alt="User avatar image" />
                           <AvatarFallback>Avatar</AvatarFallback>
                       </Avatar>
                       <div className="mb-10">
-                        {adminData?.admin?.user?.uniEmail}
+                        {studentData?.student?.user?.uniEmail}
                       </div>
                       <div className="flex flex-col gap-3">
                         <Button className="flex items-center gap-2" variant="outline" onClick={() => handleResetPassword()}>
@@ -219,12 +207,12 @@ const AdminSettings = () => {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <form id="form-rhf-input" onSubmit={adminForm.handleSubmit(onSubmit)}>
+                      <form id="form-rhf-input" onSubmit={studentForm.handleSubmit(onSubmit)}>
                         <FieldGroup>
                           <div className="flex flex-col md:flex-row gap-4">
                             <Controller
                               name="firstName"
-                              control={adminForm.control}
+                              control={studentForm.control}
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                   <FieldLabel htmlFor="form-rhf-input-firstName">
@@ -247,7 +235,7 @@ const AdminSettings = () => {
                             />
                             <Controller
                               name="lastName"
-                              control={adminForm.control}
+                              control={studentForm.control}
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                   <FieldLabel htmlFor="form-rhf-input-lastName">
@@ -272,7 +260,7 @@ const AdminSettings = () => {
                           <div className="flex flex-col md:flex-row gap-4">
                             <Controller
                               name="phoneNum"
-                              control={adminForm.control}
+                              control={studentForm.control}
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                   <FieldLabel htmlFor="form-rhf-input-phoneNum">
@@ -295,7 +283,7 @@ const AdminSettings = () => {
                             />
                             <Controller
                               name="gender"
-                              control={adminForm.control}
+                              control={studentForm.control}
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                   <FieldLabel htmlFor="form-rhf-input-gender">
@@ -328,7 +316,7 @@ const AdminSettings = () => {
                               Username
                             </FieldLabel>
                             <Input
-                              value={adminData?.admin?.user?.username ?? ""}
+                              value={studentData?.student?.user?.username ?? ""}
                               disabled
                               className="opacity-70 cursor-not-allowed"
                             />
@@ -346,7 +334,7 @@ const AdminSettings = () => {
                           variant="outline"
                           disabled={!isEditing}
                           onClick={() => {
-                            adminForm.reset();
+                            studentForm.reset();
                             setIsEditing(false);
                           }}
                         >
@@ -360,9 +348,9 @@ const AdminSettings = () => {
                   </Card>
                   <Card className="w-full">
                     <CardHeader>
-                      <CardTitle>Workplace Information</CardTitle>
+                      <CardTitle>IIT Information</CardTitle>
                       <CardDescription>
-                        View your workplace details below.
+                        View your IIT details below.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -372,28 +360,38 @@ const AdminSettings = () => {
                             University Email
                           </FieldLabel>
                           <Input
-                            value={adminData?.admin?.user?.uniEmail ?? ""}
+                            value={studentData?.student?.user?.uniEmail ?? ""}
                             disabled
                             className="opacity-70 cursor-not-allowed"
                           />
                         </Field>
-                        <div className="flex flex-col md:flex-row gap-4">
-                          <Field>
-                            <FieldLabel className="building-input">
-                              Building Name
+                        <Field>
+                            <FieldLabel className="iitnumber-input">
+                              IIT Index Number
                             </FieldLabel>
                             <Input
-                              value={adminData?.admin?.building?.name ?? ""}
+                              value={studentData?.student?.iitIdNumber ?? ""}
+                              disabled
+                              className="opacity-70 cursor-not-allowed"
+                            />
+                          </Field>
+                        <div className="flex flex-col md:flex-row gap-4">
+                          <Field>
+                            <FieldLabel className="society-position-input">
+                              Society Position
+                            </FieldLabel>
+                            <Input
+                              value={studentData?.student?.societyPosition ?? ""}
                               disabled
                               className="opacity-70 cursor-not-allowed"
                             />
                           </Field>
                           <Field>
-                            <FieldLabel className="department-input">
-                              Department Name
+                            <FieldLabel className="society-input">
+                              Society Name
                             </FieldLabel>
                             <Input
-                              value={adminData?.admin?.department?.name ?? ""}
+                              value={studentData?.student?.societyName ?? ""}
                               disabled
                               className="opacity-70 cursor-not-allowed"
                             />
@@ -442,7 +440,7 @@ const AdminSettings = () => {
                   onClick={async () => {
                     try {
                       setDeleting(true);
-                      await deleteAdminProfile(token);
+                      await deleteStudentProfile(token);
                       await signOut(auth);
 
                       toast.success("Account deleted successfully!");
@@ -472,4 +470,4 @@ const AdminSettings = () => {
   )
 }
 
-export default AdminSettings
+export default StudentSettings

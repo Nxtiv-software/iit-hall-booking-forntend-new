@@ -60,7 +60,7 @@ import { Switch } from "@/components/ui/switch"
 import { fetchAllBuildings } from "@/Services/Buildings"
 import { auth } from "@/Firebase/config"
 
-const Venues = () => {
+const AdminVenues = () => {
   const queryClient = useQueryClient()
 
   const [token, setToken] = useState<string>("")
@@ -437,4 +437,4 @@ const Venues = () => {
   )
 }
 
-export default Venues
+export default AdminVenues

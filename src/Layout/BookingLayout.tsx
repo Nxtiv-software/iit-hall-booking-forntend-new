@@ -19,8 +19,9 @@ import {
 import { useLocation } from "react-router-dom";
 
 const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
-  "/dashboard": { label: "Dashboard" },
-  "/booking": { label: "Add a Booking", parent: "/dashboard" },
+  "/student-dashboard": { label: "Dashboard" },
+  "/student-add-booking": { label: "Add a Booking", parent: "/student-dashboard" },
+  "/student-bookings": { label: "Bookings", parent: "/student-dashboard" },
   // Add more routes as needed
 };
 

@@ -1,7 +1,3 @@
-import { AppSidebar1 } from "@/components/app-sidebar-admin-1"
-import { AppSidebar2 } from "@/components/app-sidebar-admin-2"
-import { AppSidebar3 } from "@/components/app-sidebar-admin-3"
-import { AppSidebar4 } from "@/components/app-sidebar-admin-4"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,7 +15,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -30,23 +25,9 @@ import { fetchAllBookings } from "@/Services/Bookings"
 import Theme from "@/components/Theme"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
-import { fetchAdminProfile } from "@/Services/Admin"
+import { AppSidebar } from "@/components/app-sidebar-student"
 
-const AdminBookings = () => {
-  // Fetch admin profile
-    const { data: adminData, isLoading: adminLoading } = useQuery({
-      queryKey: ["adminProfile"],
-      queryFn: async () => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("Not authenticated");
-  
-        const idToken = await currentUser.getIdToken();
-        return fetchAdminProfile(idToken);
-      },
-      retry: false, 
-      retryOnMount: false,
-    });
-
+const StudentBookings = () => {
   // Fetch all bookings
   const { data: bookingsData = [], isLoading } = useQuery({
       queryKey: ["bookings"],
@@ -61,20 +42,13 @@ const AdminBookings = () => {
       retryOnMount: false,
     });
 
-  const SidebarComponent = {
-      "1": AppSidebar1,
-      "2": AppSidebar2,
-      "3": AppSidebar3,
-      "4": AppSidebar4,
-    }[adminData?.admin?.adminLevel || "1"];
-  
-  if (isLoading || adminLoading) {
+  if (isLoading) {
     return <IITLoader/>
   }
 
   return (
     <SidebarProvider>
-      <SidebarComponent />
+      <AppSidebar/>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -132,4 +106,4 @@ const AdminBookings = () => {
   )
 }
 
-export default AdminBookings
+export default StudentBookings

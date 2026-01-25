@@ -1,27 +1,23 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./AuthProvider/FirebaseProvider/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
+
 import StudentLayout from "./Layout/StudentLayout";
 import BookingLayout from "./Layout/BookingLayout";
-
-
-import Bookings from "./Pages/Admin/Bookings";
-import Resources from "./Pages/Admin/Resources";
-import Venues from "./Pages/Admin/Venues";
-import { BookingProvider } from "./AuthProvider/BookingProvider";
-import RequestDetails from "./Pages/Admin/RequestDetails";
-// import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
-import Settings from "./Pages/Admin/Settings";
-import SignIn from "./Pages/AuthPages/SignIn";
-import Signup from "./Pages/Auth/Firebase-Auth/Signup";
-import PasswordReset from "./Pages/Auth/Firebase-Auth/passwordReset";
 import Admin1Layout from "./Layout/Admin1Layout";
 import Admin2Layout from "./Layout/Admin2Layout";
 import Admin3Layout from "./Layout/Admin3Layout";
 import Admin4Layout from "./Layout/Admin4Layout";
+
+import { AuthProvider } from "./AuthProvider/FirebaseProvider/AuthProvider";
+import { BookingProvider } from "./AuthProvider/BookingProvider";
+
+import SignIn from "./Pages/AuthPages/SignIn";
+import Signup from "./Pages/Auth/Firebase-Auth/Signup";
+import PasswordReset from "./Pages/Auth/Firebase-Auth/passwordReset";
+
 import Admin1PendingRequests from "./Pages/Admin/Admin1/PendingRequests";
 import Admin2PendingRequests from "./Pages/Admin/Admin2/PendingRequests";
 import Admin3PendingRequests from "./Pages/Admin/Admin3/PendingRequests";
@@ -30,6 +26,15 @@ import Admin1RejectedRequests from "./Pages/Admin/Admin1/RejectedRequests";
 import Admin2RejectedRequests from "./Pages/Admin/Admin2/RejectedRequests";
 import Admin3RejectedRequests from "./Pages/Admin/Admin3/RejectedRequests";
 import Admin4PendingRequests from "./Pages/Admin/Admin4/PendingRequests";
+import AdminBookings from "./Pages/Admin/Bookings";
+import AdminResources from "./Pages/Admin/Resources";
+import AdminVenues from "./Pages/Admin/Venues";
+import AdminSettings from "./Pages/Admin/Settings";
+import StudentVenues from "./Pages/Student/Venues";
+import StudentBookings from "./Pages/Student/Bookings";
+import StudentSettings from "./Pages/Student/Settings";
+
+import RequestDetails from "./Pages/Admin/RequestDetails";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -117,14 +122,6 @@ const App = () => {
                 </AdminProtected>
               }
             />
-            {/* <Route
-              path="/admin-requests-accepted"
-              element={
-                <AdminProtected>
-                  <AcceptedRequests />
-                </AdminProtected>
-              }
-            /> */}
             <Route
               path="/admin1-requests-rejected"
               element={
@@ -161,7 +158,7 @@ const App = () => {
               path="/admin-bookings"
               element={
                 <AdminProtected>
-                  <Bookings />
+                  <AdminBookings />
                 </AdminProtected>
               }
             />
@@ -169,7 +166,7 @@ const App = () => {
               path="/admin-resources"
               element={
                 <AdminProtected>
-                  <Resources />
+                  <AdminResources />
                 </AdminProtected>
               }
             />
@@ -177,7 +174,7 @@ const App = () => {
               path="/admin-venues"
               element={
                 <AdminProtected>
-                  <Venues />
+                  <AdminVenues />
                 </AdminProtected>
               }
             />
@@ -185,14 +182,14 @@ const App = () => {
               path="/admin-settings"
               element={
                 <UserProtected>
-                  <Settings/>
+                  <AdminSettings />
                 </UserProtected>
               }
             />
 
             {/* Student routes */}
             <Route
-              path="/dashboard"
+              path="/student-dashboard"
               element={
                 <UserProtected>
                   <StudentLayout />
@@ -202,13 +199,38 @@ const App = () => {
             
             </Route>
             <Route
-              path="/booking"
+              path="/student-add-booking"
               element={
                 <UserProtected>
                   <BookingLayout/>
                 </UserProtected>
               }
             />
+            <Route
+              path="/student-bookings"
+              element={
+                <UserProtected>
+                  <StudentBookings/>
+                </UserProtected>
+              }
+            />
+            <Route
+              path="/student-venues"
+              element={
+                <UserProtected>
+                  <StudentVenues/>
+                </UserProtected>
+              }
+            />
+            <Route
+              path="/student-settings"
+              element={
+                <UserProtected>
+                  <StudentSettings/>
+                </UserProtected>
+              }
+            />
+
 
             <Route path="/sign-in" element={<SignIn/>}/>
 
