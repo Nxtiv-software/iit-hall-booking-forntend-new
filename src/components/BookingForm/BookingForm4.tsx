@@ -39,7 +39,7 @@ const BookingForm4 = () => {
 
       const initialSelected: Record<string, boolean> = {};
       data.forEach((r) => {
-        initialSelected[r.id] = state.form4Data?.[r.id] || false;
+        initialSelected[r.id] = state.form4Data?.resourceIds?.includes(r.id) || false;
       });
       setSelectedResources(initialSelected);
     };
@@ -52,11 +52,24 @@ const BookingForm4 = () => {
   };
 
   const handleSubmit = () => {
+    // const form4Values = {
+    //   ...selectedResources,
+    //   additionalNotes,
+    // };
+    // console.log("Form 4 Values:", form4Values);
+    // updateForm4(form4Values);
+    // nextPage();
+    const selectedResourceIds = Object.entries(selectedResources)
+      .filter(([_, checked]) => checked)
+      .map(([id]) => id);
+
     const form4Values = {
-      ...selectedResources,
       additionalNotes,
+      resourceIds: selectedResourceIds,
     };
+
     console.log("Form 4 Values:", form4Values);
+
     updateForm4(form4Values);
     nextPage();
   };

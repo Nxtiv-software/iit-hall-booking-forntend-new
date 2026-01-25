@@ -47,6 +47,7 @@ const BookingForm5 = () => {
 
     const bookingData = {
       venueId: "c6708fec-8465-4639-a049-6ac1d421e22d",
+      resourceIds: state.form4Data?.resourceIds ?? [],
       requiredDate: "2026-01-20T10:00:00.000Z",
       form1Data: state.form1Data,
       form2Data: state.form2Data,
