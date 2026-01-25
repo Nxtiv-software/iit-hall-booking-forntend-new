@@ -209,7 +209,7 @@ const Admin2Layout = () => {
                 <CardHeader>
                   <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Pending Requests</CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
-                    {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0}
+                    {pendingLoading ? "Loading..." : pendingCountData?.totalPending ?? 0}
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
