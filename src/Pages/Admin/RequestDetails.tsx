@@ -75,6 +75,7 @@ const RequestDetails = () => {
   });
 
   const adminId = adminData?.admin?.id;
+  const adminLevel = adminData?.admin?.adminLevel;
 
   // Fetch specific request details
   const { data:requestData, isLoading: requestLoading } = useQuery({
@@ -117,6 +118,12 @@ const RequestDetails = () => {
     enabled: !!requestId,
     retry: false,
   });
+
+  const hasCurrentLevelResponded = approvalHistory.some(
+    (a) =>
+      Number(a.adminLevel) === Number(adminLevel) &&
+      ["APPROVED", "REJECTED"].includes(a.status?.name)
+  );
 
   // Approve mutation
   const approveMutation = useMutation({
@@ -656,45 +663,34 @@ const RequestDetails = () => {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="comment">Comment *</Label>
-                        <Textarea
-                          id="comment"
-                          placeholder="Enter your comments here..."
-                          value={comment}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLTextAreaElement>,
-                          ) => setComment(e.target.value)}
-                          rows={4}
-                          className="resize-none"
-                        />
-                      </div>
-                      <div className="flex gap-4 justify-end">
-                        <Button
-                          variant="outline"
-                          onClick={() => navigate(`/admin${adminData?.admin?.adminLevel}-requests-pending`)}
-                          disabled={isSubmitting}
-                        >
-                          Cancel
-                        </Button>
+                      {hasCurrentLevelResponded && (
+                        <p className="text-sm italic text-muted-foreground">
+                          This request has already been reviewed by your admin level.
+                        </p>
+                      )}
+
+                      <Label>Comment *</Label>
+                      <Textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                      />
+
+                      <div className="flex justify-end gap-3">
                         <Button
                           variant="destructive"
-                          onClick={handleReject}
-                          disabled={isSubmitting || rejectMutation.isPending}
-                          className="gap-2"
+                          disabled={hasCurrentLevelResponded}
+                          onClick={() => rejectMutation.mutate()}
                         >
-                          <XCircle className="h-4 w-4" />
-                          {rejectMutation.isPending ? "Rejecting..." : "Reject"}
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Reject
                         </Button>
+
                         <Button
-                          onClick={handleApprove}
-                          disabled={isSubmitting || approveMutation.isPending}
-                          className="gap-2"
+                          disabled={hasCurrentLevelResponded}
+                          onClick={() => approveMutation.mutate()}
                         >
-                          <CheckCircle className="h-4 w-4" />
-                          {approveMutation.isPending
-                            ? "Approving..."
-                            : "Approve"}
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Approve
                         </Button>
                       </div>
                     </CardContent>

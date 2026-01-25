@@ -103,14 +103,14 @@ const Bookings = () => {
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
               <h2 className="text-lg font-semibold mb-4">Bookings</h2>
               <Table>
-                  <TableCaption>List of bookings</TableCaption>
+                  {/* <TableCaption>List of bookings</TableCaption> */}
                   <TableHeader>
                   <TableRow>
                     <TableHead>Student</TableHead>
                     <TableHead>Venue</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Requested Date</TableHead>
                     <TableHead>Admin</TableHead>
+                    <TableHead>Requested Date</TableHead>
                   </TableRow>
                   </TableHeader>
                   <TableBody>

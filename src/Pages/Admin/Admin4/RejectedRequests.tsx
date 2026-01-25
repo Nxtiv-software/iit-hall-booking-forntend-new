@@ -95,7 +95,7 @@ const Admin4RejectedRequests = () => {
                 <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
                     <h2 className="text-lg font-semibold mb-4">Rejected Requests</h2>
                     <Table>
-                        <TableCaption>List of rejected booking requests</TableCaption>
+                        {/* <TableCaption>List of rejected booking requests</TableCaption> */}
                         <TableHeader>
                         <TableRow>
                             <TableHead>Student Name</TableHead>
