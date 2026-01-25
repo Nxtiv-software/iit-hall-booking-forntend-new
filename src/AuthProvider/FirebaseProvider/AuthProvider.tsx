@@ -68,13 +68,11 @@ export function AuthProvider({ children }) {
   };
 
   const isAdmin = () => {
-    console.log('//////////', user?.role?.name)
     if (!user) return false;
     return user?.role?.name === "ADMIN";
   };
 
   const isSuperAdmin = () => {
-    console.log('//////////', user?.role?.name)
     if (!user) return false;
     return user?.role?.name === "SUPER_ADMIN";
   };

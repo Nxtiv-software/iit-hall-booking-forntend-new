@@ -1,4 +1,7 @@
-import { AppSidebar } from "@/components/app-sidebar-admin";
+import { AppSidebar1 } from "@/components/app-sidebar-admin-1";
+import { AppSidebar2 } from "@/components/app-sidebar-admin-2";
+import { AppSidebar3 } from "@/components/app-sidebar-admin-3";
+import { AppSidebar4 } from "@/components/app-sidebar-admin-4";
 import Theme from "@/components/Theme";
 import {
   Breadcrumb,
@@ -30,6 +33,7 @@ import {
   fetchAdminProfile,
   approveRequest,
   rejectRequest,
+  fetchRequestById,
 } from "@/Services/Admin";
 import {
   fetchApprovalsByRequest,
@@ -38,11 +42,10 @@ import {
 import IITLoader from "@/components/IITLoader";
 import { auth } from "@/Firebase/config";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Calendar,
-  Clock,
   MapPin,
   User,
   FileText,
@@ -73,29 +76,19 @@ const RequestDetails = () => {
 
   const adminId = adminData?.admin?.id;
 
-  // Fetch pending requests to get the specific request details
-  const { data: pendingRequestData = [], isLoading: requestLoading } = useQuery(
-    {
-      queryKey: ["pendingRequests", adminId],
-      queryFn: async () => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("Not authenticated");
+  // Fetch specific request details
+  const { data:requestData, isLoading: requestLoading } = useQuery({
+    queryKey: ["request", requestId],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
 
-        const idToken = await currentUser.getIdToken();
-        const { fetchPendingRequests } = await import("@/Services/Admin");
-        return fetchPendingRequests(adminId, idToken);
-      },
-      enabled: !!adminId,
-      retry: false,
-      retryOnMount: false,
+      const idToken = await currentUser.getIdToken();
+      return fetchRequestById(adminId, requestId!, idToken);
     },
-  );
-
-  // Find the specific request
-  const request = pendingRequestData.find(
-    (req: { id: string }) => req.id === requestId,
-  );
-  console.log(request);
+    enabled: !!adminId,
+    retry: false,
+  });
 
   // Fetch approval history
   const { data: approvalHistory = [] } = useQuery({
@@ -137,7 +130,7 @@ const RequestDetails = () => {
     onSuccess: () => {
       toast.success("Request approved successfully!");
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
-      navigate("/admin-requests-pending");
+      navigate(`/admin${adminData.admin.adminLevel}-requests-pending`);
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
@@ -157,7 +150,7 @@ const RequestDetails = () => {
     onSuccess: () => {
       toast.success("Request rejected successfully!");
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
-      navigate("/admin-requests-pending");
+      navigate(`/admin${adminData.admin.adminLevel}-requests-pending`);
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
@@ -183,14 +176,27 @@ const RequestDetails = () => {
     rejectMutation.mutate();
   };
 
-  if (requestLoading || adminLoading || !request) {
+  const SidebarComponent = {
+    "1": AppSidebar1,
+    "2": AppSidebar2,
+    "3": AppSidebar3,
+    "4": AppSidebar4,
+  }[adminData?.admin?.adminLevel || "1"];
+
+  useEffect(() => {
+    console.log("Request Data:", requestData);
+    console.log("Approval Data:", approvalHistory);
+  }, [requestData, approvalHistory]);
+
+
+  if (requestLoading || adminLoading || !requestData) {
     return <IITLoader />;
   }
 
   return (
     <div>
       <SidebarProvider>
-        <AppSidebar />
+        <SidebarComponent />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
@@ -205,7 +211,7 @@ const RequestDetails = () => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/admin-requests-pending">
+                  <BreadcrumbLink href="/admin${admin}-requests-pending">
                     Pending Requests
                   </BreadcrumbLink>
                 </BreadcrumbItem>
@@ -226,15 +232,15 @@ const RequestDetails = () => {
                 <h2 className="text-2xl font-semibold">Request Details</h2>
                 <Badge
                   variant={
-                    request.status.name === "Pending"
+                    requestData?.request.status?.name === "PENDING"
                       ? "secondary"
-                      : request.status.name === "Approved"
+                      : requestData?.request.status?.name === "APPROVED"
                         ? "default"
                         : "destructive"
                   }
                   className="text-sm"
                 >
-                  {request.status.name}
+                  {requestData?.request.status?.name ?? "N/A"}
                 </Badge>
               </div>
 
@@ -253,13 +259,13 @@ const RequestDetails = () => {
                     <div>
                       <p className="text-sm text-muted-foreground">Name</p>
                       <p className="font-medium">
-                        {`${request.student.user.firstName ?? ""} ${request.student.user.lastName ?? ""}`}
+                        {`${requestData?.request.student?.user?.firstName ?? ""} ${requestData?.request.student?.user?.lastName ?? ""}`}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Email</p>
                       <p className="font-medium">
-                        {request.student.user.uniEmail}
+                        {requestData?.request.student?.user?.uniEmail}
                       </p>
                     </div>
                     <div>
@@ -267,13 +273,13 @@ const RequestDetails = () => {
                         Index Number
                       </p>
                       <p className="font-medium">
-                        {request.student.indexNumber || "N/A"}
+                        {requestData?.request.student?.iitIdNumber || "N/A"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Phone</p>
                       <p className="font-medium">
-                        {request.student.user.phoneNum || "N/A"}
+                        {requestData?.request.student?.user?.phoneNum || "N/A"}
                       </p>
                     </div>
                   </CardContent>
@@ -294,14 +300,14 @@ const RequestDetails = () => {
                           <p className="text-sm text-muted-foreground">
                             Venue Name
                           </p>
-                          <p className="font-medium">{request.venue.name}</p>
+                          <p className="font-medium">{requestData?.request.venue?.name}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">
                             Building
                           </p>
                           <p className="font-medium">
-                            {request.formData.form3?.preferredbuilding || "N/A"}
+                            {requestData?.request?.venue?.building?.name || "N/A"}
                           </p>
                         </div>
                         <div>
@@ -309,7 +315,7 @@ const RequestDetails = () => {
                             Preferd Room
                           </p>
                           <p className="font-medium">
-                            {request.formData.form3.preferredroom || "N/A"}
+                            {requestData?.request.formData?.form3?.preferredroom || "N/A"}
                           </p>
                         </div>
                         <div>
@@ -317,7 +323,7 @@ const RequestDetails = () => {
                             Alternate Room
                           </p>
                           <p className="font-medium">
-                            {request.formData.form3.alternateroom || "N/A"}
+                            {requestData?.request.formData?.form3?.alternateroom || "N/A"}
                           </p>
                         </div>
                       </div>
@@ -327,7 +333,7 @@ const RequestDetails = () => {
                             No of Participants
                           </p>
                           <p className="font-medium">
-                            {request.attendance || "N/A"}
+                            {requestData?.request?.attendance || "N/A"}
                           </p>
                         </div>
                       </div>
@@ -336,7 +342,7 @@ const RequestDetails = () => {
                 </Card>
 
                 {/* Event Details (Form 1) */}
-                {request.formData?.form1 && (
+                {requestData?.request?.formData?.form1 && (
                   <Card className="md:col-span-2">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -348,32 +354,32 @@ const RequestDetails = () => {
                       <div className="grid gap-4 md:grid-cols-3">
                         <div>
                           <p className="text-sm text-muted-foreground">Event Title</p>
-                          <p className="font-medium">{request.formData.form1.eventtitle || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.eventtitle || "N/A"}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Event Type</p>
-                          <p className="font-medium">{request.formData.form1.eventtype || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.eventtype || "N/A"}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Society Name</p>
-                          <p className="font-medium">{request.formData.form1.societyname || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.societyname || "N/A"}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">ExCo Member Name</p>
-                          <p className="font-medium">{request.formData.form1.excomembername || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.excomembername || "N/A"}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">ExCo Position</p>
-                          <p className="font-medium">{request.formData.form1.excoposition || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.excoposition || "N/A"}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Participants</p>
-                          <p className="font-medium">{request.formData.form1.participants || "N/A"}</p>
+                          <p className="font-medium">{requestData?.request.formData?.form1?.participants || "N/A"}</p>
                         </div>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Description</p>
-                        <p className="font-medium">{request.formData.form1.description || "No description provided"}</p>
+                        <p className="font-medium">{requestData?.request.formData?.form1?.description || "No description provided"}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -395,7 +401,7 @@ const RequestDetails = () => {
                             Booking Date
                           </p>
                           <p className="font-medium">
-                            {request.formData.form2.datevalue}
+                            {requestData?.request.formData?.form2?.datevalue}
                           </p>
                         </div>
                       </div>
@@ -404,7 +410,7 @@ const RequestDetails = () => {
                           Requested Date
                         </p>
                         <p className="font-medium">
-                          {new Date(request.createdAt).toLocaleString()}
+                          {new Date(requestData?.request.createdAt).toLocaleString()}
                         </p>
                       </div>
                       <div>
@@ -412,7 +418,7 @@ const RequestDetails = () => {
                           Starting time
                         </p>
                         <p className="font-medium">
-                          {request.formData.form2.startingTime}
+                          {requestData?.request.formData?.form2?.startingTime}
                         </p>
                       </div>
                       <div>
@@ -420,7 +426,7 @@ const RequestDetails = () => {
                           Ending Time
                         </p>
                         <p className="font-medium">
-                          {request.formData.form2.endingTime}
+                          {requestData?.request.formData?.form2?.endingTime}
                         </p>
                       </div>
                     </div>
@@ -429,7 +435,7 @@ const RequestDetails = () => {
                         No of Days
                       </p>
                       <p className="font-medium">
-                        {request.formData.form2.noofdays}
+                        {requestData?.request.formData?.form2?.noofdays}
                       </p>
                     </div>
                     <div>
@@ -437,12 +443,12 @@ const RequestDetails = () => {
                         Description
                       </p>
                       <p className="font-medium">
-                        {request.description || "No description provided"}
+                        {requestData?.request.description || "No description provided"}
                       </p>
                     </div>
 
                     {/* Equipment and Services (Form 4) */}
-                    {request.formData?.form4 && (
+                    {requestData?.request.formData?.form4 && (
                       <div className="border-t pt-4 mt-4">
                         <p className="text-sm font-semibold text-muted-foreground mb-3">
                           Equipment & Services Required
@@ -450,9 +456,9 @@ const RequestDetails = () => {
                         <div className="grid gap-3 md:grid-cols-3">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.soundSystem ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.soundSystem ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.soundSystem && (
+                              {requestData?.request.formData?.form4?.soundSystem && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -460,9 +466,9 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.projector ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.projector ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.projector && (
+                              {requestData?.request.formData?.form4?.projector && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -470,9 +476,9 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.podium ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.podium ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.podium && (
+                              {requestData?.request.formData?.form4?.podium && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -480,9 +486,9 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.tablesChairSetup ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.tablesChairSetup ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.tablesChairSetup && (
+                              {requestData?.request.formData?.form4?.tablesChairSetup && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -492,9 +498,9 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.wifiCredentials ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.wifiCredentials ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.wifiCredentials && (
+                              {requestData?.request.formData?.form4?.wifiCredentials && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -502,9 +508,9 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.iitBranding ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request?.formData?.form4?.iitBranding ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.iitBranding && (
+                              {requestData?.request.formData?.form4?.iitBranding && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
@@ -512,40 +518,28 @@ const RequestDetails = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <div
-                              className={`h-4 w-4 rounded border ${request.formData.form4.zoomPackage ? "bg-primary border-primary" : "border-muted-foreground"}`}
+                              className={`h-4 w-4 rounded border ${requestData?.request?.formData?.form4?.zoomPackage ? "bg-primary border-primary" : "border-muted-foreground"}`}
                             >
-                              {request.formData.form4.zoomPackage && (
+                              {requestData?.request.formData?.form4?.zoomPackage && (
                                 <CheckCircle className="h-4 w-4 text-primary-foreground" />
                               )}
                             </div>
                             <span className="text-sm">Zoom Package</span>
                           </div>
                         </div>
-                        {request.formData.form4.additionalNotes && (
+                        {requestData?.request.formData?.form4?.additionalNotes && (
                           <div className="mt-3">
                             <p className="text-sm text-muted-foreground">
                               Additional Notes
                             </p>
                             <p className="font-medium text-sm">
-                              {request.formData.form4.additionalNotes}
+                              {requestData?.request.formData?.form4?.additionalNotes}
                             </p>
                           </div>
                         )}
                       </div>
                     )}
                   </CardContent>
-                </Card>
-
-                {/**Event Details */}
-                <Card className="md:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5" />
-                      Booking Details
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent></CardContent>
                 </Card>
 
                 {/* Approval History */}
@@ -563,7 +557,7 @@ const RequestDetails = () => {
                           (
                             approval: {
                               adminLevel: string;
-                              isApproved: boolean;
+                              status: { name: "APPROVED" | "REJECTED" }
                               comment: string;
                               createdAt: string;
                             },
@@ -575,26 +569,26 @@ const RequestDetails = () => {
                             >
                               <div className="flex items-center gap-2 mb-1">
                                 <p className="font-medium">
-                                  {approval.adminLevel}
+                                  {approval?.adminLevel}
                                 </p>
                                 <Badge
                                   variant={
-                                    approval.isApproved
+                                    approval?.status?.name === "APPROVED"
                                       ? "default"
-                                      : "destructive"
+                                      : approval?.status?.name === "REJECTED"
+                                      ? "destructive"
+                                      : "secondary"
                                   }
                                   className="text-xs"
                                 >
-                                  {approval.isApproved
-                                    ? "Approved"
-                                    : "Rejected"}
+                                  {approval?.status?.name ?? "PENDING"}
                                 </Badge>
                               </div>
                               <p className="text-sm text-muted-foreground">
-                                {approval.comment}
+                                {approval?.comment}
                               </p>
                               <p className="text-xs text-muted-foreground mt-1">
-                                {new Date(approval.createdAt).toLocaleString()}
+                                {new Date(approval?.createdAt).toLocaleString()}
                               </p>
                             </div>
                           ),
@@ -624,20 +618,20 @@ const RequestDetails = () => {
                             fileUrl: string;
                           }) => (
                             <div
-                              key={attachment.id}
+                              key={attachment?.id}
                               className="flex items-center justify-between p-3 border rounded-lg"
                             >
                               <div>
                                 <p className="font-medium">
-                                  {attachment.fileName}
+                                  {attachment?.fileName}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {attachment.fileType} • {attachment.fileSize}
+                                  {attachment?.fileType} • {attachment?.fileSize}
                                 </p>
                               </div>
                               <Button variant="outline" size="sm" asChild>
                                 <a
-                                  href={attachment.fileUrl}
+                                  href={attachment?.fileUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
@@ -653,7 +647,7 @@ const RequestDetails = () => {
                 )}
 
                 {/* Action Section */}
-                {request.status.name === "PENDING" && (
+                {requestData?.request.status?.name === "PENDING" && (
                   <Card className="md:col-span-2">
                     <CardHeader>
                       <CardTitle>Review Action</CardTitle>
@@ -678,7 +672,7 @@ const RequestDetails = () => {
                       <div className="flex gap-4 justify-end">
                         <Button
                           variant="outline"
-                          onClick={() => navigate("/admin-requests-pending")}
+                          onClick={() => navigate(`/admin${adminData?.admin?.adminLevel}-requests-pending`)}
                           disabled={isSubmitting}
                         >
                           Cancel

@@ -5,7 +5,6 @@ import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 import StudentLayout from "./Layout/StudentLayout";
-import AdminLayout from "./Layout/AdminLayout";
 import BookingLayout from "./Layout/BookingLayout";
 
 
@@ -13,14 +12,23 @@ import Bookings from "./Pages/Admin/Bookings";
 import Resources from "./Pages/Admin/Resources";
 import Venues from "./Pages/Admin/Venues";
 import { BookingProvider } from "./AuthProvider/BookingProvider";
-import PendingRequests from "./Pages/Admin/PendingRequests";
 import RequestDetails from "./Pages/Admin/RequestDetails";
 // import AcceptedRequests from "./Pages/Admin/AcceptedRequests";
-import RejectedRequests from "./Pages/Admin/RejectedRequests";
 import Settings from "./Pages/Admin/Settings";
 import SignIn from "./Pages/AuthPages/SignIn";
 import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 import PasswordReset from "./Pages/Auth/Firebase-Auth/passwordReset";
+import Admin1Layout from "./Layout/Admin1Layout";
+import Admin2Layout from "./Layout/Admin2Layout";
+import Admin3Layout from "./Layout/Admin3Layout";
+import Admin4Layout from "./Layout/Admin4Layout";
+import Admin1PendingRequests from "./Pages/Admin/Admin1/PendingRequests";
+import Admin2PendingRequests from "./Pages/Admin/Admin2/PendingRequests";
+import Admin3PendingRequests from "./Pages/Admin/Admin3/PendingRequests";
+import Admin4RejectedRequests from "./Pages/Admin/Admin4/RejectedRequests";
+import Admin1RejectedRequests from "./Pages/Admin/Admin1/RejectedRequests";
+import Admin2RejectedRequests from "./Pages/Admin/Admin2/RejectedRequests";
+import Admin3RejectedRequests from "./Pages/Admin/Admin3/RejectedRequests";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -37,18 +45,66 @@ const App = () => {
             <Route path="/reset-password" element={<PasswordReset />} />
             {/* Admin routes */}
             <Route
-              path="/admin-dashboard"
+              path="/admin1-dashboard"
               element={
                 <AdminProtected>
-                  <AdminLayout />
+                  <Admin1Layout />
                 </AdminProtected>
               }
             />
             <Route
-              path="/admin-requests-pending"
+              path="/admin2-dashboard"
               element={
                 <AdminProtected>
-                  <PendingRequests />
+                  <Admin2Layout />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin3-dashboard"
+              element={
+                <AdminProtected>
+                  <Admin3Layout />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin4-dashboard"
+              element={
+                <AdminProtected>
+                  <Admin4Layout />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin1-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin1PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin2-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin2PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin3-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin3PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin4-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin4RejectedRequests />
                 </AdminProtected>
               }
             />
@@ -69,10 +125,34 @@ const App = () => {
               }
             /> */}
             <Route
-              path="/admin-requests-rejected"
+              path="/admin1-requests-rejected"
               element={
                 <AdminProtected>
-                  <RejectedRequests />
+                  <Admin1RejectedRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin2-requests-rejected"
+              element={
+                <AdminProtected>
+                  <Admin2RejectedRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin3-requests-rejected"
+              element={
+                <AdminProtected>
+                  <Admin3RejectedRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin4-requests-rejected"
+              element={
+                <AdminProtected>
+                  <Admin4RejectedRequests />
                 </AdminProtected>
               }
             />

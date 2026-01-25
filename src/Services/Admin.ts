@@ -2,230 +2,303 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8800/admins";
 
-// 1. Fetch admin profile
+/* =========================
+   ADMIN PROFILE
+========================= */
+
 export const fetchAdminProfile = async (token: string) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    const err = error as { response?: { status?: number; data?: unknown } };
-    if (err.response?.status === 404) {
-      console.warn("Admin profile not found (404). The admin profile may need to be created.");
-    } else {
-      console.error("Error fetching admin profile:", error);
-    }
-    throw error;
-  }
+  const response = await axios.get(`${BASE_URL}/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 2. Create admin profile
 export const createAdminProfile = async (data: any, token: string) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/me`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating admin profile:", error);
-    throw error;
-  }
+  const response = await axios.post(`${BASE_URL}/me`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 3. Update admin profile
 export const updateAdminProfile = async (data: any, token: string) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/me`, data, {
-      headers: { Authorization: `Bearer ${token}`,
+  const response = await axios.put(`${BASE_URL}/me`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating admin profile:", error);
-    throw error;
-  }
+  });
+  return response.data;
 };
 
-// 4. Delete admin profile
 export const deleteAdminProfile = async (token: string) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting admin profile:", error);
-    throw error;
-  }
+  const response = await axios.delete(`${BASE_URL}/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 5. Fetch all bookings for an admin
+/* =========================
+   BOOKINGS
+========================= */
+
 export const fetchAdminBookings = async (adminId: string, token: string) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/bookings`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching admin bookings:", error);
-    throw error;
-  }
+  const response = await axios.get(`${BASE_URL}/${adminId}/bookings`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 6. Fetch pending requests for admin
-export const fetchPendingRequests = async (adminId: string, token: string) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/pending-requests`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching pending requests:", error);
-    throw error;
-  }
+/* =========================
+   ADMIN LEVEL REQUESTS
+========================= */
+
+// ADMIN 1
+export const fetchAdmin1Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin1/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 7. Fetch rejected requests for admin
-export const fetchRejectedRequests = async (adminId: string, token: string) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/rejected-requests`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching rejected requests:", error);
-    throw error;
-  }
+export const fetchAdmin1Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin1/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 8. Approve a request
-export const approveRequest = async (adminId: string, requestId: string, comment: string, token: string) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/approve`, { comment }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error approving request:", error);
-    throw error;
-  }
+// ADMIN 2
+export const fetchAdmin2Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin2/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 9. Reject a request
-export const rejectRequest = async (adminId: string, requestId: string, comment: string, token: string) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/requests/${requestId}/reject`, { comment }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error rejecting request:", error);
-    throw error;
-  }
+export const fetchAdmin2Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin2/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 10. Update approval comment
-export const updateApprovalComment = async (adminId: string, requestId: string, adminLevel: string, comment: string, token: string) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/${adminId}/requests/${requestId}/approval`, { adminLevel, comment }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating approval comment:", error);
-    throw error;
-  }
+// ADMIN 3
+export const fetchAdmin3Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin3/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 11. Fetch count of pending requests for admin
-export const fetchPendingRequestCount = async (adminId: string, token: string) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${adminId}/pending-count`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching pending request count:", error);
-    throw error;
-  }
+export const fetchAdmin3Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin3/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 12. Create a new resource
-export const createResource = async (adminId: string, departmentId: string, data: any, token: string) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/departments/${departmentId}/resources`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating resource:", error);
-    throw error;
-  }
+// ADMIN 4
+export const fetchAdmin4Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin4/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 13. Update a resource
-export const updateResource = async (adminId: string, departmentId: string, resourceId: string, data: any, token: string) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating resource:", error);
-    throw error;
-  }
+export const fetchAdmin4Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin4/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
-// 14. Delete a resource
-export const deleteResource = async (adminId: string, departmentId: string, resourceId: string, token: string) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`, {
+/* =========================
+   APPROVAL ACTIONS
+========================= */
+
+export const approveRequest = async (
+  adminId: string,
+  requestId: string,
+  comment: string,
+  token: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/${adminId}/requests/${requestId}/approve`,
+    { comment },
+    {
       headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting resource:", error);
-    throw error;
-  }
+    }
+  );
+  return response.data;
 };
 
-// 15. Create a new venue
-export const createVenue = async (adminId: string, buildingId: string, data: any, token: string) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues`, data, {
+export const rejectRequest = async (
+  adminId: string,
+  requestId: string,
+  comment: string,
+  token: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/${adminId}/requests/${requestId}/reject`,
+    { comment },
+    {
       headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating venue:", error);
-    throw error;
-  }
+    }
+  );
+  return response.data;
 };
 
-// 16. Update a venue
-export const updateVenue = async (adminId: string, buildingId: string, venueId: string, data: any, token: string) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`, data, {
+export const updateApprovalComment = async (
+  adminId: string,
+  requestId: string,
+  adminLevel: number,
+  comment: string,
+  token: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}/${adminId}/requests/${requestId}/approval`,
+    { adminLevel, comment },
+    {
       headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating venue:", error);
-    throw error;
-  }
+    }
+  );
+  return response.data;
 };
 
-// 17. Delete a venue
-export const deleteVenue = async (adminId: string, buildingId: string, venueId: string, token: string) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`, {
+/* =========================
+   PENDING COUNT
+========================= */
+
+export const fetchPendingRequestCount = async (
+  adminId: string,
+  token: string
+) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/pending-count`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/* =========================
+   RESOURCES
+========================= */
+
+export const createResource = async (
+  adminId: string,
+  departmentId: string,
+  data: any,
+  token: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/${adminId}/departments/${departmentId}/resources`,
+    data,
+    {
       headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting venue:", error);
-    throw error;
-  }
+    }
+  );
+  return response.data;
+};
+
+export const updateResource = async (
+  adminId: string,
+  departmentId: string,
+  resourceId: string,
+  data: any,
+  token: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`,
+    data,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+export const deleteResource = async (
+  adminId: string,
+  departmentId: string,
+  resourceId: string,
+  token: string
+) => {
+  const response = await axios.delete(
+    `${BASE_URL}/${adminId}/departments/${departmentId}/resources/${resourceId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+/* =========================
+   VENUES
+========================= */
+
+export const createVenue = async (
+  adminId: string,
+  buildingId: string,
+  data: any,
+  token: string
+) => {
+  const response = await axios.post(
+    `${BASE_URL}/${adminId}/buildings/${buildingId}/venues`,
+    data,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+export const updateVenue = async (
+  adminId: string,
+  buildingId: string,
+  venueId: string,
+  data: any,
+  token: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`,
+    data,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+export const deleteVenue = async (
+  adminId: string,
+  buildingId: string,
+  venueId: string,
+  token: string
+) => {
+  const response = await axios.delete(
+    `${BASE_URL}/${adminId}/buildings/${buildingId}/venues/${venueId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
+/* =========================
+   REQUESTS
+========================= */
+
+export const fetchRequestById = async (
+  adminId: string,
+  requestId: string,
+  token: string
+) => {
+  const response = await axios.get(
+    `${BASE_URL}/${adminId}/requests/${requestId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
 };

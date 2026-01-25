@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/IITLoader";
 
 const Login = () => {
-  const { loginUser, isAuthenticated, isAdmin, isSuperAdmin, loading, user } = useAuth();
+  const { loginUser, isAuthenticated, loading, user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -25,18 +25,17 @@ const Login = () => {
   };
 
   if (isAuthenticated() && user) {
-    return (
-      <Navigate
-        to={
-          isSuperAdmin()
-            ? "/super-admin-dashboard"
-            : isAdmin()
-            ? "/admin-dashboard"
-            : "/dashboard"
-        }
-        replace
-      />
-    );
+    if (user.superAdmin) {
+      return <Navigate to="/super-admin-dashboard" replace />;
+    }
+    if (user.admin) {
+      const level = user.admin.adminLevel;
+      if (level === 1) return <Navigate to="/admin1-dashboard" replace />;
+      if (level === 2) return <Navigate to="/admin2-dashboard" replace />;
+      if (level === 3) return <Navigate to="/admin3-dashboard" replace />;
+      if (level === 4) return <Navigate to="/admin4-dashboard" replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (loading) {
