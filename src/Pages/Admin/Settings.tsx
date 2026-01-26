@@ -188,12 +188,15 @@ const AdminSettings = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="w-full">
                   <CardContent>
-                    <div className="col-span-1 flex flex-col gap-4 mt-3">
-                      <Avatar className="w-35 h-35">
+                    <div className="col-span-1 flex flex-col mt-3">
+                      <Avatar className="w-24 h-24">
                           <AvatarImage src={adminData?.admin?.user?.avatarUrl} alt="User avatar image" />
-                          <AvatarFallback>Avatar</AvatarFallback>
+                          <AvatarFallback>A</AvatarFallback>
                       </Avatar>
-                      <div className="mb-10">
+                      <div className="text-2xl font-medium mt-8 mb-2">
+                        {adminData?.admin?.user?.firstName} {adminData?.admin?.user?.lastName}
+                      </div>
+                      <div className="text-sm text-muted-foreground mb-15">
                         {adminData?.admin?.user?.uniEmail}
                       </div>
                       <div className="flex flex-col gap-3">
