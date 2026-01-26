@@ -46,7 +46,7 @@ const BookingForm5 = () => {
     updateForm5(form5Values);
 
     const bookingData = {
-      venueId: "4eb610c4-9a9b-4870-b70d-e163d79e96d3",
+      venueId: state.form3Data?.preferredroom,
       resourceIds: state.form4Data?.resourceIds ?? [],
       requiredDate: new Date(state.form2Data?.datevalue),
       form1Data: state.form1Data,
@@ -73,12 +73,16 @@ const BookingForm5 = () => {
       const response = await createStudentRequest(idToken, bookingData);
       console.log("Booking created successfully:", response);
 
+      toast.success("Booking request submitted successfully!");
+
       // Clear booking data from local storage after successful submission
       resetBooking();
 
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Error submitting booking:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to submit booking request";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

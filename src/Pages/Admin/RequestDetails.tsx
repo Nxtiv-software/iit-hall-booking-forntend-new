@@ -119,6 +119,26 @@ const AdminRequestDetails = () => {
     retry: false,
   });
 
+  // Fetch available resources
+  const { data: allResources = [] } = useQuery({
+    queryKey: ["resources"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      const res = await fetch("http://localhost:8800/resources/available", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch resources");
+      return res.json();
+    },
+    retry: false,
+  });
+
   const hasCurrentLevelResponded = approvalHistory.some(
     (a) =>
       Number(a.adminLevel) === Number(adminLevel) &&
@@ -458,81 +478,24 @@ const AdminRequestDetails = () => {
                     {requestData?.request.formData?.form4 && (
                       <div className="border-t pt-4 mt-4">
                         <p className="text-sm font-semibold text-muted-foreground mb-3">
-                          Equipment & Services Required
+                          Equipment & Resources Required
                         </p>
                         <div className="grid gap-3 md:grid-cols-3">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.soundSystem ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.soundSystem && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">Sound System</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.projector ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.projector && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">Projector</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.podium ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.podium && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">Podium</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.tablesChairSetup ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.tablesChairSetup && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">
-                              Tables & Chair Setup
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request.formData?.form4?.wifiCredentials ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.wifiCredentials && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">WiFi Credentials</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request?.formData?.form4?.iitBranding ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.iitBranding && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">IIT Branding</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-4 w-4 rounded border ${requestData?.request?.formData?.form4?.zoomPackage ? "bg-primary border-primary" : "border-muted-foreground"}`}
-                            >
-                              {requestData?.request.formData?.form4?.zoomPackage && (
-                                <CheckCircle className="h-4 w-4 text-primary-foreground" />
-                              )}
-                            </div>
-                            <span className="text-sm">Zoom Package</span>
-                          </div>
+                          {allResources.map((resource: any) => {
+                            const isSelected = requestData?.request.formData?.form4?.resourceIds?.includes(resource.id);
+                            return (
+                              <div key={resource.id} className="flex items-center gap-2">
+                                <div
+                                  className={`h-4 w-4 rounded border ${isSelected ? "bg-green-500 border-green-500" : "border-muted-foreground"}`}
+                                >
+                                  {isSelected && (
+                                    <CheckCircle className="h-4 w-4 text-white" />
+                                  )}
+                                </div>
+                                <span className="text-sm">{resource.name}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                         {requestData?.request.formData?.form4?.additionalNotes && (
                           <div className="mt-3">
