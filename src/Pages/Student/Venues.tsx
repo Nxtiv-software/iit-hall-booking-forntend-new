@@ -89,7 +89,6 @@ const StudentVenues = () => {
                     <TableHead>Floor Number</TableHead>
                     <TableHead>Academic Capacity</TableHead>
                     <TableHead>Examination Capacity</TableHead>
-                    <TableHead>Created At</TableHead>
                 </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -101,7 +100,6 @@ const StudentVenues = () => {
                     <TableCell>{venues.floorNumber}</TableCell>
                     <TableCell>{venues.capacityAcademic}</TableCell>
                     <TableCell>{venues.capacityExamination}</TableCell>
-                    <TableCell>{new Date(venues.createdAt).toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
                 </TableBody>

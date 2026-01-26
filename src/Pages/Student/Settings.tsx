@@ -176,12 +176,15 @@ const StudentSettings = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="w-full">
                   <CardContent>
-                    <div className="col-span-1 flex flex-col gap-4 mt-3">
-                      <Avatar className="w-35 h-35">
+                    <div className="col-span-1 flex flex-col mt-3">
+                      <Avatar className="w-24 h-24">
                           <AvatarImage src={studentData?.student?.user?.avatarUrl} alt="User avatar image" />
-                          <AvatarFallback>Avatar</AvatarFallback>
+                          <AvatarFallback>A</AvatarFallback>
                       </Avatar>
-                      <div className="mb-10">
+                      <div className="text-2xl font-medium mt-8 mb-2">
+                        {studentData?.student?.user?.firstName} {studentData?.student?.user?.lastName}
+                      </div>
+                      <div className="text-sm text-muted-foreground mb-15">
                         {studentData?.student?.user?.uniEmail}
                       </div>
                       <div className="flex flex-col gap-3">
