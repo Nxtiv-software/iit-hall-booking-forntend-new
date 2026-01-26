@@ -188,21 +188,6 @@ const Admin1Layout = () => {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          {/* <div className="bg-muted/50 rounded-xl">
-            <div></div>
-            <Card className="@container/card">
-              <CardHeader>
-                <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
-                  {`Hey, welcome back ${username ? username.charAt(0).toUpperCase() + username.slice(1) : "User"}`}
-                </CardTitle>
-              </CardHeader>
-              <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                <div className="line-clamp-1 flex gap-2 font-medium">
-                  {formatDate(new Date())}
-                </div>
-              </CardFooter>
-            </Card>
-          </div> */}
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
