@@ -114,6 +114,7 @@ const AdminBookings = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Admin</TableHead>
                     <TableHead>Requested Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                   </TableHeader>
                   <TableBody>

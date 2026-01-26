@@ -105,6 +105,7 @@ const Admin4RejectedRequests = () => {
                             <TableHead>Venue</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Requested Date</TableHead>
+                            <TableHead>Actions</TableHead>
                         </TableRow>
                         </TableHeader>
                         <TableBody>
