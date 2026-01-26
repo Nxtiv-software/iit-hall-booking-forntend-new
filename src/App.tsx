@@ -35,6 +35,7 @@ import StudentBookings from "./Pages/Student/Bookings";
 import StudentSettings from "./Pages/Student/Settings";
 
 import RequestDetails from "./Pages/Admin/RequestDetails";
+import AdminViewRequestDetails from "./Pages/Admin/ViewRequestDetails";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -119,6 +120,14 @@ const App = () => {
               element={
                 <AdminProtected>
                   <RequestDetails />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-view-request-details/:requestId"
+              element={
+                <AdminProtected>
+                  <AdminViewRequestDetails />
                 </AdminProtected>
               }
             />

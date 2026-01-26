@@ -31,8 +31,11 @@ import Theme from "@/components/Theme"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
 import { fetchAdminProfile } from "@/Services/Admin"
+import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
 
 const AdminBookings = () => {
+  const navigate = useNavigate();
   // Fetch admin profile
     const { data: adminData, isLoading: adminLoading } = useQuery({
       queryKey: ["adminProfile"],
@@ -121,6 +124,11 @@ const AdminBookings = () => {
                       <TableCell>{bookings.request.status.name}</TableCell>
                       <TableCell>{bookings.admin.user.username}</TableCell>
                       <TableCell>{new Date(bookings.request.requiredDate).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => navigate(`/admin-view-request-details/${bookings.request.id}`)}>
+                            See more
+                        </Button>
+                      </TableCell>
                       </TableRow>
                   ))}
                   </TableBody>

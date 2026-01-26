@@ -27,8 +27,11 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchAdmin1Rejected, fetchAdminProfile } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 const Admin1RejectedRequests = () => {
+    const navigate = useNavigate();
     // Fetch admin profile
     const { data: adminData, isLoading: adminLoading } = useQuery({
         queryKey: ["adminProfile"],
@@ -111,6 +114,11 @@ const Admin1RejectedRequests = () => {
                             <TableCell>{request.venue.name}</TableCell>
                             <TableCell>{request.status.name}</TableCell>
                             <TableCell>{new Date(request.createdAt).toLocaleString()}</TableCell>
+                            <TableCell>
+                                <Button onClick={() => navigate(`/admin-view-request-details/${request.id}`)}>
+                                    See more
+                                </Button>
+                            </TableCell>
                             </TableRow>
                         ))}
                         </TableBody>
