@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar-student";
-import Theme  from "@/components/Theme";
+import Theme from "@/components/Theme";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +8,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -17,16 +23,28 @@ import {
 } from "@/components/ui/sidebar";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Plus, Calendar, MapPin } from "lucide-react";
 
 const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
   "/student-dashboard": { label: "Dashboard" },
-  "/student-dashboard/student-add-booking": { label: "Add a Booking", parent: "/student-dashboard" },
-  "/student-dashboard/student-bookings": { label: "Bookings", parent: "/student-dashboard" },
-  "/student-dashboard/student-settings": { label: "Settings", parent: "/student-dashboard" },
-  "/student-dashboard/student-venues": { label: "Venues", parent: "/student-dashboard" },
+  "/student-dashboard/student-add-booking": {
+    label: "Add a Booking",
+    parent: "/student-dashboard",
+  },
+  "/student-dashboard/student-bookings": {
+    label: "Bookings",
+    parent: "/student-dashboard",
+  },
+  "/student-dashboard/student-settings": {
+    label: "Settings",
+    parent: "/student-dashboard",
+  },
+  "/student-dashboard/student-venues": {
+    label: "Venues",
+    parent: "/student-dashboard",
+  },
   // Add more routes as needed
 };
-
 
 const StudentLayout = () => {
   const location = useLocation();
@@ -50,7 +68,7 @@ const StudentLayout = () => {
       // }
       // getBreadCrumbs()
     },
-    [location]
+    [location],
   );
 
   const getBreadCrumbs = () => {
@@ -67,7 +85,10 @@ const StudentLayout = () => {
       console.log(config);
 
       if (config) {
-        breadcrumbs.push({ label: config.label, isLast: index === pathSegemnts.length -1 });
+        breadcrumbs.push({
+          label: config.label,
+          isLast: index === pathSegemnts.length - 1,
+        });
       }
     });
 
@@ -77,7 +98,7 @@ const StudentLayout = () => {
   const breadcumbs = getBreadCrumbs();
 
   function handleBookingRequest() {
-   navigate("/student-add-booking");
+    navigate("/student-add-booking");
   }
 
   return (
@@ -92,42 +113,107 @@ const StudentLayout = () => {
           />
           <Breadcrumb>
             <BreadcrumbList>
-              
               {breadcumbs.map((item) => (
                 <BreadcrumbItem key={item.label}>
-                <BreadcrumbPage>{item.label}</BreadcrumbPage>
-               {!item.isLast && (<BreadcrumbSeparator className="hidden md:block" />)}
+                  <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                  {!item.isLast && (
+                    <BreadcrumbSeparator className="hidden md:block" />
+                  )}
                 </BreadcrumbItem>
               ))}
             </BreadcrumbList>
           </Breadcrumb>
 
           <div className="ml-auto">
-            <Theme/>
+            <Theme />
           </div>
         </header>
         {/* <div className="flex items-center justify-center flex-1 overflow-y-auto"> */}
 
-          {/* <Outlet /> */}
-          
+        {/* <Outlet /> */}
+
         {/* </div> */}
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="rounded-xl px-2 flex flex-col gap-2 items-start text-xl mb-5">
-            <h1>Quick Actions</h1>
-            <Button onClick={handleBookingRequest} className="">+ New Booking Request</Button>
+          <div>
+            <CardTitle className="text-xl mb-2">Quick Actions</CardTitle>
+            <div className="rounded-xl grid auto-rows-min gap-4 md:grid-cols-3 text-xl mb-5">
+              
+              <Card className="@container/card w-full">
+                <CardHeader className="flex items-center gap-4">
+                  <div className="rounded bg-muted/50 p-3">
+                    <Plus
+                      onClick={handleBookingRequest}
+                      className="h-5 w-5 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <CardTitle className="font-medium text-sm">
+                      Add a Booking
+                    </CardTitle>
+                    <CardDescription>
+                      Reserve a venue for your event or activity
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+              </Card>
+
+             <Card className="@container/card w-full">
+                <CardHeader className="flex items-center gap-4">
+                  <div className="rounded bg-muted/50 p-3">
+                    <Calendar
+                      onClick={handleBookingRequest}
+                      className="h-5 w-5 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <CardTitle className="font-medium text-sm">
+                     View Bookings
+                    </CardTitle>
+                    <CardDescription>
+                      Track and manage your venue reservations
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+              </Card>
+
+              <Card className="@container/card w-full">
+                <CardHeader className="flex items-center gap-4">
+                  <div className="rounded bg-muted/50 p-3">
+                    <MapPin
+                      onClick={handleBookingRequest}
+                      className="h-5 w-5 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <CardTitle className="font-medium text-sm">
+                      View Venues
+                    </CardTitle>
+                    <CardDescription>
+                      Browse available venues and facilities
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+              </Card>
+
+            </div>
           </div>
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+
+          <div>
+            <CardTitle className="text-xl mb-2">Booking Statistics</CardTitle>
+            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
                 <CardHeader>
-                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Upcoming Bookings</CardDescription>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
+                    Upcoming Bookings
+                  </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
                     {/* {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0} */}
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period 
+                    Down 20% this period
                   </div>
                   <div className="text-muted-foreground">
                     Acquisition needs attention
@@ -138,14 +224,16 @@ const StudentLayout = () => {
             <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
                 <CardHeader>
-                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Pending Approvals</CardDescription>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
+                    Pending Approvals
+                  </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
                     {/* {bookingLoading ? "Loading..." : bookingCountData?.totalBookings ?? 0} */}
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period 
+                    Down 20% this period
                   </div>
                   <div className="text-muted-foreground">
                     Acquisition needs attention
@@ -153,17 +241,19 @@ const StudentLayout = () => {
                 </CardFooter>
               </Card>
             </div>
-            <div className="bg-muted/50 rounded-xl"> 
+            <div className="bg-muted/50 rounded-xl">
               <Card className="@container/card">
                 <CardHeader>
-                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">Completed Events</CardDescription>
+                  <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
+                    Completed Events
+                  </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
                     {/* {studentLoading ? "Loading..." : studentCountData?.totalStudents ?? 0} */}
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
                   <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period 
+                    Down 20% this period
                   </div>
                   <div className="text-muted-foreground">
                     Acquisition needs attention
@@ -172,10 +262,13 @@ const StudentLayout = () => {
               </Card>
             </div>
           </div>
+          </div>
           <Card className="flex-1 flex flex-col">
             <CardHeader>
               <CardTitle className="text-xl">Pending Approvals</CardTitle>
-              <CardDescription>Events happening within the upcoming week</CardDescription>
+              <CardDescription>
+                Events happening within the upcoming week
+              </CardDescription>
             </CardHeader>
             {/* <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
               <ul className="space-y-2">

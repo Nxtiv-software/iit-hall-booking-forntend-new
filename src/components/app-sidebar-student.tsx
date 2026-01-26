@@ -164,6 +164,8 @@ const navdata = [
   { title: "Dashboard", url: "/student-dashboard" },
   { title: "Add a Booking", url: "/student-add-booking" },
   { title: "Bookings", url: "/student-bookings" },
+  { title: "Venues", url: "/student-venues" },
+  { title: "Settings", url: "/student-settings" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
