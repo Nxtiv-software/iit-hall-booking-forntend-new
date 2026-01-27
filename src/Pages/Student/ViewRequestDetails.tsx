@@ -305,15 +305,36 @@ const StudentViewRequestDetails = () => {
                       <div className="grid gap-4 md:grid-cols-3">
                         <div>
                           <p className="text-sm text-muted-foreground">Event Date</p>
-                          <p className="font-medium">{requestData?.request.formData?.form2?.datevalue || "N/A"}</p>
+                          <p className="font-medium">
+                            {new Date(requestData?.request.requiredDate).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, 
+                            }) || "N/A"}
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground"> Starting time </p>
-                          <p className="font-medium"> {requestData?.request.formData?.form2?.startingTime} </p>
+                          <p className="font-medium">
+                            {new Date(`1970-01-01T${requestData?.request.formData?.form2?.startingTime}`).toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, 
+                            }) || "N/A" }
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground"> Ending Time </p>
-                          <p className="font-medium"> {requestData?.request.formData?.form2?.endingTime} </p>
+                          <p className="font-medium">
+                            {new Date(`1970-01-01T${requestData?.request.formData?.form2?.endingTime}`).toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true, 
+                            }) || "N/A" }
+                          </p>
                         </div>
                       </div>
                         <div>
@@ -337,10 +358,10 @@ const StudentViewRequestDetails = () => {
                       <div>
                         <div>
                           <p className="text-sm text-muted-foreground">
-                            Booking Date
+                            Booked by
                           </p>
                           <p className="font-medium">
-                            {requestData?.request.formData?.form2?.datevalue}
+                            {requestData?.request?.student?.user?.firstName} {requestData?.request?.student?.user?.lastName}
                           </p>
                         </div>
                       </div>
@@ -349,7 +370,14 @@ const StudentViewRequestDetails = () => {
                           Requested Date
                         </p>
                         <p className="font-medium">
-                          {new Date(requestData?.request.createdAt).toLocaleString()}
+                          {new Date(requestData?.request.createdAt).toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
                         </p>
                       </div>
                     </div>
