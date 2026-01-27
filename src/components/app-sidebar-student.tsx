@@ -1,10 +1,5 @@
 import * as React from "react";
-
 import { SearchForm } from "@/components/search-form";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -13,176 +8,49 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
 import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
-// This is sample data.
-// const data = {
-//   navMain: [
-//     {
-//       title: "Getting Started",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Installation",
-//           url: "#",
-//         },
-//         {
-//           title: "Project Structure",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Building Your Application",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Routing",
-//           url: "#",
-//         },
-//         {
-//           title: "Data Fetching",
-//           url: "#",
-//           isActive: true,
-//         },
-//         {
-//           title: "Rendering",
-//           url: "#",
-//         },
-//         {
-//           title: "Caching",
-//           url: "#",
-//         },
-//         {
-//           title: "Styling",
-//           url: "#",
-//         },
-//         {
-//           title: "Optimizing",
-//           url: "#",
-//         },
-//         {
-//           title: "Configuring",
-//           url: "#",
-//         },
-//         {
-//           title: "Testing",
-//           url: "#",
-//         },
-//         {
-//           title: "Authentication",
-//           url: "#",
-//         },
-//         {
-//           title: "Deploying",
-//           url: "#",
-//         },
-//         {
-//           title: "Upgrading",
-//           url: "#",
-//         },
-//         {
-//           title: "Examples",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "API Reference",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Components",
-//           url: "#",
-//         },
-//         {
-//           title: "File Conventions",
-//           url: "#",
-//         },
-//         {
-//           title: "Functions",
-//           url: "#",
-//         },
-//         {
-//           title: "next.config.js Options",
-//           url: "#",
-//         },
-//         {
-//           title: "CLI",
-//           url: "#",
-//         },
-//         {
-//           title: "Edge Runtime",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Architecture",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Accessibility",
-//           url: "#",
-//         },
-//         {
-//           title: "Fast Refresh",
-//           url: "#",
-//         },
-//         {
-//           title: "Next.js Compiler",
-//           url: "#",
-//         },
-//         {
-//           title: "Supported Browsers",
-//           url: "#",
-//         },
-//         {
-//           title: "Turbopack",
-//           url: "#",
-//         },
-//       ],
-//     },
-//     {
-//       title: "Community",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Contribution Guide",
-//           url: "#",
-//         },
-//       ],
-//     },
-//   ],
-// }
 
 const navdata = [
-  { title: "Dashboard", url: "/student-dashboard" },
-  { title: "Add a Booking", url: "/student-add-booking" },
-  { title: "Bookings", url: "/student-bookings" },
-  { title: "Pending Requests", url: "/student-pending-requests" },
-  { title: "Rejected Requests", url: "/student-rejected-requests" },
-  { title: "Venues", url: "/student-venues" },
-  { title: "Settings", url: "/student-settings" },
+  { title: "Menu",
+    items: [
+      { title: "Dashboard", url: "/student-dashboard" },
+      { title: "Add a Booking", url: "/student-add-booking" },
+      { title: "Bookings", url: "/student-bookings" },
+      { 
+        title: "Requests", 
+        url: "/student-pending-requests",
+        items: [
+          { title: "Pending Requests", url: "/student-pending-requests" },
+          { title: "Rejected Requests", url: "/student-rejected-requests" },
+        ]
+      },
+      { title: "Venues", url: "/student-venues" }
+    ]
+  },
+  {
+    title: "General",
+    items: [
+      { title: "Settings", url: "/student-settings" }
+    ]
+  }
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleClick = (path: string) => {
-    navigate(path);
-  };
 
   const handleLogout = () => {
     logout();
   };
   return (
-    <Sidebar {...props} className="">
+    <Sidebar {...props}>
       <div>
         <SidebarHeader>
           <SidebarMenu>
@@ -190,7 +58,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton size="lg" asChild>
                 <Link to="/dashboard">
                 <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-11 items-center justify-center rounded-lg">
-                  {/* <GalleryVerticalEnd className="size-4" /> */}
                   <img src={IITLogo} alt="IIT logo" className="size-10"/>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
@@ -204,44 +71,38 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SearchForm />
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarMenu>
-              {navdata.map((item, index) => (
-                <Collapsible
-                  key={item.title}
-                  defaultOpen={index === 1}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton onClick={() => handleClick(item.url)}>
-                        {item.title}{" "}
-                        {/* <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" /> */}
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    {/* {item.items?.length ? (
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items.map((item) => (
-                          <SidebarMenuSubItem key={item.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={item.isActive}
-                            >
-                              <a href={item.url}>{item.title}</a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  ) : null} */}
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
+                <SidebarGroup>
+                  <SidebarMenu>
+                    {navdata.map((group) => (
+                      <SidebarMenuItem key={group.title}>
+                        <SidebarMenuButton>{group.title}</SidebarMenuButton>
+                        {group.items?.length > 0 && (
+                          <SidebarMenuSub>
+                            {group.items.map((item) => (
+                              <SidebarMenuSubItem key={item.title} className="mb-3">
+                                <SidebarMenuSubButton asChild>
+                                  <Link to={item.url}>{item.title}</Link>
+                                </SidebarMenuSubButton>
+                                {item.items?.length > 0 && (
+                                  <SidebarMenuSub>
+                                    {item.items.map((subItem) => (
+                                      <SidebarMenuSubItem key={subItem.title} className="mb-3">
+                                        <SidebarMenuSubButton asChild>
+                                          <Link to={subItem.url}>{subItem.title}</Link>
+                                        </SidebarMenuSubButton>
+                                      </SidebarMenuSubItem>
+                                    ))}
+                                  </SidebarMenuSub>
+                                )}
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        )}
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroup>
+              </SidebarContent>
         <SidebarRail />
       </div>
       <Button onClick={handleLogout} className="mt-auto mb-5 mx-5">
