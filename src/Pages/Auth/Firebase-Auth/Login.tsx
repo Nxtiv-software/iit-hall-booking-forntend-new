@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/IITLoader";
 
-
 const Login = () => {
   const { loginUser, isAuthenticated, loading, user } = useAuth();
   const {
@@ -17,7 +16,6 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = async (data: any) => {
-    
     try {
       await loginUser(data.email, data.password);
       toast.success("Login successful!");
@@ -53,79 +51,83 @@ const Login = () => {
   return (
     <div className="flex flex-col flex-1 relative">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-    <div>
-      <div className="mb-5 sm:mb-8">
-        <h1 className="mb-2 font-semibold text-gray-00 text-3xl dark:text-gray-900 sm:text-title-md">
-          Sign In
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Enter your email and password to sign in!
-        </p>
-      </div>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-6">
-            <div>
-              <Label className="text-gray-900 dark:text-gray-900">
-                Email <span className="text-red-500">*</span>{" "}
-              </Label>
-              <Input
-                placeholder="info@gmail.com"
-                className="dark:border-gray-400 dark:text-black"
-                {...register("email", { required: "Email is required" })}
-              />
-            {errors.email && <span className="dark:text-red-500 mt-1">Email is required</span>}
-            </div>
-        
+        <div>
+          <div className="mb-5 sm:mb-8">
+            <h1 className="mb-2 font-semibold text-gray-00 text-3xl dark:text-gray-900 sm:text-title-md">
+              Sign In
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter your email and password to sign in!
+            </p>
+          </div>
+          <div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-gray-900 dark:text-gray-900">
+                    Email <span className="text-red-500">*</span>{" "}
+                  </Label>
+                  <Input
+                    placeholder="info@gmail.com"
+                    className="dark:border-gray-400 dark:text-black"
+                    {...register("email", { required: "Email is required" })}
+                  />
+                  {errors.email && (
+                    <span className="dark:text-red-500 mt-1">
+                      Email is required
+                    </span>
+                  )}
+                </div>
 
-            <div>
-              <Label className="text-gray-900 dark:text-gray-900">
-                Password <span className="text-red-500">*</span>{" "}
-              </Label>
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                className="dark:border-gray-400 dark:text-black"
-                {...register("password", { required: "Password is required" })}
-              />
-            {errors.password && <span className="dark:text-red-500 mt-1">Password is required</span>}
-            </div>
-      
-            <div className="flex items-start gap-3">
-              
-              <div className="flex flex-col gap-1">
-               
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  By signing in, you agree to our Terms of Service and Privacy Policy
+                <div>
+                  <Label className="text-gray-900 dark:text-gray-900">
+                    Password <span className="text-red-500">*</span>{" "}
+                  </Label>
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    className="dark:border-gray-400 dark:text-black"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
+                  />
+                  {errors.password && (
+                    <span className="dark:text-red-500 mt-1 block">
+                      Password is required
+                    </span>
+                  )}
+                  <div className="mt-2 text-right">
+                    <Link
+                      to="/reset-password"
+                      className="text-sm text-gray-500 hover:underline dark:text-gray-400"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full cursor-pointer"
+                  variant="secondary"
+                  type="submit"
+                >
+                  Login
+                </Button>
+
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  By signing in, you agree to our Terms of Service and Privacy
+                  Policy
                 </p>
               </div>
-            </div>
-
-            <Button 
-              className="w-full cursor-pointer" 
-              variant="secondary" 
-              type="submit"
-            >
-              Login
-            </Button>
-            
-            <div className="flex flex-col gap-2 mt-4">
-              
-              <Link
-                to="/reset-password"
-                className="text-sm text-gray-500 hover:underline dark:text-gray-400 text-center"
-              >
-                 <span className="text-black">Can't access your account?</span> Reset your password to regain access
-              </Link>
-              
-            </div>
+            </form>
           </div>
-        </form>
-      </div>
-      </div>
+        </div>
       </div>
       <div className="absolute bottom-4 left-4">
-        <p className="text-sm text-gray-500 dark:text-gray-400">Powered by <span className="font-semibold text-red-500">Nxtiv Software</span></p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Powered by{" "}
+          <span className="font-semibold text-red-500">Nxtiv Software</span>
+        </p>
       </div>
     </div>
   );
