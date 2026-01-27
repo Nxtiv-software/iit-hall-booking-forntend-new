@@ -58,12 +58,6 @@ const BookingForm5 = () => {
 
     try {
       setIsSubmitting(true);
-      // const token = localStorage.getItem("token"); // or get from your auth context
-
-      // if (!token) {
-      //   navigate("/login");
-      //   return;
-      // }
 
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");

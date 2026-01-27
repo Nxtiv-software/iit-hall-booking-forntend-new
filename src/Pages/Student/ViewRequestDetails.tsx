@@ -39,9 +39,13 @@ import {
 import { fetchStudentProfile, fetchStudentRequestDetails } from "@/Services/Students";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllResources } from "@/Services/Resources";
+import { fetchVenue } from "@/Services/Venues";
+import { useEffect, useState } from "react";
 
 const StudentViewRequestDetails = () => {
   const { requestId } = useParams<{ requestId: string }>();
+  const [preferredVenue, setPreferredVenue] = useState<any | null>(null);
+  const [alternateVenue, setAlternateVenue] = useState<any | null>(null);
 
   // Fetch admin profile
   const { data: studentData, isLoading: studentLoading } = useQuery({
@@ -113,6 +117,35 @@ const StudentViewRequestDetails = () => {
     },
     retry: false,
   });
+
+  useEffect(() => {
+      const fetchVenues = async () => {
+        try {
+          const currentUser = auth.currentUser;
+          if (!currentUser) return;
+  
+          const idToken = await currentUser.getIdToken();
+  
+          const preferredRoomId = requestData?.request.formData?.form3?.preferredroom;
+          const alternateRoomId = requestData?.request.formData?.form3?.alternateroom;
+  
+          if (preferredRoomId) {
+            const venue = await fetchVenue(preferredRoomId, idToken);
+            setPreferredVenue(venue);
+          }
+  
+          if (alternateRoomId) {
+            const venue = await fetchVenue(alternateRoomId, idToken);
+            setAlternateVenue(venue);
+          }
+        } catch (err) {
+          console.error("Error fetching venues:", err);
+        }
+      };
+  
+      if (requestData) fetchVenues();
+    }, [requestData]);
+
 
   if (requestLoading || studentLoading || !requestData) {
     return <IITLoader />;
@@ -240,7 +273,7 @@ const StudentViewRequestDetails = () => {
                             Prefered Room
                           </p>
                           <p className="font-medium">
-                            {requestData?.request.formData?.form3?.preferredroom || "N/A"}
+                            {preferredVenue?.name || "N/A"}
                           </p>
                         </div>
                         <div>
@@ -248,7 +281,7 @@ const StudentViewRequestDetails = () => {
                             Alternate Room
                           </p>
                           <p className="font-medium">
-                            {requestData?.request.formData?.form3?.alternateroom || "N/A"}
+                            {alternateVenue?.name || "N/A"}
                           </p>
                         </div>
                       </div>

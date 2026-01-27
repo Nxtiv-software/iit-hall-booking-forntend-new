@@ -52,13 +52,18 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
+import { fetchVenue } from "@/Services/Venues";
 
 const AdminRequestDetails = () => {
   const { requestId } = useParams<{ requestId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [comment, setComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [preferredVenue, setPreferredVenue] = useState<any | null>(null);
+  const [alternateVenue, setAlternateVenue] = useState<any | null>(null);
+
+
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch admin profile
   const { data: adminData, isLoading: adminLoading } = useQuery({
@@ -185,23 +190,23 @@ const AdminRequestDetails = () => {
     },
   });
 
-  const handleApprove = () => {
-    if (!comment.trim()) {
-      toast.error("Please add a comment before approving");
-      return;
-    }
-    setIsSubmitting(true);
-    approveMutation.mutate();
-  };
+  // const handleApprove = () => {
+  //   if (!comment.trim()) {
+  //     toast.error("Please add a comment before approving");
+  //     return;
+  //   }
+  //   setIsSubmitting(true);
+  //   approveMutation.mutate();
+  // };
 
-  const handleReject = () => {
-    if (!comment.trim()) {
-      toast.error("Please add a comment before rejecting");
-      return;
-    }
-    setIsSubmitting(true);
-    rejectMutation.mutate();
-  };
+  // const handleReject = () => {
+  //   if (!comment.trim()) {
+  //     toast.error("Please add a comment before rejecting");
+  //     return;
+  //   }
+  //   setIsSubmitting(true);
+  //   rejectMutation.mutate();
+  // };
 
   const SidebarComponent = {
     "1": AppSidebar1,
@@ -211,10 +216,32 @@ const AdminRequestDetails = () => {
   }[adminData?.admin?.adminLevel || "1"];
 
   useEffect(() => {
-    console.log("Request Data:", requestData);
-    console.log("Approval Data:", approvalHistory);
-  }, [requestData, approvalHistory]);
+    const fetchVenues = async () => {
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
 
+        const idToken = await currentUser.getIdToken();
+
+        const preferredRoomId = requestData?.request.formData?.form3?.preferredroom;
+        const alternateRoomId = requestData?.request.formData?.form3?.alternateroom;
+
+        if (preferredRoomId) {
+          const venue = await fetchVenue(preferredRoomId, idToken);
+          setPreferredVenue(venue);
+        }
+
+        if (alternateRoomId) {
+          const venue = await fetchVenue(alternateRoomId, idToken);
+          setAlternateVenue(venue);
+        }
+      } catch (err) {
+        console.error("Error fetching venues:", err);
+      }
+    };
+
+    if (requestData) fetchVenues();
+  }, [requestData]);
 
   if (requestLoading || adminLoading || !requestData) {
     return <IITLoader />;
@@ -339,10 +366,10 @@ const AdminRequestDetails = () => {
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">
-                            Preferd Room
+                            Prefered Room
                           </p>
                           <p className="font-medium">
-                            {requestData?.request.formData?.form3?.preferredroom || "N/A"}
+                            {preferredVenue?.name || "N/A"}
                           </p>
                         </div>
                         <div>
@@ -350,7 +377,7 @@ const AdminRequestDetails = () => {
                             Alternate Room
                           </p>
                           <p className="font-medium">
-                            {requestData?.request.formData?.form3?.alternateroom || "N/A"}
+                            {alternateVenue?.name || "N/A"}
                           </p>
                         </div>
                       </div>

@@ -14,3 +14,16 @@ export const fetchAllVenues = async (token: string) => {
     throw error;
   }
 };
+
+// Get a specfic venue
+export const fetchVenue = async (venueId: string, token: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${venueId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching venue:", error);
+    throw error;
+  }
+};
