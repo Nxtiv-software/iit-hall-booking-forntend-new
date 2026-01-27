@@ -48,15 +48,22 @@ export function SuperAdminProtected({ children }) {
 }
 
 export function UserProtected({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, isStudent, user } = useAuth();
+
+  console.log("UserProtected - loading:", loading, "isAuthenticated:", isAuthenticated, "isStudent:", isStudent(), "user:", user);
 
   if (loading) {
     return <LoaderIcon />;
   }
 
   if (!isAuthenticated) {
-    console.log("UnAuthroized");
+    console.log("Not authenticated - redirecting to login");
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isStudent()) {
+    console.log("User is not student - showing Unauthorized page");
+    return <Unauthorized />;
   }
 
   return children;

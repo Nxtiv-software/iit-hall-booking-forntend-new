@@ -2,28 +2,18 @@ import { useBooking } from "@/AuthProvider/BookingProvider";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 
 const PaginationNav = () => {
 
-  const {state, goToPage} = useBooking()
+  const {state} = useBooking()
 
-  const handleClick = (page) => {
-goToPage(page)
-  }
   return (
   
       <Pagination>
         <PaginationContent>
-
-          {/* <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem> */}
 
 <div className="flex gap-5">
           <PaginationItem>

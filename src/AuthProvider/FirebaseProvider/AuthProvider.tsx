@@ -71,6 +71,11 @@ export function AuthProvider({ children }) {
     navigate("/login", { replace: true });
   };
 
+  const isStudent = () => {
+    if (!user) return false;
+    return user?.role?.name === "STUDENT";
+  }
+
   const isAdmin = () => {
     if (!user) return false;
     return user?.role?.name === "ADMIN";
@@ -82,7 +87,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isSuperAdmin, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isSuperAdmin, isStudent, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
