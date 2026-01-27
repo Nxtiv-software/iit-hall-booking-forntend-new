@@ -55,7 +55,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<SignIn />} />
-            <Route path="/signup" element={<Signup />} />
+            {/* <Route path="/signup" element={<Signup />} /> */}
             <Route path="/reset-password" element={<PasswordReset />} />
 
             {/* SuperAdmin routes */}
