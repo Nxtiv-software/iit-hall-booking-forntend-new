@@ -26,7 +26,7 @@ const Login = () => {
 
   if (isAuthenticated() && user) {
     if (user.superAdmin) {
-      return <Navigate to="/super-admin-dashboard" replace />;
+      return <Navigate to="/super-admin-create-admin" replace />;
     }
     if (user.admin) {
       const level = user.admin.adminLevel;
@@ -49,7 +49,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 relative">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
     <div>
       <div className="mb-5 sm:mb-8">
@@ -103,6 +103,9 @@ const Login = () => {
         </form>
       </div>
       </div>
+      </div>
+      <div className="absolute bottom-4 left-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400">Powered by <span className="font-semibold text-red-500">Nxtiv Software</span></p>
       </div>
     </div>
   );

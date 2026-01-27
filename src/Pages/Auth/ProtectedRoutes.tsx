@@ -25,16 +25,45 @@ export function AdminProtected({ children }) {
   return children;
 }
 
-export function UserProtected({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+export function SuperAdminProtected({ children }) {
+  const { isAuthenticated, loading, isSuperAdmin, user } = useAuth();
+
+  console.log("SuperAdminProtected - loading:", loading, "isAuthenticated:", isAuthenticated, "isSuperAdmin:", isSuperAdmin(), "user:", user);
 
   if (loading) {
     return <LoaderIcon />;
   }
 
   if (!isAuthenticated) {
-    console.log("UnAuthroized");
+    console.log("Not authenticated - redirecting to login");
     return <Navigate to="/login" replace />;
+  }
+  
+  if (!isSuperAdmin()) {
+    console.log("User is not super admin - showing Unauthorized page");
+    return <Unauthorized />;
+  }
+
+  return children;
+}
+
+export function UserProtected({ children }) {
+  const { isAuthenticated, loading, isStudent, user } = useAuth();
+
+  console.log("UserProtected - loading:", loading, "isAuthenticated:", isAuthenticated, "isStudent:", isStudent(), "user:", user);
+
+  if (loading) {
+    return <LoaderIcon />;
+  }
+
+  if (!isAuthenticated) {
+    console.log("Not authenticated - redirecting to login");
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isStudent()) {
+    console.log("User is not student - showing Unauthorized page");
+    return <Unauthorized />;
   }
 
   return children;

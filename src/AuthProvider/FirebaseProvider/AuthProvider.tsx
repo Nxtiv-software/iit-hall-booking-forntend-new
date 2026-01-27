@@ -21,6 +21,8 @@ export function AuthProvider({ children }) {
         console.log(fbUser);
         setUser(null);
         setLoading(false);
+        // Clear booking state when user logs out
+        localStorage.removeItem("bookingState");
         return;
       }
 
@@ -64,8 +66,15 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await signOut(auth);
     setUser(null);
+    // Clear booking details from local storage
+    localStorage.removeItem("bookingState");
     navigate("/login", { replace: true });
   };
+
+  const isStudent = () => {
+    if (!user) return false;
+    return user?.role?.name === "STUDENT";
+  }
 
   const isAdmin = () => {
     if (!user) return false;
@@ -78,7 +87,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isSuperAdmin, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, loginUser, logout, isAdmin, isSuperAdmin, isStudent, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
