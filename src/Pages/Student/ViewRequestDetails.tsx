@@ -1,7 +1,4 @@
-import { AppSidebar1 } from "@/components/app-sidebar-admin-1";
-import { AppSidebar2 } from "@/components/app-sidebar-admin-2";
-import { AppSidebar3 } from "@/components/app-sidebar-admin-3";
-import { AppSidebar4 } from "@/components/app-sidebar-admin-4";
+import { AppSidebar } from "@/components/app-sidebar-student";
 import Theme from "@/components/Theme";
 import {
   Breadcrumb,
@@ -25,11 +22,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useQuery } from "@tanstack/react-query";
-import {
-  fetchAdminProfile,
-  fetchRequestById,
-} from "@/Services/Admin";
 import {
   fetchApprovalsByRequest,
   fetchAttachmentsByRequest,
@@ -44,26 +36,28 @@ import {
   FileText,
   CheckCircle,
 } from "lucide-react";
+import { fetchStudentProfile, fetchStudentRequestDetails } from "@/Services/Students";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllResources } from "@/Services/Resources";
 
-const AdminViewRequestDetails = () => {
+const StudentViewRequestDetails = () => {
   const { requestId } = useParams<{ requestId: string }>();
 
   // Fetch admin profile
-  const { data: adminData, isLoading: adminLoading } = useQuery({
-    queryKey: ["adminProfile"],
+  const { data: studentData, isLoading: studentLoading } = useQuery({
+    queryKey: ["studentProfile"],
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
-      return fetchAdminProfile(idToken);
+      return fetchStudentProfile(idToken);
     },
     retry: false,
     retryOnMount: false,
   });
 
-  const adminId = adminData?.admin?.id;
+  const studentId = studentData?.student?.id;
 
   // Fetch specific request details
   const { data:requestData, isLoading: requestLoading } = useQuery({
@@ -73,9 +67,9 @@ const AdminViewRequestDetails = () => {
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
-      return fetchRequestById(adminId, requestId!, idToken);
+      return fetchStudentRequestDetails(studentId, requestId!, idToken);
     },
-    enabled: !!adminId,
+    enabled: !!studentId,
     retry: false,
   });
 
@@ -107,7 +101,7 @@ const AdminViewRequestDetails = () => {
     retry: false,
   });
 
-   // Fetch all resources
+  // Fetch all resources
   const { data: allResources = [] } = useQuery({
     queryKey: ["resources"],
     queryFn: async () => {
@@ -120,22 +114,14 @@ const AdminViewRequestDetails = () => {
     retry: false,
   });
 
-
-  const SidebarComponent = {
-    "1": AppSidebar1,
-    "2": AppSidebar2,
-    "3": AppSidebar3,
-    "4": AppSidebar4,
-  }[adminData?.admin?.adminLevel || "1"];
-
-  if (requestLoading || adminLoading || !requestData) {
+  if (requestLoading || studentLoading || !requestData) {
     return <IITLoader />;
   }
 
   return (
     <div>
       <SidebarProvider>
-        <SidebarComponent />
+        <AppSidebar/>
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
@@ -536,4 +522,4 @@ const AdminViewRequestDetails = () => {
   );
 };
 
-export default AdminViewRequestDetails;
+export default StudentViewRequestDetails;

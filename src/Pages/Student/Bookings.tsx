@@ -26,8 +26,11 @@ import Theme from "@/components/Theme"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
 import { AppSidebar } from "@/components/app-sidebar-student"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 const StudentBookings = () => {
+  const navigate = useNavigate();
   // Fetch all bookings
   const { data: bookingsData = [], isLoading } = useQuery({
       queryKey: ["bookings"],
@@ -85,6 +88,7 @@ const StudentBookings = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Admin</TableHead>
                     <TableHead>Requested Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -95,6 +99,11 @@ const StudentBookings = () => {
                       <TableCell>{bookings.request.status.name}</TableCell>
                       <TableCell>{bookings.admin.user.username}</TableCell>
                       <TableCell>{new Date(bookings.request.requiredDate).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => navigate(`/student-view-request-details/${bookings.request.id}`)}>
+                            See more
+                        </Button>
+                      </TableCell>
                       </TableRow>
                   ))}
                   </TableBody>

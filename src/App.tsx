@@ -36,6 +36,7 @@ import StudentSettings from "./Pages/Student/Settings";
 
 import RequestDetails from "./Pages/Admin/RequestDetails";
 import AdminViewRequestDetails from "./Pages/Admin/ViewRequestDetails";
+import StudentViewRequestDetails from "./Pages/Student/ViewRequestDetails";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -239,7 +240,14 @@ const App = () => {
                 </UserProtected>
               }
             />
-
+            <Route
+              path="/student-view-request-details/:requestId"
+              element={
+                <UserProtected>
+                  <StudentViewRequestDetails />
+                </UserProtected>
+              }
+            />
 
             <Route path="/sign-in" element={<SignIn/>}/>
 

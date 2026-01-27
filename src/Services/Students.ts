@@ -218,3 +218,22 @@ export const fetchTotalStudentCount = async (token: string) => {
     throw error;
   }
 };
+
+// Get request details by id
+export const fetchStudentRequestDetails = async (
+  studentId: string,
+  requestId: string,
+  token: string,
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/${studentId}/requests/${requestId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching request by student id:", error);
+    throw error;
+  }
+};
