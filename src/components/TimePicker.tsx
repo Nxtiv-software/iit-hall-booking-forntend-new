@@ -19,7 +19,7 @@ const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
               setTimevalue(e.target.value);
             }}
             id="time-picker"
-            step="1"
+            step="60"
             className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
           />
         </div>
