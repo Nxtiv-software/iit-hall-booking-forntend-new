@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -24,6 +25,12 @@ import {
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Plus, Calendar, MapPin } from "lucide-react";
+import { fetchPendingRequestCount, fetchRejectedRequestCount, fetchStudentBookingCount, fetchStudentProfile, fetchStudentUpcomingBookings } from "@/Services/Students";
+import { useQuery } from "@tanstack/react-query";
+import { auth } from "@/Firebase/config";
+import IITLoader from "../components/IITLoader";
+import { Avatar } from "@radix-ui/react-avatar";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
   "/student-dashboard": { label: "Dashboard" },
@@ -57,6 +64,77 @@ const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
 const StudentLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Fetch student profile
+  const { data: studentData, isLoading: studentLoading } = useQuery({
+    queryKey: ["studentProfile"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+
+      const idToken = await currentUser.getIdToken();
+      return fetchStudentProfile(idToken);
+    },
+    retry: false, 
+    retryOnMount: false,
+  });
+
+  const studentId = studentData?.student?.id;  
+
+  // Fetch pending request count
+  const { data: pendingCount, isLoading: pendingCountLoading } = useQuery({
+    queryKey: ["pendingCount"],
+    queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchPendingRequestCount(idToken, studentId!);
+      },
+      enabled: !!studentId,
+      retry: false, 
+  });
+
+  // Fetch rejected request count
+  const { data: rejectedCount, isLoading: rejectedCountLoading } = useQuery({
+    queryKey: ["rejectedCount"],
+    queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchRejectedRequestCount(idToken, studentId!);
+      },
+      enabled: !!studentId,
+      retry: false, 
+  });
+
+  // Fetch booking request count
+  const { data: bookingCount, isLoading: bookingCountLoading } = useQuery({
+    queryKey: ["bookingCount"],
+    queryFn: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Not authenticated");
+  
+        const idToken = await currentUser.getIdToken();
+        return fetchStudentBookingCount(idToken, studentId!);
+      },
+      enabled: !!studentId,
+      retry: false, 
+  });
+
+  // Fetch upcoming events
+  const { data: upcomingEventData = [], isLoading: upcomingLoading } = useQuery({
+    queryKey: ["upcomingEvents"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchStudentUpcomingBookings(idToken, studentId!);
+    },
+    enabled: !!studentId,
+    retry: false, 
+  });
 
   useEffect(
     function getLocation() {
@@ -107,6 +185,10 @@ const StudentLayout = () => {
 
   function handleBookingRequest() {
     navigate("/student-add-booking");
+  }
+
+  if ( studentLoading || bookingCountLoading || pendingCountLoading || rejectedCountLoading || upcomingLoading ) {
+    return <IITLoader/>
   }
 
   return (
@@ -213,18 +295,15 @@ const StudentLayout = () => {
               <Card className="@container/card">
                 <CardHeader>
                   <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
-                    Upcoming Bookings
+                    Your Bookings
                   </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
-                    {/* {pendingLoading ? "Loading..." : pendingCountData?.totalPendings ?? 0} */}
+                    { pendingCount?.count ?? 0 }
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                  <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period
-                  </div>
                   <div className="text-muted-foreground">
-                    Acquisition needs attention
+                    Check recent activity
                   </div>
                 </CardFooter>
               </Card>
@@ -233,18 +312,15 @@ const StudentLayout = () => {
               <Card className="@container/card">
                 <CardHeader>
                   <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
-                    Pending Approvals
+                    Pending Requests
                   </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
-                    {/* {bookingLoading ? "Loading..." : bookingCountData?.totalBookings ?? 0} */}
+                    { bookingCount?.count ?? 0 }
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                  <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period
-                  </div>
                   <div className="text-muted-foreground">
-                    Acquisition needs attention
+                    Review pending actions
                   </div>
                 </CardFooter>
               </Card>
@@ -253,31 +329,28 @@ const StudentLayout = () => {
               <Card className="@container/card">
                 <CardHeader>
                   <CardDescription className="line-clamp-1 flex gap-2 font-medium text-xl">
-                    Completed Events
+                    Rejected Requests
                   </CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-4xl">
-                    {/* {studentLoading ? "Loading..." : studentCountData?.totalStudents ?? 0} */}
+                    { rejectedCount?.count ?? 0 }
                   </CardTitle>
                 </CardHeader>
                 <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                  <div className="line-clamp-1 flex gap-2 font-medium">
-                    Down 20% this period
-                  </div>
                   <div className="text-muted-foreground">
-                    Acquisition needs attention
+                    Requires attention
                   </div>
                 </CardFooter>
               </Card>
             </div>
           </div>
           </div>
-          <Card className="flex-1 flex flex-col">
+          {/* <Card className="flex-1 flex flex-col">
             <CardHeader>
-              <CardTitle className="text-xl">Pending Approvals</CardTitle>
+              <CardTitle className="text-xl">Upcoming bookings</CardTitle>
               <CardDescription>
                 Events happening within the upcoming week
               </CardDescription>
-            </CardHeader>
+            </CardHeader> */}
             {/* <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
               <ul className="space-y-2">
                 {upcomingEventData.map((booking, index) => (
@@ -305,6 +378,57 @@ const StudentLayout = () => {
                 ))}
               </ul>
             </CardContent> */}
+          {/* </Card> */}
+          <Card className="flex-1 flex flex-col">
+            <CardHeader>
+              <CardTitle className="text-xl">Upcoming Events</CardTitle>
+              <CardDescription>Events happening within the upcoming week</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 max-h-[400px] overflow-y-auto">
+              <ul className="space-y-3">
+                {upcomingEventData.map((booking) => (
+                  <li
+                    key={booking.id}
+                    className="flex flex-col gap-8 p-4 border rounded-lg bg-muted/50 hover:bg-muted/70 transition sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex-shrink-0">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={booking.request.student.user.avatarUrl} alt="Student avatar" />
+                        <AvatarFallback>{booking.request.student.user.username.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </div>
+
+                    <div className="flex-1 flex flex-col">
+                      <p className="text-sm text-muted-foreground  font-medium">Event</p>
+                      <p className="font-semibold text-base line-clamp-1">
+                        {booking.request.title}
+                      </p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Requestor</p>
+                      <p className="font-medium">{booking.request.student.user.username}</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Venue</p>
+                      <p className="font-medium">{booking.request.venue.name}</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="font-medium">
+                        {new Date(booking.request.requiredDate).toLocaleDateString(undefined, {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
           </Card>
         </div>
       </SidebarInset>

@@ -404,10 +404,24 @@ const AdminRequestDetails = () => {
                           <p className="font-medium">{requestData?.request.formData?.form1?.participants || "N/A"}</p>
                         </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Description</p>
-                        <p className="font-medium">{requestData?.request.formData?.form1?.description || "No description provided"}</p>
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Event Date</p>
+                          <p className="font-medium">{requestData?.request.formData?.form2?.datevalue || "N/A"}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground"> Starting time </p>
+                          <p className="font-medium"> {requestData?.request.formData?.form2?.startingTime} </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground"> Ending Time </p>
+                          <p className="font-medium"> {requestData?.request.formData?.form2?.endingTime} </p>
+                        </div>
                       </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground"> No of Days </p>
+                          <p className="font-medium"> {requestData?.request.formData?.form2?.noofdays} </p>
+                        </div>
                     </CardContent>
                   </Card>
                 )}
@@ -440,38 +454,16 @@ const AdminRequestDetails = () => {
                           {new Date(requestData?.request.createdAt).toLocaleString()}
                         </p>
                       </div>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Starting time
-                        </p>
-                        <p className="font-medium">
-                          {requestData?.request.formData?.form2?.startingTime}
-                        </p>
+                        <p className="text-sm text-muted-foreground"> Title </p>
+                        <p className="font-medium"> {requestData?.request.title || "No title provided"} </p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Ending Time
-                        </p>
-                        <p className="font-medium">
-                          {requestData?.request.formData?.form2?.endingTime}
-                        </p>
+                        <p className="text-sm text-muted-foreground"> Description </p>
+                        <p className="font-medium"> {requestData?.request.description || "No description provided"} </p>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">
-                        No of Days
-                      </p>
-                      <p className="font-medium">
-                        {requestData?.request.formData?.form2?.noofdays}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">
-                        Description
-                      </p>
-                      <p className="font-medium">
-                        {requestData?.request.description || "No description provided"}
-                      </p>
                     </div>
 
                     {/* Equipment and Services (Form 4) */}

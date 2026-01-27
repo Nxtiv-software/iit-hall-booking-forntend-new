@@ -183,6 +183,27 @@ export const fetchPendingRequestCount = async (
   }
 };
 
+// Get rejected request count
+export const fetchRejectedRequestCount = async (
+  token: string,
+  studentId: string
+) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/${studentId}/requests/rejected/count`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching rejected request count:", error);
+    throw error;
+  }
+};
+
 // Get all bookings by student ID
 export const fetchStudentBookings = async (
   token: string,
@@ -226,7 +247,7 @@ export const fetchStudentBookingCount = async (
 };
 
 // Get upcoming bookings (next week)
-export const fetchUpcomingBookings = async (
+export const fetchStudentUpcomingBookings = async (
   token: string,
   studentId: string
 ) => {
