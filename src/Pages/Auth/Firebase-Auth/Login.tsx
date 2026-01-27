@@ -107,7 +107,7 @@ const Login = () => {
                 </div>
 
                 <Button
-                  className="w-full cursor-pointer"
+                  className="w-full cursor-pointer mt-2"
                   variant="secondary"
                   type="submit"
                 >
