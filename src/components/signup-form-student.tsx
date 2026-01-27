@@ -8,20 +8,12 @@ import {
 } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { useForm, Controller } from "react-hook-form"
-import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useState } from "react"
 import { toast } from "sonner"
 import { auth } from "@/Firebase/config"
 
@@ -29,7 +21,7 @@ import { auth } from "@/Firebase/config"
 export function SignupFormStudent({ ...props }: React.ComponentProps<typeof Card>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -65,7 +57,7 @@ export function SignupFormStudent({ ...props }: React.ComponentProps<typeof Card
 
       const token = await user.getIdToken(); 
 
-      // First, fetch the superadmin ID
+      
       const meResponse = await fetch("http://localhost:8800/super-admins/me", {
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +72,7 @@ export function SignupFormStudent({ ...props }: React.ComponentProps<typeof Card
       const superAdminData = await meResponse.json();
       const superAdminId = superAdminData.id;
 
-      // Then, create the student using the superadmin ID
+      
       const response = await fetch(`http://localhost:8800/super-admins/${superAdminId}/students`, {
         method: "POST",
         headers: {
