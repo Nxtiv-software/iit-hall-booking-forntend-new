@@ -5,13 +5,11 @@ import toast from "react-hot-toast";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import Loader from "@/components/IITLoader";
-import { useState } from "react";
+
 
 const Login = () => {
   const { loginUser, isAuthenticated, loading, user } = useAuth();
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const {
     register,
     handleSubmit,
@@ -19,10 +17,6 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = async (data: any) => {
-    if (!agreedToTerms) {
-      toast.error("Please agree to the terms and conditions to continue");
-      return;
-    }
     
     try {
       await loginUser(data.email, data.password);
@@ -111,7 +105,6 @@ const Login = () => {
               className="w-full cursor-pointer" 
               variant="secondary" 
               type="submit"
-              disabled={!agreedToTerms}
             >
               Login
             </Button>
