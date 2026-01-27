@@ -98,16 +98,9 @@ const Login = () => {
             </div>
       
             <div className="flex items-start gap-3">
-              <Checkbox
-                id="terms"
-                checked={agreedToTerms}
-                onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                className="mt-1 border-gray-400 dark:bg-gray-200 dark:border-gray-400"
-              />
+              
               <div className="flex flex-col gap-1">
-                <Label htmlFor="terms" className="text-sm text-gray-900 dark:text-gray-900 cursor-pointer">
-                  I agree to the terms and conditions
-                </Label>
+               
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   By signing in, you agree to our Terms of Service and Privacy Policy
                 </p>
@@ -124,14 +117,12 @@ const Login = () => {
             </Button>
             
             <div className="flex flex-col gap-2 mt-4">
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                Can't access your account? Reset your password to regain access
-              </p>
+              
               <Link
                 to="/reset-password"
-                className="text-sm text-blue-600 hover:underline dark:text-blue-400 text-center"
+                className="text-sm text-gray-500 hover:underline dark:text-gray-400 text-center"
               >
-                Forgot Password?
+                 <span className="text-black">Can't access your account?</span> Reset your password to regain access
               </Link>
               
             </div>
