@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
-import { AdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
+import { AdminProtected, SuperAdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
 
 import StudentLayout from "./Layout/StudentLayout";
 import BookingLayout from "./Layout/BookingLayout";
@@ -39,6 +39,10 @@ import AdminViewRequestDetails from "./Pages/Admin/ViewRequestDetails";
 import StudentViewRequestDetails from "./Pages/Student/ViewRequestDetails";
 import StudentPendingRequests from "./Pages/Student/PendingRequests";
 import StudentRejectedRequests from "./Pages/Student/RejectedRequests";
+import SuperAdminLayout from "./Layout/SuperAdminLayout"
+import CreateUsers from "./Pages/SuperAdmin/CreateAdmin";
+import CreateAdmin from "./Pages/SuperAdmin/CreateAdmin";
+import CreateStudent from "./Pages/SuperAdmin/CreateStudent";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -53,6 +57,20 @@ const App = () => {
             <Route path="/login" element={<SignIn />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/reset-password" element={<PasswordReset />} />
+
+            {/* SuperAdmin routes */}
+            <Route path="super-admin-dashboard" element={<SuperAdminProtected>
+              <SuperAdminLayout/>
+            </SuperAdminProtected>}/>
+
+            <Route path="super-admin-create-admin" element={<SuperAdminProtected>
+              <CreateAdmin/>
+            </SuperAdminProtected>}/>
+
+            <Route path="super-admin-create-student" element={<SuperAdminProtected>
+              <CreateStudent/>
+            </SuperAdminProtected>}/>
+
             {/* Admin routes */}
             <Route
               path="/admin1-dashboard"
@@ -198,6 +216,9 @@ const App = () => {
                 </UserProtected>
               }
             />
+
+
+
 
             {/* Student routes */}
             <Route

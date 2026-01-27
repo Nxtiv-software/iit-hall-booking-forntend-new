@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link } from "react-router-dom";
 import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
+// import { GalleryVerticalEnd } from "lucide-react"
 
 import { SearchForm } from "@/components/search-form"
 
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button";
 import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
+import { it } from "date-fns/locale";
 
 const data = {
   navMain: [
@@ -26,29 +28,35 @@ const data = {
       title: "Menu",
       items: [
         { title: "Dashboard", url: "/super-admin-dashboard", isActive: true},
-        { title: "Users", 
-          url: "/super-admin-users",
-          items: [
-            { title: "Pending Requests", url: "/admin-requests-pending" },
-            { title: "Rejected Requests", url: "/admin-requests-rejected" },
-          ] 
-        }, 
-        { title: "Bookings", url: "/admin-bookings" }, 
-        { title: "Resources", url: "/admin-resources" },
-        { title: "Venues", url: "/admin-venues" },
+        // { title: "Requests", 
+        //   url: "/admin-requests-pending",
+        //   items: [
+        //     { title: "Pending Requests", url: "/admin-requests-pending" },
+        //     // { title: "Accepted Requests", url: "/admin-requests-accepted" },
+        //     { title: "Rejected Requests", url: "/admin-requests-rejected" },
+        //   ] 
+        // }, 
+      ],
+    },
+    {title: "Management",
+      items: [
+        { title: "Create Admin", url: "/super-admin-create-admin" },
+        { title: "Create Student", url: "/super-admin-create-student" },
+        // { title: "Resources", url: "/super-admin-manage-resources" },
+        // { title: "Venues", url: "/super-admin-manage-venues" },
       ],
     },
     {
       title: "General",
       items: [
-        { title: "Settings", url: "/super-admin-settings" },
+        { title: "Settings", url: "/admin-settings" },
         // { title: "Help Desk", url: "/help-desk" },
       ],
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function SuperAdminAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { logout } = useAuth();
 
   const handleLogout = () => {
@@ -61,8 +69,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link to="/super-admin-dashboard">
+              <Link to="/admin-dashboard">
                 <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-11 items-center justify-center rounded-lg">
+                  {/* <GalleryVerticalEnd className="size-4" /> */}
                   <img src={IITLogo} alt="IIT logo" className="size-10"/>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">

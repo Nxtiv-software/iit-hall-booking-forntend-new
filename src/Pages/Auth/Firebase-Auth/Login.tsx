@@ -104,6 +104,7 @@ const Login = () => {
       </div>
       </div>
       </div>
+      {/* <p className="dark:text-black">Powered by Nxtiv Software</p> */}
     </div>
   );
 };

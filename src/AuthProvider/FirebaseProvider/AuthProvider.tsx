@@ -21,6 +21,8 @@ export function AuthProvider({ children }) {
         console.log(fbUser);
         setUser(null);
         setLoading(false);
+        // Clear booking state when user logs out
+        localStorage.removeItem("bookingState");
         return;
       }
 
@@ -64,6 +66,8 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await signOut(auth);
     setUser(null);
+    // Clear booking details from local storage
+    localStorage.removeItem("bookingState");
     navigate("/login", { replace: true });
   };
 
