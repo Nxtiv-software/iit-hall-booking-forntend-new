@@ -68,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-          <SearchForm />
+          {/* <SearchForm /> */}
         </SidebarHeader>
         <SidebarContent>
                 <SidebarGroup>

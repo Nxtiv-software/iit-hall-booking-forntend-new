@@ -80,7 +80,6 @@ export function SuperAdminAppSidebar({ ...props }: React.ComponentProps<typeof S
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SearchForm />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

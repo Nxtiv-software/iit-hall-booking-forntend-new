@@ -71,7 +71,7 @@ export function AppSidebar4({ ...props }: React.ComponentProps<typeof Sidebar>) 
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SearchForm />
+        {/* <SearchForm /> */}
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
