@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Link } from "react-router-dom";
 import IITLogo from "./../assets/images/general/IIT_logo_cropped.png";
-// import { GalleryVerticalEnd } from "lucide-react"
 
 import { SearchForm } from "@/components/search-form"
 
@@ -20,14 +19,13 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button";
 import { useAuth } from "@/AuthProvider/FirebaseProvider/AuthProvider";
-import { it } from "date-fns/locale";
 
 const data = {
   navMain: [
-    {
-      title: "Menu",
-      items: [
-        { title: "Dashboard", url: "/super-admin-dashboard", isActive: true},
+    // {
+    //   title: "Menu",
+    //   items: [
+    //     { title: "Dashboard", url: "/super-admin-dashboard", isActive: true},
         // { title: "Requests", 
         //   url: "/admin-requests-pending",
         //   items: [
@@ -36,8 +34,8 @@ const data = {
         //     { title: "Rejected Requests", url: "/admin-requests-rejected" },
         //   ] 
         // }, 
-      ],
-    },
+    //   ],
+    // },
     {title: "Management",
       items: [
         { title: "Create Admin", url: "/super-admin-create-admin" },
