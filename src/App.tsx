@@ -37,6 +37,8 @@ import StudentSettings from "./Pages/Student/Settings";
 import RequestDetails from "./Pages/Admin/RequestDetails";
 import AdminViewRequestDetails from "./Pages/Admin/ViewRequestDetails";
 import StudentViewRequestDetails from "./Pages/Student/ViewRequestDetails";
+import StudentPendingRequests from "./Pages/Student/PendingRequests";
+import StudentRejectedRequests from "./Pages/Student/RejectedRequests";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -237,6 +239,22 @@ const App = () => {
               element={
                 <UserProtected>
                   <StudentSettings/>
+                </UserProtected>
+              }
+            />
+            <Route
+              path="/student-pending-requests"
+              element={
+                <UserProtected>
+                  <StudentPendingRequests/>
+                </UserProtected>
+              }
+            />
+            <Route
+              path="/student-rejected-requests"
+              element={
+                <UserProtected>
+                  <StudentRejectedRequests/>
                 </UserProtected>
               }
             />

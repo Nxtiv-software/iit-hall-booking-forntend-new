@@ -99,6 +99,48 @@ export const fetchStudentRequests = async (
   }
 };
 
+// Get all pending requests by student ID
+export const fetchStudentPendingRequests = async (
+  token: string,
+  studentId: string
+) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/${studentId}/requests/pending`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching student pending requests:", error);
+    throw error;
+  }
+};
+
+// Get all rejected requests by student ID
+export const fetchStudentRejectedRequests = async (
+  token: string,
+  studentId: string
+) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/${studentId}/requests/rejected`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching student rejected requests:", error);
+    throw error;
+  }
+};
+
 // Get total request count
 export const fetchStudentRequestCount = async (
   token: string,

@@ -1,3 +1,5 @@
+import { AppSidebar } from "@/components/app-sidebar-student"
+import Theme from "@/components/Theme"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,18 +23,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
-import { fetchAllBookings } from "@/Services/Bookings"
-import Theme from "@/components/Theme"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
-import { AppSidebar } from "@/components/app-sidebar-student"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
-import { fetchStudentBookings, fetchStudentProfile } from "@/Services/Students"
+import { fetchStudentPendingRequests, fetchStudentProfile } from "@/Services/Students"
 
-const StudentBookings = () => {
+const StudentPendingRequests = () => {
   const navigate = useNavigate();
-
+  
   // Fetch student profile
   const { data: studentData, isLoading: studentLoading } = useQuery({
     queryKey: ["studentProfile"],
@@ -49,27 +48,28 @@ const StudentBookings = () => {
   
   const studentId = studentData?.student?.id;
 
-  // Fetch all bookings
-  const { data: bookingsData = [], isLoading: bookingLoading } = useQuery({
-      queryKey: ["bookings"],
-      queryFn: async () => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("Not authenticated");
-  
-        const idToken = await currentUser.getIdToken();
-        return fetchStudentBookings(idToken, studentId);
-      },
-      enabled: !!studentId,
-      retry: false, 
-    });
+  // Fetch pending requests
+  const { data: pendingRequestData = [], isLoading: requestLoading } = useQuery({
+    queryKey: ["pendingRequests", studentId],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
 
-  if (bookingLoading || studentLoading) {
+      const idToken = await currentUser.getIdToken();
+      return fetchStudentPendingRequests(idToken, studentId!);
+    },
+    enabled: !!studentId,
+    retry: false, 
+  });
+
+  if (requestLoading || studentLoading) {
     return <IITLoader/>
   }
 
   return (
+    <div>
     <SidebarProvider>
-      <AppSidebar/>
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -86,7 +86,7 @@ const StudentBookings = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Bookings</BreadcrumbPage>
+                <BreadcrumbPage>Pending Requests</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -96,30 +96,28 @@ const StudentBookings = () => {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min p-4">
-              <h2 className="text-lg font-semibold mb-4">Bookings</h2>
+              <h2 className="text-lg font-semibold mb-4">Pending Requests</h2>
               <Table>
-                  {/* <TableCaption>List of bookings</TableCaption> */}
+                  {/* <TableCaption>List of pending booking requests</TableCaption> */}
                   <TableHeader>
                   <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Venue</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Requested on</TableHead>
-                    <TableHead>Approved on</TableHead>
-                    <TableHead>Actions</TableHead>
+                      <TableHead>Student Name</TableHead>
+                      <TableHead>Venue</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Requested Date</TableHead>
+                      <TableHead>Actions</TableHead>
                   </TableRow>
                   </TableHeader>
                   <TableBody>
-                  {bookingsData.map((bookings) => (
-                      <TableRow key={bookings.id}>
-                      <TableCell>{bookings.request.student.user.username}</TableCell>
-                      <TableCell>{bookings.request.venue.name}</TableCell>
-                      <TableCell>{bookings.request.status.name}</TableCell>
-                      <TableCell>{new Date(bookings.request.createdAt).toLocaleString()}</TableCell>
-                      <TableCell>{new Date(bookings.createdAt).toLocaleString()}</TableCell>
+                  {pendingRequestData.map((request: { id: string; student: { user: { firstName: string; lastName: string } }; venue: { name: string }; status: { name: string }; createdAt: string }) => (
+                      <TableRow key={request.id}>
+                      <TableCell>{`${request.student.user.firstName ?? ""} ${request.student.user.lastName ?? ""}`}</TableCell>
+                      <TableCell>{request.venue.name}</TableCell>
+                      <TableCell>{request.status.name}</TableCell>
+                      <TableCell>{new Date(request.createdAt).toLocaleString()}</TableCell>
                       <TableCell>
-                        <Button onClick={() => navigate(`/student-view-request-details/${bookings.request.id}`)}>
-                            See more
+                        <Button onClick={() => navigate(`/student-view-request-details/${request.id}`)}>
+                          See more
                         </Button>
                       </TableCell>
                       </TableRow>
@@ -127,10 +125,11 @@ const StudentBookings = () => {
                   </TableBody>
               </Table>
           </div>
-        </div>
+      </div>
       </SidebarInset>
     </SidebarProvider>
+</div>
   )
 }
 
-export default StudentBookings
+export default StudentPendingRequests

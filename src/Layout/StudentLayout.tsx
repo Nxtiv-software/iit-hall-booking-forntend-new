@@ -43,6 +43,14 @@ const breadcrumbMap: Record<string, { label: string; parent?: string }> = {
     label: "Venues",
     parent: "/student-dashboard",
   },
+  "/student-dashboard/student-pending-requests": {
+    label: "Pending Requests",
+    parent: "/student-dashboard",
+  },
+  "/student-dashboard/student-rejected-requests": {
+    label: "Rejected Requests",
+    parent: "/student-dashboard",
+  },
   // Add more routes as needed
 };
 
