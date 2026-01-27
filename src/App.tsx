@@ -3,21 +3,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { AdminProtected, SuperAdminProtected, UserProtected } from "./Pages/Auth/ProtectedRoutes";
-
 import StudentLayout from "./Layout/StudentLayout";
 import BookingLayout from "./Layout/BookingLayout";
 import Admin1Layout from "./Layout/Admin1Layout";
 import Admin2Layout from "./Layout/Admin2Layout";
 import Admin3Layout from "./Layout/Admin3Layout";
 import Admin4Layout from "./Layout/Admin4Layout";
-
 import { AuthProvider } from "./AuthProvider/FirebaseProvider/AuthProvider";
 import { BookingProvider } from "./AuthProvider/BookingProvider";
-
 import SignIn from "./Pages/AuthPages/SignIn";
-import Signup from "./Pages/Auth/Firebase-Auth/Signup";
 import PasswordReset from "./Pages/Auth/Firebase-Auth/passwordReset";
-
 import Admin1PendingRequests from "./Pages/Admin/Admin1/PendingRequests";
 import Admin2PendingRequests from "./Pages/Admin/Admin2/PendingRequests";
 import Admin3PendingRequests from "./Pages/Admin/Admin3/PendingRequests";
@@ -33,14 +28,11 @@ import AdminSettings from "./Pages/Admin/Settings";
 import StudentVenues from "./Pages/Student/Venues";
 import StudentBookings from "./Pages/Student/Bookings";
 import StudentSettings from "./Pages/Student/Settings";
-
 import RequestDetails from "./Pages/Admin/RequestDetails";
 import AdminViewRequestDetails from "./Pages/Admin/ViewRequestDetails";
 import StudentViewRequestDetails from "./Pages/Student/ViewRequestDetails";
 import StudentPendingRequests from "./Pages/Student/PendingRequests";
 import StudentRejectedRequests from "./Pages/Student/RejectedRequests";
-import SuperAdminLayout from "./Layout/SuperAdminLayout"
-import CreateUsers from "./Pages/SuperAdmin/CreateAdmin";
 import CreateAdmin from "./Pages/SuperAdmin/CreateAdmin";
 import CreateStudent from "./Pages/SuperAdmin/CreateStudent";
 
@@ -211,14 +203,11 @@ const App = () => {
             <Route
               path="/admin-settings"
               element={
-                <UserProtected>
+                <AdminProtected>
                   <AdminSettings />
-                </UserProtected>
+                </AdminProtected>
               }
             />
-
-
-
 
             {/* Student routes */}
             <Route

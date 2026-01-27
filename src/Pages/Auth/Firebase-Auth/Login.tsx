@@ -5,10 +5,13 @@ import toast from "react-hot-toast";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import Loader from "@/components/IITLoader";
+import { useState } from "react";
 
 const Login = () => {
   const { loginUser, isAuthenticated, loading, user } = useAuth();
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const {
     register,
     handleSubmit,
@@ -16,6 +19,11 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = async (data: any) => {
+    if (!agreedToTerms) {
+      toast.error("Please agree to the terms and conditions to continue");
+      return;
+    }
+    
     try {
       await loginUser(data.email, data.password);
       toast.success("Login successful!");
@@ -89,15 +97,43 @@ const Login = () => {
             {errors.password && <span className="dark:text-red-500 mt-1">Password is required</span>}
             </div>
       
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="terms"
+                checked={agreedToTerms}
+                onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                className="mt-1 border-gray-400 dark:bg-gray-200 dark:border-gray-400"
+              />
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="terms" className="text-sm text-gray-900 dark:text-gray-900 cursor-pointer">
+                  I agree to the terms and conditions
+                </Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  By signing in, you agree to our Terms of Service and Privacy Policy
+                </p>
+              </div>
+            </div>
 
-            <Button className="w-full cursor-pointer" variant="secondary" type="submit">Login</Button>
-            <div className="flex justify-between items-center mt-2">
+            <Button 
+              className="w-full cursor-pointer" 
+              variant="secondary" 
+              type="submit"
+              disabled={!agreedToTerms}
+            >
+              Login
+            </Button>
+            
+            <div className="flex flex-col gap-2 mt-4">
+              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                Can't access your account? Reset your password to regain access
+              </p>
               <Link
                 to="/reset-password"
-                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                className="text-sm text-blue-600 hover:underline dark:text-blue-400 text-center"
               >
                 Forgot Password?
               </Link>
+              
             </div>
           </div>
         </form>

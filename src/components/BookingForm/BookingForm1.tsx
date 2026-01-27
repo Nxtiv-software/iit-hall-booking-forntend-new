@@ -13,6 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useBooking } from "@/AuthProvider/BookingProvider";
 
 interface AuthFormProps<T extends FieldValues> {
@@ -135,7 +142,19 @@ const BookingForm1 = <T extends FieldValues>({
                 >
                   <FormLabel>{getFieldLabel(fieldName)}</FormLabel>
                   <FormControl>
-                    {fieldName === "description" ? (
+                    {fieldName === "societyname" ? (
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your society" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="IEEE">IEEE</SelectItem>
+                          <SelectItem value="Esports">Esports</SelectItem>
+                          <SelectItem value="Rotaract">Rotaract</SelectItem>
+                          <SelectItem value="Leo">Leo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : fieldName === "description" ? (
                       <textarea
                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder={getFieldPlaceholder(fieldName)}

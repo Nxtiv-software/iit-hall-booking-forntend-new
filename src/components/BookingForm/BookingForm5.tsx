@@ -2,7 +2,8 @@ import { useBooking } from "@/AuthProvider/BookingProvider";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
-import { useEffect, useState } from "react";
+import { Input } from "../ui/input";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStudentRequest } from "@/Services/Students";
 import toast from "react-hot-toast";
@@ -11,6 +12,7 @@ import { auth } from "@/Firebase/config";
 const BookingForm5 = () => {
   const { state, prevPage, updateForm5, resetBooking } = useBooking();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [agreement1, setAgreement1] = useState(
     state.form5Data?.agreement1 || false
@@ -21,11 +23,45 @@ const BookingForm5 = () => {
   const [agreement3, setAgreement3] = useState(
     state.form5Data?.agreement3 || false
   );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     console.log(agreement1, agreement2, agreement3);
   }, [agreement1, agreement2, agreement3]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      if (file.size > maxSize) {
+        toast.error("File size exceeds 10MB limit");
+        return;
+      }
+
+      // Check file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Invalid file type. Please upload PDF, DOC, DOCX, PPT, or PPTX files only");
+        return;
+      }
+
+      setSelectedFile(file);
+      toast.success("File selected successfully");
+    }
+  };
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
+  };
 
   // 2. Define a submit handler.
   async function onSubmit() {
@@ -95,8 +131,17 @@ const BookingForm5 = () => {
         <div className="flex flex-col gap-5">
           <p>Attach Event Proposal</p>
           <div className="flex gap-8 items-center">
-            <Button>Choose a file</Button>
-            <p>No file selected</p>
+            <Input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.ppt,.pptx"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <Button type="button" onClick={handleChooseFile}>Choose a file</Button>
+            <p className="text-sm text-muted-foreground">
+              {selectedFile ? selectedFile.name : "No file selected"}
+            </p>
           </div>
           <p className="text-muted-foreground text-xs">
             Accepted formats: PDF, DOC, DOCX, PPT, PPTX (Max 10MB)
