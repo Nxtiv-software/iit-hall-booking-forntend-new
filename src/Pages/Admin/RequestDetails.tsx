@@ -533,10 +533,10 @@ const AdminRequestDetails = () => {
                             return (
                               <div key={resource.id} className="flex items-center gap-2">
                                 <div
-                                  className={`h-4 w-4 rounded border ${isSelected ? "bg-green-500 border-green-500" : "border-muted-foreground"}`}
+                                  className={`h-4 w-4 rounded border`}
                                 >
                                   {isSelected && (
-                                    <CheckCircle className="h-4 w-4 text-white" />
+                                    <CheckCircle className="h-4 w-4 text-green-500" />
                                   )}
                                 </div>
                                 <span className="text-sm">{resource.name}</span>
