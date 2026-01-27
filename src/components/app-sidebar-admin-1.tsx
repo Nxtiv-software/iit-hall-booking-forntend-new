@@ -31,7 +31,6 @@ const data = {
           url: "/admin1-requests-pending",
           items: [
             { title: "Pending Requests", url: "/admin1-requests-pending" },
-            // { title: "Accepted Requests", url: "/admin-requests-accepted" },
             { title: "Rejected Requests", url: "/admin1-requests-rejected" },
           ] 
         }, 
@@ -44,7 +43,6 @@ const data = {
       title: "General",
       items: [
         { title: "Settings", url: "/admin-settings" },
-        // { title: "Help Desk", url: "/help-desk" },
       ],
     },
   ],
@@ -65,7 +63,6 @@ export function AppSidebar1({ ...props }: React.ComponentProps<typeof Sidebar>) 
             <SidebarMenuButton size="lg" asChild>
               <Link to="/admin-dashboard">
                 <div className="bg-accent text-sidebar-primary-foreground flex aspect-square size-11 items-center justify-center rounded-lg">
-                  {/* <GalleryVerticalEnd className="size-4" /> */}
                   <img src={IITLogo} alt="IIT logo" className="size-10"/>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">

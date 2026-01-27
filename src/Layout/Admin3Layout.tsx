@@ -250,27 +250,45 @@ const Admin3Layout = () => {
               <CardDescription>Events happening within the upcoming week</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
-              <ul className="space-y-2">
-                {upcomingEventData.map((booking, index) => (
+              <ul className="space-y-3">
+                {upcomingEventData.map((booking) => (
                   <li
                     key={booking.id}
-                    className="flex items-start gap-3"
+                    className="flex flex-col gap-8 p-4 border rounded-lg bg-muted/50 hover:bg-muted/70 transition sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <span className="flex items-center justify-center w-8 h-8 rounded-md border-2 font-semibold translate-y-1">
-                      {index + 1}
-                    </span>
+                    <div className="flex-shrink-0">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={booking.request.student.user.avatarUrl} alt="Student avatar" />
+                        <AvatarFallback>{booking.request.student.user.username.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </div>
 
-                    <div className="flex-1 p-4 border rounded-md bg-muted/50 flex flex-col md:flex-row md:justify-between md:items-center">
-                      <div className="space-y-1">
-                        <p>Student: {booking.request.student.user.username}</p>
-                        <p>Venue: {booking.request.venue.name}</p>
-                        <p>Date: {new Date(booking.request.createdAt).toLocaleString()}</p>
-                      </div>
+                    <div className="flex-1 flex flex-col">
+                      <p className="text-sm text-muted-foreground  font-medium">Event</p>
+                      <p className="font-semibold text-base line-clamp-1">
+                        {booking.request.title}
+                      </p>
+                    </div>
 
-                      <div className="mt-2 md:mt-0 space-y-1">
-                        <p>Admin: {booking.admin.user.name}</p>
-                        <p>Status: {booking.request.status.name}</p>
-                      </div>
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Requestor</p>
+                      <p className="font-medium">{booking.request.student.user.username}</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Venue</p>
+                      <p className="font-medium">{booking.request.venue.name}</p>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="font-medium">
+                        {new Date(booking.request.requiredDate).toLocaleDateString(undefined, {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </p>
                     </div>
                   </li>
                 ))}
