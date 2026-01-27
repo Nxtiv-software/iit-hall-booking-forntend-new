@@ -49,7 +49,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 relative">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
     <div>
       <div className="mb-5 sm:mb-8">
@@ -104,7 +104,9 @@ const Login = () => {
       </div>
       </div>
       </div>
-      {/* <p className="dark:text-black">Powered by Nxtiv Software</p> */}
+      <div className="absolute bottom-4 left-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400">Powered by <span className="font-semibold text-red-500">Nxtiv Software</span></p>
+      </div>
     </div>
   );
 };
