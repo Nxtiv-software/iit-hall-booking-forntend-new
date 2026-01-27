@@ -26,7 +26,7 @@ const Login = () => {
 
   if (isAuthenticated() && user) {
     if (user.superAdmin) {
-      return <Navigate to="/super-admin-dashboard" replace />;
+      return <Navigate to="/super-admin-create-admin" replace />;
     }
     if (user.admin) {
       const level = user.admin.adminLevel;

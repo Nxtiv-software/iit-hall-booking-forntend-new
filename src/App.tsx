@@ -59,9 +59,9 @@ const App = () => {
             <Route path="/reset-password" element={<PasswordReset />} />
 
             {/* SuperAdmin routes */}
-            <Route path="super-admin-dashboard" element={<SuperAdminProtected>
+            {/* <Route path="super-admin-dashboard" element={<SuperAdminProtected>
               <SuperAdminLayout/>
-            </SuperAdminProtected>}/>
+            </SuperAdminProtected>}/> */}
 
             <Route path="super-admin-create-admin" element={<SuperAdminProtected>
               <CreateAdmin/>
