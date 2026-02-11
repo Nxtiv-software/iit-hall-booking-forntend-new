@@ -187,6 +187,14 @@ const StudentLayout = () => {
     navigate("/student-add-booking");
   }
 
+  function handleViewBookings() {
+    navigate("/student-bookings");
+  }
+
+  function handleViewVenues() {
+    navigate("/student-venues");
+  }
+
   if ( studentLoading || bookingCountLoading || pendingCountLoading || rejectedCountLoading || upcomingLoading ) {
     return <IITLoader/>
   }
@@ -228,11 +236,10 @@ const StudentLayout = () => {
             <CardTitle className="text-xl mb-2">Quick Actions</CardTitle>
             <div className="rounded-xl grid auto-rows-min gap-4 md:grid-cols-3 text-xl mb-5">
               
-              <Card className="@container/card w-full">
+              <Card onClick={handleBookingRequest} className="@container/card w-full">
                 <CardHeader className="flex items-center gap-4">
                   <div className="rounded bg-muted/50 p-3">
                     <Plus
-                      onClick={handleBookingRequest}
                       className="h-5 w-5 cursor-pointer"
                     />
                   </div>
@@ -247,11 +254,10 @@ const StudentLayout = () => {
                 </CardHeader>
               </Card>
 
-             <Card className="@container/card w-full">
+             <Card onClick={handleViewBookings} className="@container/card w-full">
                 <CardHeader className="flex items-center gap-4">
                   <div className="rounded bg-muted/50 p-3">
                     <Calendar
-                      onClick={handleBookingRequest}
                       className="h-5 w-5 cursor-pointer"
                     />
                   </div>
@@ -266,11 +272,10 @@ const StudentLayout = () => {
                 </CardHeader>
               </Card>
 
-              <Card className="@container/card w-full">
+              <Card onClick={handleViewVenues} className="@container/card w-full">
                 <CardHeader className="flex items-center gap-4">
                   <div className="rounded bg-muted/50 p-3">
                     <MapPin
-                      onClick={handleBookingRequest}
                       className="h-5 w-5 cursor-pointer"
                     />
                   </div>
