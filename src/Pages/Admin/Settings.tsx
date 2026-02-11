@@ -2,6 +2,8 @@ import { AppSidebar1 } from "@/components/app-sidebar-admin-1"
 import { AppSidebar2 } from "@/components/app-sidebar-admin-2"
 import { AppSidebar3 } from "@/components/app-sidebar-admin-3"
 import { AppSidebar4 } from "@/components/app-sidebar-admin-4"
+import { AppSidebar5 } from "@/components/app-sidebar-admin-5"
+import { AppSidebar6 } from "@/components/app-sidebar-admin-6"
 import Theme from "@/components/Theme"
 import {
   Breadcrumb,
@@ -144,12 +146,14 @@ const AdminSettings = () => {
     setShowDeleteModal(true);
   }
 
-  const SidebarComponent = {
+  const SidebarComponent = ({
     "1": AppSidebar1,
     "2": AppSidebar2,
     "3": AppSidebar3,
     "4": AppSidebar4,
-  }[adminData?.admin?.adminLevel || "1"];
+    "5": AppSidebar5,
+    "6": AppSidebar6,
+  } as const)[String(adminData?.admin?.adminLevel || "1")] || AppSidebar1;
   
   if (isLoading) {
     return <IITLoader/>

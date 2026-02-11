@@ -34,6 +34,8 @@ const Login = () => {
       if (level === 2) return <Navigate to="/admin2-dashboard" replace />;
       if (level === 3) return <Navigate to="/admin3-dashboard" replace />;
       if (level === 4) return <Navigate to="/admin4-dashboard" replace />;
+      if (level === 5) return <Navigate to="/admin5-dashboard" replace />;
+      if (level === 6) return <Navigate to="/admin6-dashboard" replace />;
     }
     return <Navigate to="/student-dashboard" replace />;
   }
