@@ -24,13 +24,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
-import { fetchAdmin2Pending, fetchAdminProfile } from "@/Services/Admin"
+import { fetchAdmin5Pending, fetchAdminProfile } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 
-const Admin2PendingRequests = () => {
+const Admin5PendingRequests = () => {
   const navigate = useNavigate();
   
   // Fetch admin profile
@@ -57,7 +57,7 @@ const Admin2PendingRequests = () => {
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
-      return fetchAdmin2Pending(adminId, idToken);
+      return fetchAdmin5Pending(adminId, idToken);
     },
     retry: false, 
     retryOnMount: false,
@@ -133,4 +133,4 @@ const Admin2PendingRequests = () => {
   )
 }
 
-export default Admin2PendingRequests
+export default Admin5PendingRequests

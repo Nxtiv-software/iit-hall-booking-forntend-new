@@ -24,13 +24,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
-import { fetchAdmin2Rejected, fetchAdminProfile } from "@/Services/Admin"
+import { fetchAdmin6Rejected, fetchAdminProfile } from "@/Services/Admin"
 import IITLoader from "@/components/IITLoader"
 import { auth } from "@/Firebase/config"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 
-const Admin2RejectedRequests = () => {
+const Admin6RejectedRequests = () => {
     const navigate = useNavigate();
     // Fetch admin profile
     const { data: adminData, isLoading: adminLoading } = useQuery({
@@ -56,7 +56,7 @@ const Admin2RejectedRequests = () => {
             if (!currentUser) throw new Error("Not authenticated");
 
             const idToken = await currentUser.getIdToken();
-            return fetchAdmin2Rejected(adminId, idToken);
+            return fetchAdmin6Rejected(adminId, idToken);
         },
         retry: false, 
         retryOnMount: false,
@@ -132,4 +132,4 @@ const Admin2RejectedRequests = () => {
   )
 }
 
-export default Admin2RejectedRequests
+export default Admin6RejectedRequests

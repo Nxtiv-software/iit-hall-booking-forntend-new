@@ -35,6 +35,12 @@ import StudentPendingRequests from "./Pages/Student/PendingRequests";
 import StudentRejectedRequests from "./Pages/Student/RejectedRequests";
 import CreateAdmin from "./Pages/SuperAdmin/CreateAdmin";
 import CreateStudent from "./Pages/SuperAdmin/CreateStudent";
+import Admin5RejectedRequests from "./Pages/Admin/Admin5/RejectedRequests";
+import Admin6RejectedRequests from "./Pages/Admin/Admin6/RejectedRequests";
+import Admin5PendingRequests from "./Pages/Admin/Admin5/PendingRequests";
+import Admin6PendingRequests from "./Pages/Admin/Admin6/PendingRequests";
+import Admin5Layout from "./Layout/Admin5Layout";
+import Admin6Layout from "./Layout/Admin6Layout";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -97,6 +103,22 @@ const App = () => {
               }
             />
             <Route
+              path="/admin5-dashboard"
+              element={
+                <AdminProtected>
+                  <Admin5Layout />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin6-dashboard"
+              element={
+                <AdminProtected>
+                  <Admin6Layout />
+                </AdminProtected>
+              }
+            />
+            <Route
               path="/admin1-requests-pending"
               element={
                 <AdminProtected>
@@ -125,6 +147,22 @@ const App = () => {
               element={
                 <AdminProtected>
                   <Admin4PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin5-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin5PendingRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin6-requests-pending"
+              element={
+                <AdminProtected>
+                  <Admin6PendingRequests />
                 </AdminProtected>
               }
             />
@@ -173,6 +211,22 @@ const App = () => {
               element={
                 <AdminProtected>
                   <Admin4RejectedRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin5-requests-rejected"
+              element={
+                <AdminProtected>
+                  <Admin5RejectedRequests />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin6-requests-rejected"
+              element={
+                <AdminProtected>
+                  <Admin6RejectedRequests />
                 </AdminProtected>
               }
             />

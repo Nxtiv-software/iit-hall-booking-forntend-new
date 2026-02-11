@@ -112,6 +112,36 @@ export const fetchAdmin4Rejected = async (adminId: string, token: string) => {
   return response.data;
 };
 
+// ADMIN 5
+export const fetchAdmin5Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin5/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+export const fetchAdmin5Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin5/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+// ADMIN 6
+export const fetchAdmin6Pending = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin6/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+export const fetchAdmin6Rejected = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin6/rejected`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
 /* =========================
    APPROVAL ACTIONS
 ========================= */
