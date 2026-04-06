@@ -41,6 +41,7 @@ import Admin5PendingRequests from "./Pages/Admin/Admin5/PendingRequests";
 import Admin6PendingRequests from "./Pages/Admin/Admin6/PendingRequests";
 import Admin5Layout from "./Layout/Admin5Layout";
 import Admin6Layout from "./Layout/Admin6Layout";
+import AdminLecturers from "./Pages/Admin/Admin1/Lecturers";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -251,6 +252,14 @@ const App = () => {
               element={
                 <AdminProtected>
                   <AdminVenues />
+                </AdminProtected>
+              }
+            />
+            <Route
+              path="/admin-lecturers"
+              element={
+                <AdminProtected>
+                  <AdminLecturers />
                 </AdminProtected>
               }
             />

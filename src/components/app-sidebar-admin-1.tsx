@@ -35,6 +35,7 @@ const data = {
           ] 
         }, 
         { title: "Bookings", url: "/admin-bookings" }, 
+        { title: "Lecturers", url: "/admin-lecturers" }, 
         { title: "Resources", url: "/admin-resources" },
         { title: "Venues", url: "/admin-venues" },
       ],
