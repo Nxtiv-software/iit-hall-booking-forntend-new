@@ -54,8 +54,8 @@ export const fetchAdminBookings = async (adminId: string, token: string) => {
 
 // ADMIN 1
 
-export const fetchAdmin1All = async (token: string) => {
-  const response = await axios.get(`${BASE_URL}/admin1/all`, {
+export const fetchAdmin1All = async (adminId: string, token: string) => {
+  const response = await axios.get(`${BASE_URL}/${adminId}/admin1/all`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
@@ -158,11 +158,12 @@ export const approveRequest = async (
   adminId: string,
   requestId: string,
   comment: string,
-  token: string
+  token: string,
+  lecturerAdminId: string,
 ) => {
   const response = await axios.post(
     `${BASE_URL}/${adminId}/requests/${requestId}/approve`,
-    { comment },
+    { comment, lecturerAdminId },
     {
       headers: { Authorization: `Bearer ${token}` },
     }

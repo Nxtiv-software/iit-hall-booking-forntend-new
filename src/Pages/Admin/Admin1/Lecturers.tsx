@@ -47,6 +47,8 @@ const AdminLecturers = () => {
     retryOnMount: false,
   });
 
+  const adminId = adminData?.admin?.id;
+
   // Fetch all lecturers
   const { data: lecturersData = [], isLoading: lecturersLoading} = useQuery({
       queryKey: ["lecturers"],
@@ -55,7 +57,7 @@ const AdminLecturers = () => {
       if (!currentUser) throw new Error("Not authenticated");
 
       const idToken = await currentUser.getIdToken();
-      return fetchAdmin1All(idToken);
+      return fetchAdmin1All(adminId, idToken);
     },
     retry: false, 
     retryOnMount: false,

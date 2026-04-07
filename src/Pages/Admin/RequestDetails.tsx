@@ -13,6 +13,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -36,6 +43,7 @@ import {
   approveRequest,
   rejectRequest,
   fetchRequestById,
+  fetchAdmin1All,
 } from "@/Services/Admin";
 import {
   fetchApprovalsByRequest,
@@ -60,12 +68,11 @@ const AdminRequestDetails = () => {
   const { requestId } = useParams<{ requestId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
   const [comment, setComment] = useState("");
+  const [selectedLecturer, setSelectedLecturer] = useState<string>("");
   const [preferredVenue, setPreferredVenue] = useState<any | null>(null);
   const [alternateVenue, setAlternateVenue] = useState<any | null>(null);
-
-
-  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch admin profile
   const { data: adminData, isLoading: adminLoading } = useQuery({
@@ -73,7 +80,6 @@ const AdminRequestDetails = () => {
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       return fetchAdminProfile(idToken);
     },
@@ -84,15 +90,27 @@ const AdminRequestDetails = () => {
   const adminId = adminData?.admin?.id;
   const adminLevel = adminData?.admin?.adminLevel;
 
-  // Fetch specific request details
-  const { data:requestData, isLoading: requestLoading } = useQuery({
+  // Fetch request details
+  const { data: requestData, isLoading: requestLoading } = useQuery({
     queryKey: ["request", requestId],
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       return fetchRequestById(adminId, requestId!, idToken);
+    },
+    enabled: !!adminId,
+    retry: false,
+  });
+
+  // Fetch lecturer list
+  const { data: lecturerData, isLoading: lecturerLoading } = useQuery({
+    queryKey: ["lecturer"],
+    queryFn: async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("Not authenticated");
+      const idToken = await currentUser.getIdToken();
+      return fetchAdmin1All(adminId, idToken);
     },
     enabled: !!adminId,
     retry: false,
@@ -104,7 +122,6 @@ const AdminRequestDetails = () => {
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       return fetchApprovalsByRequest(requestId!, idToken);
     },
@@ -118,7 +135,6 @@ const AdminRequestDetails = () => {
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       return fetchAttachmentsByRequest(requestId!, idToken);
     },
@@ -132,7 +148,6 @@ const AdminRequestDetails = () => {
     queryFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       const res = await fetch("http://localhost:8800/resources/available", {
         headers: {
@@ -154,17 +169,16 @@ const AdminRequestDetails = () => {
 
   // Approve mutation
   const approveMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ selectedLecturer }: { selectedLecturer: string }) => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
-      return approveRequest(adminId, requestId!, comment, idToken);
+      return approveRequest(adminId, requestId!, comment, idToken, selectedLecturer);
     },
     onSuccess: () => {
       toast.success("Request approved successfully!");
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
-      navigate(`/admin${adminData.admin.adminLevel}-requests-pending`);
+      navigate(`/admin${adminLevel}-requests-pending`);
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
@@ -177,14 +191,13 @@ const AdminRequestDetails = () => {
     mutationFn: async () => {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("Not authenticated");
-
       const idToken = await currentUser.getIdToken();
       return rejectRequest(adminId, requestId!, comment, idToken);
     },
     onSuccess: () => {
       toast.success("Request rejected successfully!");
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
-      navigate(`/admin${adminData.admin.adminLevel}-requests-pending`);
+      navigate(`/admin${adminLevel}-requests-pending`);
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { message?: string } } };
@@ -192,62 +205,31 @@ const AdminRequestDetails = () => {
     },
   });
 
-  // const handleApprove = () => {
-  //   if (!comment.trim()) {
-  //     toast.error("Please add a comment before approving");
-  //     return;
-  //   }
-  //   setIsSubmitting(true);
-  //   approveMutation.mutate();
-  // };
+  const SidebarComponent = ({"1": AppSidebar1, "2": AppSidebar2, "3": AppSidebar3, "4": AppSidebar4, "5": AppSidebar5, "6": AppSidebar6} as const)[String(adminLevel || "1")] || AppSidebar1;
 
-  // const handleReject = () => {
-  //   if (!comment.trim()) {
-  //     toast.error("Please add a comment before rejecting");
-  //     return;
-  //   }
-  //   setIsSubmitting(true);
-  //   rejectMutation.mutate();
-  // };
-
-  const SidebarComponent = ({
-    "1": AppSidebar1,
-    "2": AppSidebar2,
-    "3": AppSidebar3,
-    "4": AppSidebar4,
-    "5": AppSidebar5,
-    "6": AppSidebar6,
-  } as const)[String(adminData?.admin?.adminLevel || "1")] || AppSidebar1;
-
+  // Fetch venues
   useEffect(() => {
     const fetchVenues = async () => {
-      try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) return;
+      if (!requestData) return;
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+      const idToken = await currentUser.getIdToken();
 
-        const idToken = await currentUser.getIdToken();
+      const preferredRoomId = requestData?.request.formData?.form3?.preferredroom;
+      const alternateRoomId = requestData?.request.formData?.form3?.alternateroom;
 
-        const preferredRoomId = requestData?.request.formData?.form3?.preferredroom;
-        const alternateRoomId = requestData?.request.formData?.form3?.alternateroom;
-
-        if (preferredRoomId) {
-          const venue = await fetchVenue(preferredRoomId, idToken);
-          setPreferredVenue(venue);
-        }
-
-        if (alternateRoomId) {
-          const venue = await fetchVenue(alternateRoomId, idToken);
-          setAlternateVenue(venue);
-        }
-      } catch (err) {
-        console.error("Error fetching venues:", err);
-      }
+      if (preferredRoomId) setPreferredVenue(await fetchVenue(preferredRoomId, idToken));
+      if (alternateRoomId) setAlternateVenue(await fetchVenue(alternateRoomId, idToken));
     };
 
-    if (requestData) fetchVenues();
+    fetchVenues();
   }, [requestData]);
 
-  if (requestLoading || adminLoading || !requestData) {
+  const assignedLecturer = lecturerData?.find(
+    (lec: any) => lec.id === requestData?.request.lecturerAdminId
+  );
+
+  if (requestLoading || adminLoading || !requestData || lecturerLoading) {
     return <IITLoader />;
   }
 
@@ -256,12 +238,10 @@ const AdminRequestDetails = () => {
       <SidebarProvider>
         <SidebarComponent />
         <SidebarInset>
+          {/* Header & Breadcrumb */}
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
@@ -269,9 +249,7 @@ const AdminRequestDetails = () => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/admin${admin}-requests-pending">
-                    Pending Requests
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href={`/admin${adminLevel}-requests-pending`}>Pending Requests</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -279,9 +257,7 @@ const AdminRequestDetails = () => {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
-            <div className="ml-auto">
-              <Theme />
-            </div>
+            <div className="ml-auto"><Theme /></div>
           </header>
 
           <div className="flex flex-1 flex-col gap-4 p-4">
@@ -470,10 +446,18 @@ const AdminRequestDetails = () => {
                           </p>
                         </div>
                       </div>
+                      <div className="grid gap-4 md:grid-cols-3">
                         <div>
                           <p className="text-sm text-muted-foreground"> No of Days </p>
                           <p className="font-medium"> {requestData?.request.formData?.form2?.noofdays} </p>
                         </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Lecturer Name</p>
+                          <p className="font-medium">
+                            {assignedLecturer ? `${assignedLecturer.user.firstName} ${assignedLecturer.user.lastName}` : "Not assigned"}
+                          </p>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
@@ -667,51 +651,80 @@ const AdminRequestDetails = () => {
                   </Card>
                 )}
 
-                {/* Action Section */}
-                {requestData?.request.status?.name === "PENDING" && (
-                  <Card className="md:col-span-2">
-                    <CardHeader>
-                      <CardTitle>Review Action</CardTitle>
-                      <CardDescription>
-                        Add your comments and approve or reject this request
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {hasCurrentLevelResponded && (
-                        <p className="text-sm italic text-muted-foreground">
-                          This request has already been reviewed by your admin level.
-                        </p>
-                      )}
+              {/* Appoint Lecturer */}
+              {adminLevel === 1 && (
+                <Card className="md:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Appoint Lecturer</CardTitle>
+                    <CardDescription>Select a lecturer responsible for the event</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Select value={selectedLecturer} onValueChange={setSelectedLecturer}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a lecturer" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lecturerData?.map((lecturer: any) => (
+                          <SelectItem key={lecturer.id} value={lecturer.id}>
+                            {lecturer.user?.firstName} {lecturer.user?.lastName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </CardContent>
+                </Card>
+              )}
 
-                      <Label>Comment *</Label>
-                      <Textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                      />
+              {/* Action Section */}
+              {requestData?.request.status?.name === "PENDING" && (
+                <Card className="md:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Review Action</CardTitle>
+                    <CardDescription>Add your comments and approve or reject this request</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {hasCurrentLevelResponded && (
+                      <p className="text-sm italic text-muted-foreground">
+                        This request has already been reviewed by your admin level.
+                      </p>
+                    )}
 
-                      <div className="flex justify-end gap-3">
-                        <Button
-                          variant="destructive"
-                          disabled={hasCurrentLevelResponded}
-                          onClick={() => rejectMutation.mutate()}
-                        >
-                          <XCircle className="h-4 w-4 mr-2" />
-                          Reject
-                        </Button>
+                    <Label>Comment *</Label>
+                    <Textarea value={comment} onChange={(e) => setComment(e.target.value)} />
 
-                        <Button
-                          disabled={hasCurrentLevelResponded}
-                          onClick={() => approveMutation.mutate()}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Approve
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        variant="destructive"
+                        disabled={hasCurrentLevelResponded}
+                        onClick={() => rejectMutation.mutate()}
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Reject
+                      </Button>
+
+                      <Button
+                        disabled={hasCurrentLevelResponded}
+                        onClick={() => {
+                          if (!comment.trim()) {
+                            toast.error("Please add a comment before approving");
+                            return;
+                          }
+                          if (!selectedLecturer) {
+                            toast.error("Please select a lecturer before approving");
+                            return;
+                          }
+                          approveMutation.mutate({ selectedLecturer });
+                        }}
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Approve
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
+          </div>
           </div>
         </SidebarInset>
       </SidebarProvider>
