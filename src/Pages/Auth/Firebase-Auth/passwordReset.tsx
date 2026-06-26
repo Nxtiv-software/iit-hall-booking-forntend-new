@@ -24,7 +24,7 @@ function PasswordReset() {
     try {
       setLoading(true);
       await sendPasswordResetEmail(auth, email, {
-        url: "https://iit-hallbooking.firebaseapp.com", 
+        url: "https://iit-hallbooking-978bf.firebaseapp.com", 
       });
       toast.success("Password reset email sent! Check your inbox.");
       setEmail("");
